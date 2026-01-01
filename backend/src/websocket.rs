@@ -1,8 +1,8 @@
 use axum::{
-    extract::{Path, State, ws::{WebSocket, WebSocketUpgrade}},
+    extract::{Path, State, ws::WebSocketUpgrade},
     response::IntoResponse,
 };
-use futures::{sink::SinkExt, stream::StreamExt};
+use futures::{SinkExt, StreamExt};
 use serde::{Deserialize, Serialize};
 use std::sync::Arc;
 use tokio::sync::RwLock;
@@ -12,17 +12,25 @@ use crate::game::{GameManager, Player, Zone, Card};
 #[derive(Debug, Serialize, Deserialize)]
 pub enum Message {
     // Client -> Server
-    JoinGame { player_name: String },
+    #[serde(rename = "UpdateLife")]
     UpdateLife { player_id: String, delta: i32 },
+    #[serde(rename = "MoveCard")]
     MoveCard { card_id: String, from_zone: String, to_zone: String },
+    #[serde(rename = "DrawCard")]
     DrawCard { card_name: String },
+    #[serde(rename = "DiscardCard")]
     DiscardCard { card_id: String },
     
     // Server -> Client
+    #[serde(rename = "PlayerJoined")]
     PlayerJoined { player_id: String, player_name: String },
+    #[serde(rename = "GameState")]
     GameState { state: String }, // JSON string of full game state
+    #[serde(rename = "LifeUpdated")]
     LifeUpdated { player_id: String, life: i32 },
+    #[serde(rename = "CardMoved")]
     CardMoved { player_id: String, card_id: String, from_zone: String, to_zone: String },
+    #[serde(rename = "Error")]
     Error { message: String },
 }
 
@@ -35,7 +43,7 @@ pub async fn ws_handler(
 }
 
 async fn handle_socket(
-    socket: WebSocket,
+    socket: axum::extract::ws::WebSocket,
     game_id: String,
     player_id: String,
     game_manager: Arc<RwLock<GameManager>>,

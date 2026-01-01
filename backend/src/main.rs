@@ -4,13 +4,12 @@ mod handlers;
 
 use axum::{
     extract::DefaultBodyLimit,
-    http::Method,
     routing::get,
     Router,
 };
 use std::sync::Arc;
 use tokio::sync::RwLock;
-use tower_http::cors::{AllowOrigin, CorsLayer};
+use tower_http::cors::CorsLayer;
 use tracing_subscriber;
 
 use game::GameManager;

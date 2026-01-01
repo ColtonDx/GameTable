@@ -7,8 +7,8 @@ RUN cargo build --release
 # Stage 2: Build frontend
 FROM node:18-alpine as frontend-builder
 WORKDIR /app/frontend
-COPY frontend/package.json frontend/package-lock.json ./
-RUN npm ci
+COPY frontend/package.json ./
+RUN npm install
 COPY frontend/ .
 RUN npm run build
 

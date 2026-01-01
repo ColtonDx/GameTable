@@ -1,0 +1,85 @@
+.player-zone {
+  background: #2d3748;
+  padding: 20px;
+  border-radius: 8px;
+  border: 2px solid #64748b;
+  transition: all 0.3s ease;
+}
+
+.player-zone:hover {
+  border-color: #2563eb;
+}
+
+.player-zone h3 {
+  color: #93c5fd;
+  margin-bottom: 16px;
+  text-align: center;
+  border-bottom: 1px solid #64748b;
+  padding-bottom: 10px;
+}
+
+.draw-card-section {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.draw-card-section .input {
+  flex: 1;
+}
+
+.draw-card-section .btn {
+  min-width: 80px;
+}
+
+.zones {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 12px;
+}
+
+.zone {
+  background: #1a202c;
+  padding: 12px;
+  border-radius: 4px;
+  border: 1px solid #64748b;
+}
+
+.zone h4 {
+  font-size: 12px;
+  text-transform: uppercase;
+  color: #64748b;
+  margin-bottom: 8px;
+  font-weight: bold;
+}
+
+.card-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.card {
+  background: #0f172a;
+  border: 1px solid #3b82f6;
+  padding: 8px;
+  border-radius: 3px;
+  font-size: 12px;
+  color: #93c5fd;
+  word-break: break-word;
+  transition: all 0.3s ease;
+}
+
+.card:hover {
+  background: #1e293b;
+  border-color: #2563eb;
+  box-shadow: 0 0 5px rgba(37, 99, 235, 0.5);
+}
+
+.empty {
+  font-size: 12px;
+  color: #64748b;
+  text-align: center;
+  font-style: italic;
+  padding: 8px;
+}

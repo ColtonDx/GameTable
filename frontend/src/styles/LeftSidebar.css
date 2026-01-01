@@ -17,6 +17,10 @@
   width: 50px;
 }
 
+.left-sidebar.collapsed .sidebar-header h2 {
+  display: none;
+}
+
 .sidebar-header {
   padding: 16px;
   border-bottom: 2px solid #d0d0d0;

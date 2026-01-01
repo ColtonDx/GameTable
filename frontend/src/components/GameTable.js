@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import '../styles/GameTableNew.css';
 import LeftSidebar from './LeftSidebar';
-import PlayerProfile from './PlayerProfile';
+import FourPlayerLifeTracker from './FourPlayerLifeTracker';
 import HandZone from './HandZone';
 import ZonesPanel from './ZonesPanel';
 import BottomToolbar from './BottomToolbar';
@@ -47,7 +47,7 @@ const GameTable = ({ gameId, playerId, playerName, onBack }) => {
     };
   }, [gameId, playerId]);
 
-  const updateLife = (delta) => {
+  const updatePlayerLife = (playerId, delta) => {
     if (ws.current && ws.current.readyState === WebSocket.OPEN) {
       ws.current.send(
         JSON.stringify({
@@ -57,18 +57,14 @@ const GameTable = ({ gameId, playerId, playerName, onBack }) => {
     }
   };
 
-  const drawCard = (cardName) => {
+  const handleNextTurn = () => {
     if (ws.current && ws.current.readyState === WebSocket.OPEN) {
       ws.current.send(
         JSON.stringify({
-          DrawCard: { card_name: cardName }
+          NextTurn: {}
         })
       );
     }
-  };
-
-  const handleNextTurn = () => {
-    console.log('Next turn clicked');
   };
 
   const handleAction = () => {
@@ -77,7 +73,6 @@ const GameTable = ({ gameId, playerId, playerName, onBack }) => {
 
   const handleGameMenu = () => {
     // Restart game or other game menu actions
-    console.log('Game menu action: Restart Game');
     if (window.confirm('Are you sure you want to restart the game?')) {
       // Send restart message to backend
       if (ws.current && ws.current.readyState === WebSocket.OPEN) {
@@ -107,13 +102,12 @@ const GameTable = ({ gameId, playerId, playerName, onBack }) => {
           <LeftSidebar />
         </div>
 
-        {/* Top-Right: Player Profile */}
+        {/* Top-Right: Life Tracker (4 Players) */}
         <div className="quadrant top-right">
-          <PlayerProfile 
-            playerName={playerName || 'Player'} 
-            life={currentPlayer?.life || 40}
+          <FourPlayerLifeTracker 
             gameState={gameState}
-            playerId={playerId}
+            currentPlayerId={gameState?.current_turn_player !== undefined ? Object.keys(gameState.players || {})[gameState.current_turn_player] : null}
+            onUpdatePlayerLife={updatePlayerLife}
           />
         </div>
 
@@ -135,7 +129,7 @@ const GameTable = ({ gameId, playerId, playerName, onBack }) => {
       {/* Bottom Toolbar */}
       <BottomToolbar 
         gameState={gameState}
-        onUpdateLife={updateLife}
+        turnNumber={gameState?.turn_number || 1}
         onNextTurn={handleNextTurn}
         onAction={handleAction}
         onGameMenu={handleGameMenu}

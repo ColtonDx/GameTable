@@ -144,6 +144,45 @@ impl GameSession {
         }
     }
 
+    pub fn next_turn(&mut self) {
+        self.current_turn_player = (self.current_turn_player + 1) % self.players.len();
+        
+        // Update is_active for all players
+        for player in self.players.values_mut() {
+            player.is_active = false;
+        }
+        
+        // Set the current turn player as active
+        let player_ids: Vec<String> = self.players.keys().cloned().collect();
+        if let Some(active_id) = player_ids.get(self.current_turn_player) {
+            if let Some(player) = self.players.get_mut(active_id) {
+                player.is_active = true;
+            }
+        }
+        
+        // Only increment turn number after the last player completes their turn
+        if self.current_turn_player == 0 {
+            self.turn_number += 1;
+        }
+    }
+
+    pub fn restart_game(&mut self) {
+        self.turn_number = 1;
+        self.current_turn_player = 0;
+        
+        for player in self.players.values_mut() {
+            player.life = 40;
+            player.is_active = false;
+        }
+        
+        // Set first player as active
+        if let Some(first_player_id) = self.players.keys().next().cloned() {
+            if let Some(player) = self.players.get_mut(&first_player_id) {
+                player.is_active = true;
+            }
+        }
+    }
+
     pub fn broadcast_state(&self) {
         if let Some(tx) = &self.tx {
             let state_json = serde_json::to_string(&self).unwrap_or_default();

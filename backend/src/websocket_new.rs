@@ -19,6 +19,10 @@ pub enum Message {
     DrawCard { card_name: String },
     #[serde(rename = "DiscardCard")]
     DiscardCard { card_id: String },
+    #[serde(rename = "NextTurn")]
+    NextTurn {},
+    #[serde(rename = "RestartGame")]
+    RestartGame {},
     
     #[serde(rename = "GameState")]
     GameState { state: String },
@@ -142,6 +146,20 @@ async fn handle_socket(
                                 player.hand.push(card);
                                 game.broadcast_state();
                             }
+                        }
+                    },
+                    Message::NextTurn {} => {
+                        let mut gm = game_manager.write().await;
+                        if let Some(game) = gm.get_game_mut(&game_id) {
+                            game.next_turn();
+                            game.broadcast_state();
+                        }
+                    },
+                    Message::RestartGame {} => {
+                        let mut gm = game_manager.write().await;
+                        if let Some(game) = gm.get_game_mut(&game_id) {
+                            game.restart_game();
+                            game.broadcast_state();
                         }
                     },
                     _ => {}

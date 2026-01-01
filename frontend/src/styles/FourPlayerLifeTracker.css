@@ -1,0 +1,245 @@
+/* Four Player Life Tracker Styles */
+
+.four-player-life-tracker {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  gap: 12px;
+  height: 100%;
+  padding: 16px;
+  background: linear-gradient(135deg, #f5f5f5 0%, #ffffff 100%);
+}
+
+.tracker-row {
+  display: contents;
+}
+
+.life-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Player Life Card */
+.player-life-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  width: 100%;
+  max-width: 280px;
+  padding: 20px;
+  background: linear-gradient(135deg, #ffffff 0%, #f9f9f9 100%);
+  border: 2px solid #d0d0d0;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.player-life-card:hover {
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+}
+
+.player-life-card.active {
+  border-color: #10b981;
+  background: linear-gradient(135deg, #ecfdf5 0%, #f0fdf4 100%);
+  box-shadow: 0 0 24px rgba(16, 185, 129, 0.3);
+}
+
+.player-life-card.placeholder {
+  opacity: 0.5;
+  background: linear-gradient(135deg, #f5f5f5 0%, #eeeeee 100%);
+  border-style: dashed;
+  border-color: #b0b0b0;
+}
+
+/* Player Name Display */
+.player-name-display {
+  font-size: 14px;
+  font-weight: 600;
+  color: #333;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  text-align: center;
+}
+
+.player-life-card.placeholder .player-name-display {
+  color: #999;
+}
+
+/* Life Display Box */
+.life-display-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  background: linear-gradient(135deg, rgba(37, 99, 235, 0.1), rgba(37, 99, 235, 0.05));
+  border: 2px solid rgba(37, 99, 235, 0.3);
+  border-radius: 8px;
+  padding: 16px 12px;
+  min-width: 200px;
+}
+
+.player-life-card.active .life-display-box {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(16, 185, 129, 0.05));
+  border-color: rgba(16, 185, 129, 0.3);
+}
+
+/* Life Buttons */
+.life-btn {
+  background: linear-gradient(135deg, rgba(37, 99, 235, 0.2), rgba(37, 99, 235, 0.1));
+  border: 1px solid rgba(37, 99, 235, 0.4);
+  color: #60a5fa;
+  width: 40px;
+  height: 40px;
+  border-radius: 6px;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.life-btn:hover:not(:disabled) {
+  background: linear-gradient(135deg, rgba(37, 99, 235, 0.4), rgba(37, 99, 235, 0.3));
+  border-color: rgba(37, 99, 235, 0.7);
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+}
+
+.life-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.life-btn.decrease-btn {
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.2), rgba(239, 68, 68, 0.1));
+  border-color: rgba(239, 68, 68, 0.4);
+  color: #ef4444;
+}
+
+.life-btn.decrease-btn:hover:not(:disabled) {
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.4), rgba(239, 68, 68, 0.3));
+  border-color: rgba(239, 68, 68, 0.7);
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+}
+
+.life-btn.increase-btn {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(16, 185, 129, 0.1));
+  border-color: rgba(16, 185, 129, 0.4);
+  color: #10b981;
+}
+
+.life-btn.increase-btn:hover:not(:disabled) {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.4), rgba(16, 185, 129, 0.3));
+  border-color: rgba(16, 185, 129, 0.7);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+/* Life Number Display */
+.life-number {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 80px;
+}
+
+.life-value {
+  font-size: 48px;
+  font-weight: 900;
+  color: #ef4444;
+  line-height: 1;
+}
+
+.player-life-card.active .life-value {
+  color: #10b981;
+}
+
+/* Active Indicator */
+.active-indicator {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: white;
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+}
+
+/* Responsive */
+@media (max-width: 1200px) {
+  .four-player-life-tracker {
+    gap: 8px;
+    padding: 12px;
+  }
+
+  .player-life-card {
+    padding: 16px;
+    gap: 12px;
+    max-width: 240px;
+  }
+
+  .life-display-box {
+    min-width: 160px;
+    padding: 12px 8px;
+  }
+
+  .life-btn {
+    width: 36px;
+    height: 36px;
+    font-size: 16px;
+  }
+
+  .life-value {
+    font-size: 40px;
+  }
+
+  .player-name-display {
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 768px) {
+  .four-player-life-tracker {
+    gap: 6px;
+    padding: 8px;
+  }
+
+  .player-life-card {
+    padding: 12px;
+    gap: 10px;
+    max-width: 180px;
+  }
+
+  .life-display-box {
+    min-width: 140px;
+    padding: 10px 6px;
+    gap: 8px;
+  }
+
+  .life-btn {
+    width: 32px;
+    height: 32px;
+    font-size: 14px;
+  }
+
+  .life-value {
+    font-size: 32px;
+  }
+
+  .player-name-display {
+    font-size: 11px;
+  }
+
+  .active-indicator {
+    font-size: 8px;
+    padding: 3px 6px;
+  }
+}

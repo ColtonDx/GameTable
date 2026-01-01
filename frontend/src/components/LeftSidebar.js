@@ -47,7 +47,6 @@ const LeftSidebar = () => {
                 <button className="action-btn">Mulligan</button>
                 <button className="action-btn">Reveal Hand</button>
                 <button className="action-btn">Reset Game</button>
-                <button className="action-btn">Print Decklist</button>
               </div>
             )}
           </div>
@@ -65,10 +64,6 @@ const LeftSidebar = () => {
             </button>
             {expandedMenus.gameinfo && (
               <div className="menu-content game-info">
-                <div className="info-item">
-                  <span className="label">Format:</span>
-                  <span className="value">Commander</span>
-                </div>
                 <div className="info-item">
                   <span className="label">Players:</span>
                   <span className="value">4</span>

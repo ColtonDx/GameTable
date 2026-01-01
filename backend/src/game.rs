@@ -1,6 +1,7 @@
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use uuid::Uuid;
+use tokio::sync::broadcast;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Card {
@@ -23,7 +24,6 @@ pub struct Player {
     pub name: String,
     pub life: i32,
     pub hand: Vec<Card>,
-    pub battlefield: Vec<Card>,
     pub graveyard: Vec<Card>,
     pub exile: Vec<Card>,
     pub command_zone: Vec<Card>,
@@ -37,7 +37,6 @@ impl Player {
             name,
             life: 20,
             hand: Vec::new(),
-            battlefield: Vec::new(),
             graveyard: Vec::new(),
             exile: Vec::new(),
             command_zone: Vec::new(),
@@ -48,7 +47,7 @@ impl Player {
     pub fn get_zone(&self, zone: &Zone) -> &Vec<Card> {
         match zone {
             Zone::Hand => &self.hand,
-            Zone::Battlefield => &self.battlefield,
+            Zone::Battlefield => &self.hand,
             Zone::Graveyard => &self.graveyard,
             Zone::Exile => &self.exile,
             Zone::CommandZone => &self.command_zone,
@@ -58,7 +57,7 @@ impl Player {
     pub fn get_zone_mut(&mut self, zone: &Zone) -> &mut Vec<Card> {
         match zone {
             Zone::Hand => &mut self.hand,
-            Zone::Battlefield => &mut self.battlefield,
+            Zone::Battlefield => &mut self.hand,
             Zone::Graveyard => &mut self.graveyard,
             Zone::Exile => &mut self.exile,
             Zone::CommandZone => &mut self.command_zone,
@@ -70,22 +69,28 @@ impl Player {
 pub struct GameSession {
     pub id: String,
     pub players: HashMap<String, Player>,
+    pub battlefield: Vec<Card>,
     pub current_turn_player: usize,
     pub turn_number: u32,
     pub created_at: u64,
+    #[serde(skip)]
+    pub tx: Option<broadcast::Sender<String>>,
 }
 
 impl GameSession {
     pub fn new(game_id: String) -> Self {
+        let (tx, _) = broadcast::channel(100);
         Self {
             id: game_id,
             players: HashMap::new(),
+            battlefield: Vec::new(),
             current_turn_player: 0,
             turn_number: 1,
             created_at: std::time::SystemTime::now()
                 .duration_since(std::time::UNIX_EPOCH)
                 .unwrap()
                 .as_secs(),
+            tx: Some(tx),
         }
     }
 
@@ -138,6 +143,18 @@ impl GameSession {
             Err(format!("Player {} not found", player_id))
         }
     }
+
+    pub fn broadcast_state(&self) {
+        if let Some(tx) = &self.tx {
+            let state_json = serde_json::to_string(&self).unwrap_or_default();
+            let msg = serde_json::json!({
+                "GameState": {
+                    "state": state_json
+                }
+            }).to_string();
+            let _ = tx.send(msg);
+        }
+    }
 }
 
 pub struct GameManager {
@@ -152,7 +169,7 @@ impl GameManager {
     }
 
     pub fn create_game(&mut self) -> String {
-        let game_id = Uuid::new_v4().to_string();
+        let game_id = generate_short_id();
         self.games.insert(game_id.clone(), GameSession::new(game_id.clone()));
         game_id
     }
@@ -168,4 +185,15 @@ impl GameManager {
     pub fn delete_game(&mut self, game_id: &str) {
         self.games.remove(game_id);
     }
+}
+
+fn generate_short_id() -> String {
+    use std::fmt::Write;
+    let uuid = Uuid::new_v4();
+    let bytes = uuid.as_bytes();
+    let mut result = String::new();
+    for i in 0..2 {
+        write!(&mut result, "{:02X}", bytes[i]).unwrap();
+    }
+    result
 }

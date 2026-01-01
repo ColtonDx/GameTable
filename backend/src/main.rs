@@ -1,6 +1,9 @@
 mod game;
-mod websocket;
+mod websocket_new;
 mod handlers;
+
+// Re-export websocket_new as websocket for compatibility
+use websocket_new as websocket;
 
 use axum::{
     extract::DefaultBodyLimit,

@@ -27,7 +27,7 @@ const Lobby = ({ onStartGame }) => {
       return;
     }
     const playerId = `player_${Date.now()}`;
-    onStartGame(gameId, playerId);
+    onStartGame(gameId, playerId, playerName);
   };
 
   if (gameId) {

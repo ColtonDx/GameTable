@@ -1,0 +1,253 @@
+/* New Game Table Layout - 4 Quadrant Design */
+
+.game-table-new {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e8eaed 100%);
+  color: #1a1a1a;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  overflow: hidden;
+}
+
+.game-table-new.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  color: #2563eb;
+}
+
+/* Error Banner */
+.error-banner {
+  background: rgba(239, 68, 68, 0.1);
+  border-bottom: 2px solid #ef4444;
+  color: #fca5a5;
+  padding: 12px 20px;
+  font-size: 13px;
+  animation: slideDown 0.3s ease-out;
+  z-index: 999;
+}
+
+@keyframes slideDown {
+  from {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Main Layout Grid */
+.main-layout {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  grid-template-rows: 1fr;
+  gap: 12px;
+  padding: 12px;
+  overflow: hidden;
+}
+
+/* Quadrant Base Styles */
+.quadrant {
+  background: rgba(255, 255, 255, 0.6);
+  border: 1px solid #d0d0d0;
+  border-radius: 8px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.quadrant.top-left {
+  grid-column: 1;
+  grid-row: 1;
+  padding: 0;
+  border: none;
+  background: transparent;
+}
+
+.quadrant.top-right {
+  grid-column: 2;
+  grid-row: 1;
+  display: grid;
+  grid-template-rows: auto 1fr;
+  gap: 12px;
+}
+
+.quadrant.bottom-left {
+  grid-column: 1 / 3;
+  grid-row: 2;
+  display: flex;
+  gap: 12px;
+}
+
+.quadrant.bottom-right {
+  display: none;
+}
+
+/* Bottom Layout - Hand and Zones Side by Side */
+.bottom-section {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: 1fr 280px;
+  gap: 12px;
+  min-height: 200px;
+}
+
+/* Top Right Grid Fix */
+.main-layout {
+  grid-template-columns: 240px 1fr;
+  grid-template-rows: auto 1fr;
+}
+
+.quadrant.top-left {
+  grid-column: 1;
+  grid-row: 1 / 3;
+}
+
+.quadrant.top-right {
+  grid-column: 2;
+  grid-row: 1;
+}
+
+.quadrant.bottom-left {
+  grid-column: 2;
+  grid-row: 2;
+  display: grid;
+  grid-template-columns: 1fr 280px;
+  gap: 12px;
+}
+
+/* Button Styles */
+.btn {
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 600;
+  padding: 8px 16px;
+  transition: all 0.2s;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #2563eb, #1e40af);
+  color: white;
+}
+
+.btn-primary:hover {
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+}
+
+.btn-secondary {
+  background: linear-gradient(135deg, #6b7280, #4b5563);
+  color: white;
+}
+
+.btn-secondary:hover {
+  background: linear-gradient(135deg, #9ca3af, #6b7280);
+}
+
+/* Responsive Design */
+@media (max-width: 1400px) {
+  .main-layout {
+    grid-template-columns: 200px 1fr;
+  }
+
+  .quadrant.top-left {
+    padding: 0;
+    border: none;
+  }
+}
+
+@media (max-width: 1024px) {
+  .main-layout {
+    grid-template-columns: 180px 1fr;
+    padding: 8px;
+    gap: 8px;
+  }
+
+  .quadrant {
+    padding: 10px;
+  }
+
+  .quadrant.bottom-left {
+    grid-template-columns: 1fr 240px;
+    gap: 8px;
+  }
+}
+
+@media (max-width: 768px) {
+  .main-layout {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto auto auto;
+  }
+
+  .quadrant.top-left {
+    grid-column: 1;
+    grid-row: 1;
+    padding: 12px;
+    border: 1px solid rgba(37, 99, 235, 0.2);
+    border-radius: 8px;
+    background: linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 100%);
+  }
+
+  .quadrant.top-right {
+    grid-column: 1;
+    grid-row: 2;
+  }
+
+  .quadrant.bottom-left {
+    grid-column: 1;
+    grid-row: 3 / 5;
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  /* Hide zones on very small screens, show in bottom */
+  .quadrant.bottom-left > .zones-panel {
+    display: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .main-layout {
+    padding: 6px;
+    gap: 6px;
+  }
+
+  .quadrant {
+    padding: 8px;
+    border-radius: 6px;
+  }
+
+  .bottom-toolbar {
+    padding: 6px 12px;
+    height: 50px;
+  }
+}
+
+/* Print Styles */
+@media print {
+  .bottom-toolbar,
+  .left-sidebar {
+    display: none;
+  }
+
+  .main-layout {
+    padding: 0;
+    gap: 0;
+  }
+
+  .quadrant {
+    border: 1px solid #000;
+    page-break-inside: avoid;
+  }
+}

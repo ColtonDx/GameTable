@@ -1,0 +1,203 @@
+/* Zones Panel Styles */
+
+.zones-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  height: 100%;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.7), rgba(248, 249, 250, 0.7));
+  border: 2px solid #d0d0d0;
+  border-radius: 8px;
+  padding: 12px;
+  overflow-y: auto;
+}
+
+.zones-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex: 1;
+}
+
+.zone {
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(37, 99, 235, 0.2);
+  border-radius: 6px;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.zone-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 6px;
+  border-bottom: 1px solid rgba(37, 99, 235, 0.15);
+}
+
+.zone-name {
+  font-size: 11px;
+  color: #9ca3af;
+  text-transform: uppercase;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.zone-count {
+  background: rgba(37, 99, 235, 0.2);
+  color: #60a5fa;
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-size: 10px;
+  font-weight: 600;
+  min-width: 24px;
+  text-align: center;
+}
+
+.zone-content {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-height: 40px;
+  justify-content: center;
+}
+
+/* Library Placeholder */
+.library-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 50px;
+  background: rgba(37, 99, 235, 0.1);
+  border: 2px dashed rgba(37, 99, 235, 0.3);
+  border-radius: 4px;
+}
+
+.card-stack-visual {
+  width: 50px;
+  height: 50px;
+  background: linear-gradient(135deg, rgba(37, 99, 235, 0.3), rgba(16, 185, 129, 0.1));
+  border: 1px solid rgba(37, 99, 235, 0.4);
+  border-radius: 3px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  font-weight: 700;
+  color: #60a5fa;
+  position: relative;
+  box-shadow: inset 0 0 0 1px rgba(37, 99, 235, 0.2);
+}
+
+.card-stack-visual::before,
+.card-stack-visual::after {
+  content: '';
+  position: absolute;
+  background: inherit;
+  border: inherit;
+  border-radius: inherit;
+}
+
+.card-stack-visual::before {
+  width: 48px;
+  height: 48px;
+  top: -3px;
+  left: -3px;
+  z-index: -1;
+}
+
+.card-stack-visual::after {
+  width: 46px;
+  height: 46px;
+  top: -6px;
+  left: -6px;
+  z-index: -2;
+}
+
+/* Zone Stack */
+.zone-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  max-height: 60px;
+  overflow-y: auto;
+}
+
+.stacked-card {
+  background: linear-gradient(90deg, rgba(37, 99, 235, 0.2), transparent);
+  border-left: 3px solid #2563eb;
+  padding: 6px 8px;
+  font-size: 11px;
+  color: #d1d5db;
+  border-radius: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: all 0.2s;
+}
+
+.stacked-card:hover {
+  background: linear-gradient(90deg, rgba(37, 99, 235, 0.4), transparent);
+  border-left-color: #60a5fa;
+}
+
+.zone-empty {
+  color: #6b7280;
+  font-size: 11px;
+  font-style: italic;
+  padding: 8px;
+  text-align: center;
+}
+
+/* Battlefield Summary */
+.battlefield-summary {
+  background: rgba(16, 185, 129, 0.1);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  border-radius: 6px;
+  padding: 8px 10px;
+  margin-top: auto;
+  flex-shrink: 0;
+}
+
+.summary-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 11px;
+  color: #9ca3af;
+  text-transform: uppercase;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.summary-count {
+  background: rgba(16, 185, 129, 0.3);
+  color: #10b981;
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-size: 10px;
+}
+
+/* Scrollbar Styling */
+.zones-panel::-webkit-scrollbar,
+.zone-stack::-webkit-scrollbar {
+  width: 6px;
+}
+
+.zones-panel::-webkit-scrollbar-track,
+.zone-stack::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.zones-panel::-webkit-scrollbar-thumb,
+.zone-stack::-webkit-scrollbar-thumb {
+  background: rgba(37, 99, 235, 0.3);
+  border-radius: 3px;
+}
+
+.zones-panel::-webkit-scrollbar-thumb:hover,
+.zone-stack::-webkit-scrollbar-thumb:hover {
+  background: rgba(37, 99, 235, 0.5);
+}

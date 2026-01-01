@@ -1,12 +1,14 @@
 import React, { useState, useEffect, useRef } from 'react';
-import '../styles/GameTable.css';
-import '../styles/CommanderLayout.css';
-import PlayerZone from './PlayerZone';
+import '../styles/GameTableNew.css';
+import LeftSidebar from './LeftSidebar';
+import PlayerProfile from './PlayerProfile';
+import HandZone from './HandZone';
+import ZonesPanel from './ZonesPanel';
+import BottomToolbar from './BottomToolbar';
 
 const GameTable = ({ gameId, playerId, playerName, onBack }) => {
   const [gameState, setGameState] = useState(null);
   const [error, setError] = useState('');
-  const [menuOpen, setMenuOpen] = useState(false);
   const ws = useRef(null);
 
   useEffect(() => {
@@ -23,7 +25,6 @@ const GameTable = ({ gameId, playerId, playerName, onBack }) => {
         const message = JSON.parse(event.data);
         
         if (message.GameState && message.GameState.state) {
-          // Full game state update - parse and set entire state
           const state = JSON.parse(message.GameState.state);
           setGameState(state);
         } else if (message.Error) {
@@ -46,21 +47,11 @@ const GameTable = ({ gameId, playerId, playerName, onBack }) => {
     };
   }, [gameId, playerId]);
 
-  const updateLife = (targetPlayerId, delta) => {
+  const updateLife = (delta) => {
     if (ws.current && ws.current.readyState === WebSocket.OPEN) {
       ws.current.send(
         JSON.stringify({
-          UpdateLife: { player_id: targetPlayerId, delta }
-        })
-      );
-    }
-  };
-
-  const moveCard = (cardId, fromZone, toZone) => {
-    if (ws.current && ws.current.readyState === WebSocket.OPEN) {
-      ws.current.send(
-        JSON.stringify({
-          MoveCard: { card_id: cardId, from_zone: fromZone, to_zone: toZone }
+          UpdateLife: { player_id: playerId, delta }
         })
       );
     }
@@ -76,148 +67,61 @@ const GameTable = ({ gameId, playerId, playerName, onBack }) => {
     }
   };
 
+  const handleNextTurn = () => {
+    console.log('Next turn clicked');
+  };
+
+  const handleAction = () => {
+    console.log('Action clicked');
+  };
+
   if (!gameState) {
-    return <div className="game-table loading">Connecting to game...</div>;
+    return <div className="game-table-new loading">Connecting to game...</div>;
   }
 
-  // Get array of players
-  const playersArray = Object.entries(gameState.players || {}).map(([id, player]) => ({
-    ...player,
-    id
-  }));
-
-  // Ensure exactly 4 players (pad with empty slots if needed)
-  while (playersArray.length < 4) {
-    playersArray.push({
-      id: `empty_${playersArray.length}`,
-      name: 'Empty Seat',
-      life: 20,
-      hand: [],
-      graveyard: [],
-      exile: [],
-      command_zone: [],
-    });
-  }
-
-  // Limit to first 4 players
-  const displayPlayers = playersArray.slice(0, 4);
-
-  // Map players to corners: [top-left, top-right, bottom-right, bottom-left]
-  const cornerPositions = ['top-left', 'top-right', 'bottom-right', 'bottom-left'];
+  const currentPlayer = gameState?.players ? Object.values(gameState.players)[0] : null;
 
   return (
-    <div className="commander-table">
-      {/* Compact Menu Bar */}
-      <div className="menu-bar">
-        <div className="menu-left">
-          <span className="game-id">#{gameId.substring(0, 4)}</span>
-        </div>
-        <div className="menu-center">
-          <h1>Command Zone</h1>
-        </div>
-        <div className="menu-right">
-          <button 
-            onClick={() => setMenuOpen(!menuOpen)}
-            className="menu-btn"
-            title="Game Info"
-          >
-            ⚙️
-          </button>
-        </div>
-      </div>
-
-      {/* Game Menu Overlay */}
-      {menuOpen && (
-        <div className="menu-overlay" onClick={() => setMenuOpen(false)}>
-          <div className="menu-content" onClick={e => e.stopPropagation()}>
-            <h2>Game Info</h2>
-            <div className="menu-item">
-              <strong>Game ID:</strong> {gameId}
-            </div>
-            <div className="menu-item">
-              <strong>Your ID:</strong> {playerId}
-            </div>
-            <div className="menu-item">
-              <strong>Your Name:</strong> {playerName}
-            </div>
-            <div className="menu-item">
-              <strong>Players:</strong> {playersArray.filter(p => !p.id.startsWith('empty_')).length}/4
-            </div>
-            <button onClick={onBack} className="btn btn-secondary">
-              Leave Game
-            </button>
-            <button onClick={() => setMenuOpen(false)} className="btn btn-primary">
-              Close
-            </button>
-          </div>
-        </div>
-      )}
-
+    <div className="game-table-new">
       {error && <div className="error-banner">{error}</div>}
 
-      {/* Main Game Table with 4 Corners */}
-      <div className="table-layout">
-        {/* Player Zones in 4 Corners */}
-        {displayPlayers.map((player, idx) => (
-          <div key={player.id} className={`player-corner ${cornerPositions[idx]}`}>
-            <PlayerZone
-              player={player}
-              playerIndex={idx}
-              isCurrentPlayer={player.id === playerId}
-              onUpdateLife={updateLife}
-              onDrawCard={drawCard}
-              onMoveCard={moveCard}
-            />
-          </div>
-        ))}
+      {/* Main 4-Quadrant Layout */}
+      <div className="main-layout">
+        {/* Top-Left: Sidebar */}
+        <div className="quadrant top-left">
+          <LeftSidebar />
+        </div>
 
-        {/* Central Play Area */}
-        <div className="central-area">
-          {/* Shared Battlefield */}
-          <div className="shared-battlefield">
-            <div className="battlefield-title">Battlefield</div>
-            {gameState.battlefield && gameState.battlefield.length > 0 ? (
-              <div className="battlefield-cards">
-                {gameState.battlefield.map(card => (
-                  <div key={card.id} className="card-token">
-                    {card.name}
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <div className="empty-battlefield">No permanents</div>
-            )}
-          </div>
+        {/* Top-Right: Player Profile */}
+        <div className="quadrant top-right">
+          <PlayerProfile 
+            playerName={playerName || 'Player'} 
+            life={currentPlayer?.life || 20}
+          />
+        </div>
 
-          {/* Central Life Tracker */}
-          <div className="central-life">
-            <div className="life-grid">
-              {displayPlayers.map((player, idx) => (
-                <div key={player.id} className={`life-box life-${cornerPositions[idx]}`}>
-                  <div className="life-player-name">{player.name.split(' ').pop()}</div>
-                  <div className="life-value">{player.life}</div>
-                  <div className="life-buttons">
-                    <button 
-                      onClick={() => updateLife(player.id, -1)}
-                      className="life-btn minus"
-                      title="-1 Life"
-                    >
-                      −
-                    </button>
-                    <button 
-                      onClick={() => updateLife(player.id, 1)}
-                      className="life-btn plus"
-                      title="+1 Life"
-                    >
-                      +
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
+        {/* Bottom-Left: Hand Zone */}
+        <div className="quadrant bottom-left">
+          <HandZone 
+            cards={currentPlayer?.hand || []}
+            onSelectCard={() => {}}
+            onHandOptions={() => {}}
+          />
+        </div>
+
+        {/* Bottom-Right: Zones Panel */}
+        <div className="quadrant bottom-right">
+          <ZonesPanel gameState={gameState} />
         </div>
       </div>
+
+      {/* Bottom Toolbar */}
+      <BottomToolbar 
+        gameState={gameState}
+        onUpdateLife={updateLife}
+        onNextTurn={handleNextTurn}
+        onAction={handleAction}
+      />
     </div>
   );
 };

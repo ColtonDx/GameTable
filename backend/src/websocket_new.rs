@@ -5,7 +5,7 @@ use axum::{
 use futures::{SinkExt, StreamExt};
 use serde::{Deserialize, Serialize};
 use std::sync::Arc;
-use tokio::sync::RwLock;
+use tokio::sync::{RwLock, Mutex};
 
 use crate::game::{GameManager, Player, Zone, Card};
 
@@ -40,7 +40,8 @@ async fn handle_socket(
     player_id: String,
     game_manager: Arc<RwLock<GameManager>>,
 ) {
-    let (mut sender, mut receiver) = socket.split();
+    let (sender, mut receiver) = socket.split();
+    let sender = Arc::new(Mutex::new(sender));
 
     // Get broadcast channel
     let tx = {
@@ -77,16 +78,18 @@ async fn handle_socket(
                     "state": state_json
                 }
             }).to_string();
-            let _ = sender.send(axum::extract::ws::Message::Text(msg)).await;
+            let mut s = sender.lock().await;
+            let _ = s.send(axum::extract::ws::Message::Text(msg)).await;
         }
     }
 
     // Spawn task to broadcast state updates to this client
-    let sender_clone = sender.clone();
+    let sender_clone = Arc::clone(&sender);
     let rx_handle = tokio::spawn(async move {
-        let mut sender = sender_clone;
+        let sender = sender_clone;
         while let Ok(msg) = rx.recv().await {
-            if sender.send(axum::extract::ws::Message::Text(msg)).await.is_err() {
+            let mut s = sender.lock().await;
+            if s.send(axum::extract::ws::Message::Text(msg)).await.is_err() {
                 break;
             }
         }

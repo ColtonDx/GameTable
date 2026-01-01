@@ -1,5 +1,5 @@
 use axum::{
-    extract::{Path, State, ws::WebSocketUpgrade},
+    extract::{Path, State, ws::{WebSocket, WebSocketUpgrade}},
     response::IntoResponse,
 };
 use futures::{SinkExt, StreamExt};
@@ -43,7 +43,7 @@ pub async fn ws_handler(
 }
 
 async fn handle_socket(
-    socket: axum::extract::ws::WebSocket,
+    socket: WebSocket,
     game_id: String,
     player_id: String,
     game_manager: Arc<RwLock<GameManager>>,

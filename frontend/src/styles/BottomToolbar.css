@@ -267,6 +267,167 @@
   color: #93c5fd;
 }
 
+/* Menu Container */
+.menu-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.toolbar-btn.with-dropdown {
+  position: relative;
+}
+
+/* Dropdown Menus */
+.toolbar-menu {
+  position: absolute;
+  background: linear-gradient(135deg, #1a202c, #0f172a);
+  border: 2px solid rgba(37, 99, 235, 0.4);
+  border-radius: 8px;
+  padding: 8px 0;
+  margin-top: 8px;
+  min-width: 180px;
+  z-index: 1000;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+
+.game-menu-dropdown {
+  bottom: 100%;
+  left: 0;
+  margin-top: auto;
+  margin-bottom: 8px;
+}
+
+.settings-menu {
+  bottom: 100%;
+  right: 0;
+  margin-bottom: 8px;
+  min-width: 280px;
+}
+
+.menu-item {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 10px 16px;
+  background: none;
+  border: none;
+  color: #93c5fd;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+  transition: all 0.2s;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.menu-item:hover {
+  background: rgba(37, 99, 235, 0.2);
+  color: #60a5fa;
+}
+
+.menu-item:active {
+  background: rgba(37, 99, 235, 0.3);
+}
+
+/* Settings Menu Content */
+.settings-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  border-bottom: 1px solid rgba(37, 99, 235, 0.2);
+}
+
+.settings-header h3 {
+  color: #60a5fa;
+  font-size: 14px;
+  font-weight: 700;
+  margin: 0;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  color: #93c5fd;
+  cursor: pointer;
+  font-size: 16px;
+  transition: color 0.2s;
+}
+
+.close-btn:hover {
+  color: #60a5fa;
+}
+
+.settings-section {
+  padding: 12px 16px;
+  border-bottom: 1px solid rgba(37, 99, 235, 0.2);
+}
+
+.settings-section:last-child {
+  border-bottom: none;
+}
+
+.settings-section h4 {
+  color: #93c5fd;
+  font-size: 11px;
+  font-weight: 700;
+  margin: 0 0 8px 0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Keybinds List */
+.keybinds-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.keybind-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 0;
+  font-size: 11px;
+}
+
+.keybind-action {
+  color: #93c5fd;
+}
+
+.keybind-key {
+  background: rgba(37, 99, 235, 0.2);
+  border: 1px solid rgba(37, 99, 235, 0.3);
+  color: #60a5fa;
+  padding: 2px 8px;
+  border-radius: 3px;
+  font-family: 'Courier New', monospace;
+  font-weight: 600;
+  font-size: 10px;
+}
+
+/* Settings Labels */
+.setting-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #93c5fd;
+  font-size: 11px;
+  cursor: pointer;
+  padding: 4px 0;
+  transition: color 0.2s;
+}
+
+.setting-label:hover {
+  color: #60a5fa;
+}
+
+.setting-label input[type="checkbox"] {
+  cursor: pointer;
+  accent-color: #60a5fa;
+}
+
 /* Responsive */
 @media (max-width: 1024px) {
   .toolbar-btn {
@@ -313,5 +474,13 @@
   .counter-display {
     padding: 0 6px;
     min-width: 50px;
+  }
+
+  .toolbar-menu {
+    min-width: 160px;
+  }
+
+  .settings-menu {
+    min-width: 240px;
   }
 }

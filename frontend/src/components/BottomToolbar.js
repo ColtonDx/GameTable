@@ -1,13 +1,15 @@
 import React, { useState } from 'react';
 import '../styles/BottomToolbar.css';
 
-const BottomToolbar = ({ gameState, onUpdateLife, onNextTurn, onAction }) => {
+const BottomToolbar = ({ gameState, onUpdateLife, onNextTurn, onAction, onGameMenu }) => {
   const [manaOpen, setManaOpen] = useState(false);
+  const [settingsOpen, setSettingsOpen] = useState(false);
+  const [gameMenuOpen, setGameMenuOpen] = useState(false);
   const [energy, setEnergy] = useState(0);
   const [poison, setPoison] = useState(0);
 
   const currentPlayer = gameState?.players ? Object.values(gameState.players)[0] : null;
-  const life = currentPlayer?.life || 20;
+  const life = currentPlayer?.life || 40;
 
   const manaTypes = [
     { symbol: '⚪', name: 'White', color: '#f8f8f8' },
@@ -18,14 +20,34 @@ const BottomToolbar = ({ gameState, onUpdateLife, onNextTurn, onAction }) => {
     { symbol: '◆', name: 'Colorless', color: '#666' },
   ];
 
+  const keybinds = [
+    { key: 'Space', action: 'Pass Priority' },
+    { key: 'Tab', action: 'Toggle Grid' },
+    { key: 'M', action: 'Mute/Unmute' },
+    { key: 'Esc', action: 'Open Menu' },
+    { key: 'Enter', action: 'Confirm Action' },
+  ];
+
   return (
     <div className="bottom-toolbar">
       {/* Left Section - Game Menu */}
       <div className="toolbar-section left">
-        <button className="toolbar-btn with-dropdown">
-          <span className="icon">☰</span>
-          <span>Game Menu</span>
-        </button>
+        <div className="menu-container">
+          <button 
+            className="toolbar-btn with-dropdown"
+            onClick={() => setGameMenuOpen(!gameMenuOpen)}
+          >
+            <span className="icon">☰</span>
+            <span>Game Menu</span>
+          </button>
+          {gameMenuOpen && (
+            <div className="toolbar-menu game-menu-dropdown">
+              <button className="menu-item" onClick={onGameMenu}>
+                Restart Game
+              </button>
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Center Section - Resource Counters */}
@@ -145,19 +167,53 @@ const BottomToolbar = ({ gameState, onUpdateLife, onNextTurn, onAction }) => {
         >
           <span>Actions</span>
         </button>
-        <button className="toolbar-btn">
-          <span>⬆️</span>
-          <span>Popout</span>
-        </button>
-        <button className="toolbar-btn">
-          <span>🎲</span>
-          <span>Dice</span>
-        </button>
-        <button className="toolbar-btn">
+        <button 
+          className="toolbar-btn"
+          onClick={() => setSettingsOpen(!settingsOpen)}
+        >
           <span>⚙️</span>
           <span>Settings</span>
         </button>
       </div>
+
+      {/* Settings Menu */}
+      {settingsOpen && (
+        <div className="toolbar-menu settings-menu">
+          <div className="settings-header">
+            <h3>Settings</h3>
+            <button 
+              className="close-btn"
+              onClick={() => setSettingsOpen(false)}
+            >
+              ✕
+            </button>
+          </div>
+
+          <div className="settings-section">
+            <h4>Keybinds</h4>
+            <div className="keybinds-list">
+              {keybinds.map(bind => (
+                <div key={bind.key} className="keybind-row">
+                  <span className="keybind-action">{bind.action}</span>
+                  <span className="keybind-key">{bind.key}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="settings-section">
+            <h4>Display</h4>
+            <label className="setting-label">
+              <input type="checkbox" defaultChecked />
+              Sound Effects
+            </label>
+            <label className="setting-label">
+              <input type="checkbox" defaultChecked />
+              Show Animations
+            </label>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

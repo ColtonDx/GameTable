@@ -1,7 +1,11 @@
 import React from 'react';
 import '../styles/PlayerProfile.css';
 
-const PlayerProfile = ({ playerName, life }) => {
+const PlayerProfile = ({ playerName, life, gameState, playerId }) => {
+  const currentPlayer = gameState?.players?.[playerId];
+  const handCount = currentPlayer?.hand?.length || 0;
+  const deckCount = currentPlayer?.library?.length || 0;
+
   return (
     <div className="player-profile">
       <div className="profile-card">
@@ -33,11 +37,11 @@ const PlayerProfile = ({ playerName, life }) => {
       <div className="quick-stats">
         <div className="stat-box">
           <span className="stat-label">Cards in Hand</span>
-          <span className="stat-value">7</span>
+          <span className="stat-value">{handCount}</span>
         </div>
         <div className="stat-box">
           <span className="stat-label">Cards in Deck</span>
-          <span className="stat-value">53</span>
+          <span className="stat-value">{deckCount}</span>
         </div>
       </div>
     </div>

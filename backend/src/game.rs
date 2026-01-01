@@ -35,7 +35,7 @@ impl Player {
         Self {
             id,
             name,
-            life: 20,
+            life: 40,
             hand: Vec::new(),
             graveyard: Vec::new(),
             exile: Vec::new(),

@@ -75,6 +75,21 @@ const GameTable = ({ gameId, playerId, playerName, onBack }) => {
     console.log('Action clicked');
   };
 
+  const handleGameMenu = () => {
+    // Restart game or other game menu actions
+    console.log('Game menu action: Restart Game');
+    if (window.confirm('Are you sure you want to restart the game?')) {
+      // Send restart message to backend
+      if (ws.current && ws.current.readyState === WebSocket.OPEN) {
+        ws.current.send(
+          JSON.stringify({
+            RestartGame: {}
+          })
+        );
+      }
+    }
+  };
+
   if (!gameState) {
     return <div className="game-table-new loading">Connecting to game...</div>;
   }
@@ -96,7 +111,9 @@ const GameTable = ({ gameId, playerId, playerName, onBack }) => {
         <div className="quadrant top-right">
           <PlayerProfile 
             playerName={playerName || 'Player'} 
-            life={currentPlayer?.life || 20}
+            life={currentPlayer?.life || 40}
+            gameState={gameState}
+            playerId={playerId}
           />
         </div>
 
@@ -121,6 +138,7 @@ const GameTable = ({ gameId, playerId, playerName, onBack }) => {
         onUpdateLife={updateLife}
         onNextTurn={handleNextTurn}
         onAction={handleAction}
+        onGameMenu={handleGameMenu}
       />
     </div>
   );

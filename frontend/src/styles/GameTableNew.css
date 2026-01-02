@@ -78,6 +78,8 @@
   padding: 8px;
   overflow: hidden;
   min-height: 0;
+  width: 100%;
+  min-width: 0;
 }
 
 .board-row {
@@ -87,6 +89,7 @@
 .board-cell {
   display: flex;
   min-height: 0;
+  min-width: 0;
 }
 
 /* Hand Section - below board */

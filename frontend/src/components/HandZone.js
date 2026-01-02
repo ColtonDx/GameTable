@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import '../styles/HandZone.css';
 
-const HandZone = ({ cards, onSelectCard, onHandOptions }) => {
+const HandZone = ({ cards, onSelectCard, onHandOptions, scale = 1 }) => {
   const [selectedCardIndex, setSelectedCardIndex] = useState(null);
   const [scrollOffset, setScrollOffset] = useState(0);
 
@@ -34,7 +34,7 @@ const HandZone = ({ cards, onSelectCard, onHandOptions }) => {
         </button>
       </div>
 
-      <div className="hand-container">
+      <div className="hand-container" style={{ transform: `scale(${scale})`, transformOrigin: 'top center' }}>
         {/* Left Navigation Arrow */}
         {cards.length > 0 && (
           <button 

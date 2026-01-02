@@ -9,6 +9,8 @@ import BottomToolbar from './BottomToolbar';
 const GameTable = ({ gameId, playerId, playerName, onBack }) => {
   const [gameState, setGameState] = useState(null);
   const [error, setError] = useState('');
+  const [boardScale, setBoardScale] = useState(1);
+  const [handScale, setHandScale] = useState(1);
   const ws = useRef(null);
 
   useEffect(() => {
@@ -52,6 +54,20 @@ const GameTable = ({ gameId, playerId, playerName, onBack }) => {
       ws.current.send(
         JSON.stringify({
           UpdateLife: { player_id: playerId, delta }
+        })
+      );
+    }
+  };
+
+  const updatePlayerCounter = (playerId, counterType, delta) => {
+    if (ws.current && ws.current.readyState === WebSocket.OPEN) {
+      ws.current.send(
+        JSON.stringify({
+          UpdateCounter: {
+            player_id: playerId,
+            counter_type: counterType,
+            delta: delta
+          }
         })
       );
     }
@@ -121,7 +137,7 @@ const GameTable = ({ gameId, playerId, playerName, onBack }) => {
         {/* Main Game Area */}
         <div className="main-game-area">
           {/* 4-Player Battlefield Board */}
-          <div className="battlefield-board">
+          <div className="battlefield-board" style={{ transform: `scale(${boardScale})` }}>
             {/* Top Row */}
             <div className="board-row top-row">
               {/* Top-Left Player (Player 3) */}
@@ -131,6 +147,7 @@ const GameTable = ({ gameId, playerId, playerName, onBack }) => {
                   position="top-left"
                   isActive={activePlayerIndex === 3}
                   onUpdateLife={updatePlayerLife}
+                  onUpdateCounter={updatePlayerCounter}
                   onSpawnCard={handleSpawnCard}
                 />
               </div>
@@ -141,6 +158,7 @@ const GameTable = ({ gameId, playerId, playerName, onBack }) => {
                   position="top-right"
                   isActive={activePlayerIndex === 1}
                   onUpdateLife={updatePlayerLife}
+                  onUpdateCounter={updatePlayerCounter}
                   onSpawnCard={handleSpawnCard}
                 />
               </div>
@@ -155,6 +173,7 @@ const GameTable = ({ gameId, playerId, playerName, onBack }) => {
                   position="bottom-left"
                   isActive={activePlayerIndex === 0}
                   onUpdateLife={updatePlayerLife}
+                  onUpdateCounter={updatePlayerCounter}
                   onSpawnCard={handleSpawnCard}
                 />
               </div>
@@ -165,6 +184,7 @@ const GameTable = ({ gameId, playerId, playerName, onBack }) => {
                   position="bottom-right"
                   isActive={activePlayerIndex === 2}
                   onUpdateLife={updatePlayerLife}
+                  onUpdateCounter={updatePlayerCounter}
                   onSpawnCard={handleSpawnCard}
                 />
               </div>
@@ -173,11 +193,11 @@ const GameTable = ({ gameId, playerId, playerName, onBack }) => {
 
           {/* Current Player's Hand */}
           <div className="hand-section">
-            <div className="panel-header">Hand ({currentPlayer?.hand?.length || 0})</div>
             <HandZone 
               cards={currentPlayer?.hand || []}
               onSelectCard={() => {}}
               onHandOptions={() => {}}
+              scale={handScale}
             />
           </div>
 
@@ -196,6 +216,10 @@ const GameTable = ({ gameId, playerId, playerName, onBack }) => {
         onAction={handleAction}
         onGameMenu={handleGameMenu}
         onUndoTurn={handleUndoTurn}
+        boardScale={boardScale}
+        onBoardScaleChange={setBoardScale}
+        handScale={handScale}
+        onHandScaleChange={setHandScale}
       />
     </div>
   );

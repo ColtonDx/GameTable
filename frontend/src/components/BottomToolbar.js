@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import '../styles/BottomToolbar.css';
 import DiceAndCoins from './DiceAndCoins';
 
-const BottomToolbar = ({ gameState, turnNumber, onNextTurn, onAction, onGameMenu, onUndoTurn }) => {
+const BottomToolbar = ({ gameState, turnNumber, onNextTurn, onAction, onGameMenu, onUndoTurn, boardScale, onBoardScaleChange, handScale, onHandScaleChange }) => {
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [gameMenuOpen, setGameMenuOpen] = useState(false);
   const [diceResult, setDiceResult] = useState(null);
@@ -52,6 +52,46 @@ const BottomToolbar = ({ gameState, turnNumber, onNextTurn, onAction, onGameMenu
 
       {/* Right Section - Turn Info & Settings */}
       <div className="toolbar-section right">
+        {/* Board Scale Controls */}
+        <div className="scale-controls">
+          <span className="scale-label">Board</span>
+          <button 
+            className="scale-btn"
+            onClick={() => onBoardScaleChange(Math.max(0.5, boardScale - 0.1))}
+            title="Zoom out board"
+          >
+            −
+          </button>
+          <span className="scale-value">{Math.round(boardScale * 100)}%</span>
+          <button 
+            className="scale-btn"
+            onClick={() => onBoardScaleChange(Math.min(1.5, boardScale + 0.1))}
+            title="Zoom in board"
+          >
+            +
+          </button>
+        </div>
+
+        {/* Hand Scale Controls */}
+        <div className="scale-controls">
+          <span className="scale-label">Hand</span>
+          <button 
+            className="scale-btn"
+            onClick={() => onHandScaleChange(Math.max(0.5, handScale - 0.1))}
+            title="Zoom out hand"
+          >
+            −
+          </button>
+          <span className="scale-value">{Math.round(handScale * 100)}%</span>
+          <button 
+            className="scale-btn"
+            onClick={() => onHandScaleChange(Math.min(1.5, handScale + 0.1))}
+            title="Zoom in hand"
+          >
+            +
+          </button>
+        </div>
+
         {/* Dice and Coins */}
         <DiceAndCoins 
           onRoll={(result) => {

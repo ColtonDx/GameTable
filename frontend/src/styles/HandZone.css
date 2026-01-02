@@ -9,7 +9,7 @@
   flex-direction: column;
   gap: 12px;
   height: 100%;
-  overflow-y: auto;
+  overflow: visible;
 }
 
 .hand-header {
@@ -62,10 +62,12 @@
 .hand-container {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 12px;
   flex: 1;
-  min-height: 150px;
+  min-height: 80px;
   position: relative;
+  flex-wrap: wrap;
 }
 
 .nav-arrow {

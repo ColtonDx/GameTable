@@ -16,44 +16,88 @@
   margin-bottom: 4px;
 }
 
-.roll-result {
-  display: inline-flex;
+/* Center screen roll result */
+.roll-result-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
   align-items: center;
   justify-content: center;
-  width: 40px;
-  height: 40px;
-  margin-left: 8px;
-  font-size: 20px;
-  font-weight: bold;
-  border-radius: 4px;
-  animation: popIn 0.3s ease-out;
+  pointer-events: none;
+  z-index: 9999;
 }
 
-.roll-result.result-coin {
-  background: rgba(251, 191, 36, 0.3);
-  border: 2px solid #fbbf24;
+.roll-result-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 40px;
+  border-radius: 16px;
+  font-weight: bold;
+  animation: slideIn 0.4s ease-out, slideOut 0.4s ease-in 2.6s forwards;
+}
+
+.roll-result-overlay.result-coin .roll-result-content {
+  background: linear-gradient(135deg, rgba(251, 191, 36, 0.3), rgba(251, 191, 36, 0.1));
+  border: 3px solid #fbbf24;
   color: #fbbf24;
 }
 
-.roll-result.result-d6 {
-  background: rgba(59, 130, 246, 0.3);
-  border: 2px solid #3b82f6;
+.roll-result-overlay.result-d6 .roll-result-content {
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.3), rgba(59, 130, 246, 0.1));
+  border: 3px solid #3b82f6;
   color: #3b82f6;
 }
 
-.roll-result.result-d20 {
-  background: rgba(139, 92, 246, 0.3);
-  border: 2px solid #8b5cf6;
+.roll-result-overlay.result-d20 .roll-result-content {
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.3), rgba(139, 92, 246, 0.1));
+  border: 3px solid #8b5cf6;
   color: #8b5cf6;
 }
 
-@keyframes popIn {
-  0% {
+.result-icon {
+  font-size: 80px;
+  line-height: 1;
+}
+
+.result-value {
+  font-size: 120px;
+  line-height: 1;
+  font-weight: 900;
+}
+
+.result-label {
+  font-size: 18px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-top: 8px;
+  opacity: 0.9;
+}
+
+@keyframes slideIn {
+  from {
     transform: scale(0.5);
     opacity: 0;
   }
-  100% {
+  to {
     transform: scale(1);
     opacity: 1;
+  }
+}
+
+@keyframes slideOut {
+  from {
+    transform: scale(1);
+    opacity: 1;
+  }
+  to {
+    transform: scale(0.5);
+    opacity: 0;
   }
 }

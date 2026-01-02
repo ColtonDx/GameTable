@@ -1,7 +1,7 @@
 import React from 'react';
 import '../styles/BattlefieldZone.css';
 
-const BattlefieldZone = ({ player, position, isActive, onUpdateLife, onSpawnCard }) => {
+const BattlefieldZone = ({ player, position, isActive, onUpdateLife, onUpdateCounter, onSpawnCard }) => {
   if (!player) {
     return (
       <div 
@@ -52,16 +52,58 @@ const BattlefieldZone = ({ player, position, isActive, onUpdateLife, onSpawnCard
       {/* Player Counters */}
       <div className="player-counters">
         <div className="counter">
+          <button 
+            className="counter-btn counter-minus"
+            onClick={() => onUpdateCounter(player.id, 'poison', -1)}
+            title="Poison -1"
+          >
+            −
+          </button>
           <span className="counter-icon">☠️</span>
           <span className="counter-value">{player.poison || 0}</span>
+          <button 
+            className="counter-btn counter-plus"
+            onClick={() => onUpdateCounter(player.id, 'poison', 1)}
+            title="Poison +1"
+          >
+            +
+          </button>
         </div>
         <div className="counter">
+          <button 
+            className="counter-btn counter-minus"
+            onClick={() => onUpdateCounter(player.id, 'energy', -1)}
+            title="Energy -1"
+          >
+            −
+          </button>
           <span className="counter-icon">⚡</span>
           <span className="counter-value">{player.energy || 0}</span>
+          <button 
+            className="counter-btn counter-plus"
+            onClick={() => onUpdateCounter(player.id, 'energy', 1)}
+            title="Energy +1"
+          >
+            +
+          </button>
         </div>
         <div className="counter">
+          <button 
+            className="counter-btn counter-minus"
+            onClick={() => onUpdateCounter(player.id, 'experience', -1)}
+            title="Experience -1"
+          >
+            −
+          </button>
           <span className="counter-icon">⭐</span>
           <span className="counter-value">{player.experience || 0}</span>
+          <button 
+            className="counter-btn counter-plus"
+            onClick={() => onUpdateCounter(player.id, 'experience', 1)}
+            title="Experience +1"
+          >
+            +
+          </button>
         </div>
       </div>
 

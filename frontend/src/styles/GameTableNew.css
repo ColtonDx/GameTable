@@ -90,9 +90,42 @@
 /* Player Panels (Hand + Zones) */
 .player-panels {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 200px 1fr;
   gap: 12px;
-  height: 200px;
+  height: 140px;
+  flex-shrink: 0;
+}
+
+.zones-wrapper {
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.hand-wrapper {
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid #444;
+  border-radius: 8px;
+  padding: 0;
+  overflow: hidden;
+}
+
+.hand-wrapper .panel-header {
+  padding: 12px 12px 8px 12px;
+  margin: 0;
+  flex-shrink: 0;
+}
+
+.hand-wrapper .hand-zone {
+  flex: 1;
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  padding: 0 12px 12px 12px;
+  gap: 8px;
 }
 
 .panel {
@@ -131,7 +164,7 @@
 /* Responsive */
 @media (max-width: 1400px) {
   .player-panels {
-    height: 150px;
+    height: 120px;
   }
 }
 
@@ -149,6 +182,7 @@
 
   .player-panels {
     gap: 8px;
+    height: 100px;
   }
 }
 

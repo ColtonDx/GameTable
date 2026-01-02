@@ -1,0 +1,78 @@
+/* Collapsible Zones Styles */
+
+.collapsible-zones {
+  width: 100%;
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid #444;
+  border-radius: 8px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.collapsible-zones.closed {
+  height: 40px;
+}
+
+.collapsible-zones.open {
+  height: auto;
+  max-height: 300px;
+}
+
+.zones-toggle {
+  width: 100%;
+  background: rgba(0, 0, 0, 0.3);
+  border: none;
+  border-bottom: 1px solid #444;
+  color: #60a5fa;
+  padding: 10px 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.zones-toggle:hover {
+  background: rgba(37, 99, 235, 0.1);
+}
+
+.toggle-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  font-size: 10px;
+}
+
+.toggle-text {
+  flex: 1;
+  text-align: left;
+}
+
+.zones-content {
+  padding: 12px;
+  max-height: 250px;
+  overflow-y: auto;
+}
+
+/* Override zones-panel styling when inside collapsible */
+.zones-content .zones-panel {
+  background: transparent;
+  border: none;
+  padding: 0;
+  gap: 8px;
+}
+
+.zones-content .zone {
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(96, 165, 250, 0.2);
+  font-size: 11px;
+}
+
+.zones-content .zone-name {
+  font-size: 10px;
+}

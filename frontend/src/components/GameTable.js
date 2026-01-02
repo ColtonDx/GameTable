@@ -3,7 +3,7 @@ import '../styles/GameTableNew.css';
 import LeftSidebar from './LeftSidebar';
 import BattlefieldZone from './BattlefieldZone';
 import HandZone from './HandZone';
-import ZonesPanel from './ZonesPanel';
+import CollapsibleZones from './CollapsibleZones';
 import BottomToolbar from './BottomToolbar';
 
 const GameTable = ({ gameId, playerId, playerName, onBack }) => {
@@ -95,6 +95,11 @@ const GameTable = ({ gameId, playerId, playerName, onBack }) => {
     }
   };
 
+  const handleSpawnCard = (position) => {
+    console.log('Spawning card at position:', position);
+    // TODO: Implement card spawning
+  };
+
   if (!gameState) {
     return <div className="game-table-new loading">Connecting to game...</div>;
   }
@@ -125,6 +130,8 @@ const GameTable = ({ gameId, playerId, playerName, onBack }) => {
                   player={players[3]}
                   position="top-left"
                   isActive={activePlayerIndex === 3}
+                  onUpdateLife={updatePlayerLife}
+                  onSpawnCard={handleSpawnCard}
                 />
               </div>
               {/* Top-Right Player (Player 1) */}
@@ -133,6 +140,8 @@ const GameTable = ({ gameId, playerId, playerName, onBack }) => {
                   player={players[1]}
                   position="top-right"
                   isActive={activePlayerIndex === 1}
+                  onUpdateLife={updatePlayerLife}
+                  onSpawnCard={handleSpawnCard}
                 />
               </div>
             </div>
@@ -145,6 +154,8 @@ const GameTable = ({ gameId, playerId, playerName, onBack }) => {
                   player={players[0]}
                   position="bottom-left"
                   isActive={activePlayerIndex === 0}
+                  onUpdateLife={updatePlayerLife}
+                  onSpawnCard={handleSpawnCard}
                 />
               </div>
               {/* Bottom-Right Player (Player 2) */}
@@ -153,6 +164,8 @@ const GameTable = ({ gameId, playerId, playerName, onBack }) => {
                   player={players[2]}
                   position="bottom-right"
                   isActive={activePlayerIndex === 2}
+                  onUpdateLife={updatePlayerLife}
+                  onSpawnCard={handleSpawnCard}
                 />
               </div>
             </div>
@@ -160,14 +173,13 @@ const GameTable = ({ gameId, playerId, playerName, onBack }) => {
 
           {/* Current Player's Hand & Zones */}
           <div className="player-panels">
-            {/* Left Panel: Zones */}
-            <div className="panel zones-panel">
-              <div className="panel-header">Zones</div>
-              <ZonesPanel gameState={gameState} />
+            {/* Collapsible Zones */}
+            <div className="zones-wrapper">
+              <CollapsibleZones gameState={gameState} />
             </div>
 
-            {/* Right Panel: Hand */}
-            <div className="panel hand-panel">
+            {/* Hand Panel */}
+            <div className="hand-wrapper">
               <div className="panel-header">Hand ({currentPlayer?.hand?.length || 0})</div>
               <HandZone 
                 cards={currentPlayer?.hand || []}

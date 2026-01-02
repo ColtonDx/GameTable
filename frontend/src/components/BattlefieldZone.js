@@ -1,10 +1,16 @@
 import React from 'react';
 import '../styles/BattlefieldZone.css';
 
-const BattlefieldZone = ({ player, position, isActive }) => {
+const BattlefieldZone = ({ player, position, isActive, onUpdateLife, onSpawnCard }) => {
   if (!player) {
     return (
-      <div className={`battlefield-zone ${position} empty`}>
+      <div 
+        className={`battlefield-zone ${position} empty`}
+        onContextMenu={(e) => {
+          e.preventDefault();
+          onSpawnCard && onSpawnCard(position);
+        }}
+      >
         <div className="empty-seat">
           <span className="seat-label">Empty Seat</span>
         </div>
@@ -13,13 +19,33 @@ const BattlefieldZone = ({ player, position, isActive }) => {
   }
 
   return (
-    <div className={`battlefield-zone ${position} ${isActive ? 'active' : ''}`}>
+    <div 
+      className={`battlefield-zone ${position} ${isActive ? 'active' : ''}`}
+      onContextMenu={(e) => {
+        e.preventDefault();
+        onSpawnCard && onSpawnCard(position);
+      }}
+    >
       {/* Player Info Bar */}
       <div className="player-info-bar">
         <div className="player-name">{player.name}</div>
         <div className="player-life">
+          <button 
+            className="life-btn life-minus"
+            onClick={() => onUpdateLife(player.id, -1)}
+            title="Lose 1 life"
+          >
+            −
+          </button>
           <span className="life-icon">❤️</span>
           <span className="life-value">{player.life}</span>
+          <button 
+            className="life-btn life-plus"
+            onClick={() => onUpdateLife(player.id, 1)}
+            title="Gain 1 life"
+          >
+            +
+          </button>
         </div>
       </div>
 
@@ -28,9 +54,7 @@ const BattlefieldZone = ({ player, position, isActive }) => {
         <div className="cards-container">
           {/* Placeholder for rendered cards */}
           <div className="placeholder-text">
-            {player.hand && player.hand.length > 0
-              ? `${player.hand.length} card${player.hand.length !== 1 ? 's' : ''}`
-              : 'Empty'}
+            Right-click to spawn card
           </div>
         </div>
       </div>

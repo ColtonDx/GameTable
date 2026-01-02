@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import '../styles/Lobby.css';
 
 const Lobby = ({ onStartGame }) => {
@@ -6,6 +6,14 @@ const Lobby = ({ onStartGame }) => {
   const [gameId, setGameId] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [gameSelected, setGameSelected] = useState(false);
+  const gameIdInputRef = useRef(null);
+
+  const handleGameIdChange = (e) => {
+    const newValue = e.target.value;
+    console.log('onChange fired:', newValue, 'e.target.value:', e.target.value);
+    setGameId(newValue);
+  };
 
   const handleCreateGame = async () => {
     setLoading(true);
@@ -14,6 +22,7 @@ const Lobby = ({ onStartGame }) => {
       const response = await fetch('/game/create');
       const data = await response.json();
       setGameId(data.game_id);
+      setGameSelected(true);
       setLoading(false);
     } catch (err) {
       setError('Failed to create game');
@@ -30,7 +39,15 @@ const Lobby = ({ onStartGame }) => {
     onStartGame(gameId, playerId, playerName);
   };
 
-  if (gameId) {
+  const handleStartJoin = () => {
+    if (!gameId) {
+      setError('Please enter a game ID');
+      return;
+    }
+    setGameSelected(true);
+  };
+
+  if (gameSelected) {
     return (
       <div className="lobby">
         <h1>Game Table</h1>
@@ -50,7 +67,11 @@ const Lobby = ({ onStartGame }) => {
           <button onClick={handleJoinGame} className="btn btn-primary">
             Join Game
           </button>
-          <button onClick={() => setGameId('')} className="btn btn-secondary">
+          <button onClick={() => {
+            setGameSelected(false);
+            setGameId('');
+            setPlayerName('');
+          }} className="btn btn-secondary">
             Back
           </button>
         </div>
@@ -71,15 +92,13 @@ const Lobby = ({ onStartGame }) => {
         </button>
         <p className="divider">OR</p>
         <input
+          ref={gameIdInputRef}
           id="game-id-input"
           type="text"
           placeholder="Enter Game ID"
           value={gameId}
-          onChange={(e) => {
-            console.log('Game ID input changed:', e.target.value);
-            setGameId(e.target.value);
-          }}
-          onKeyPress={(e) => {
+          onChange={handleGameIdChange}
+          onKeyDown={(e) => {
             if (e.key === 'Enter') {
               e.preventDefault();
               handleJoinGame();
@@ -95,11 +114,11 @@ const Lobby = ({ onStartGame }) => {
           placeholder="Enter your name"
           value={playerName}
           onChange={(e) => setPlayerName(e.target.value)}
-          onKeyPress={(e) => e.key === 'Enter' && handleJoinGame()}
+          onKeyPress={(e) => e.key === 'Enter' && handleStartJoin()}
           className="input"
           autoComplete="off"
         />
-        <button onClick={handleJoinGame} className="btn btn-primary">
+        <button onClick={handleStartJoin} className="btn btn-primary">
           Join Existing Game
         </button>
       </div>

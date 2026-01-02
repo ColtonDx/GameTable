@@ -67,12 +67,14 @@
 /* Player Card */
 .player-card {
   position: absolute;
-  padding: 8px;
+  padding: 6px 8px;
   background: rgba(0, 0, 0, 0.7);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 4px;
   z-index: 10;
-  max-width: 250px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
 
 .player-card.bottom-left {

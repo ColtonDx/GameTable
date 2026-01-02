@@ -28,26 +28,25 @@ const BattlefieldZone = ({ player, position, isActive, onUpdateLife, onUpdateCou
     >
       {/* Player Info Card */}
       <div className={`player-card ${position}`}>
-        <div className="player-info-bar">
-          <div className="player-name">{player.name}</div>
-          <div className="player-life">
-            <button 
-              className="life-btn life-minus"
-              onClick={() => onUpdateLife(player.id, -1)}
-              title="Lose 1 life"
-            >
-              −
-            </button>
-            <span className="life-icon">❤️</span>
-            <span className="life-value">{player.life}</span>
-            <button 
-              className="life-btn life-plus"
-              onClick={() => onUpdateLife(player.id, 1)}
-              title="Gain 1 life"
-            >
-              +
-            </button>
-          </div>
+        <div className="player-name">{player.name}</div>
+        
+        <div className="player-life">
+          <button 
+            className="life-btn life-minus"
+            onClick={() => onUpdateLife(player.id, -1)}
+            title="Lose 1 life"
+          >
+            −
+          </button>
+          <span className="life-icon">❤️</span>
+          <span className="life-value">{player.life}</span>
+          <button 
+            className="life-btn life-plus"
+            onClick={() => onUpdateLife(player.id, 1)}
+            title="Gain 1 life"
+          >
+            +
+          </button>
         </div>
 
         {/* Player Counters */}

@@ -13,8 +13,6 @@
 
 .battlefield-zone.empty {
   background: linear-gradient(135deg, #2a2a2a 0%, #1f1f1f 100%);
-  border-style: dashed;
-  border-color: #555;
   opacity: 0.6;
 }
 
@@ -259,7 +257,7 @@
   align-items: center;
   justify-content: center;
   background: rgba(0, 0, 0, 0.3);
-  border: 1px dashed rgba(255, 255, 255, 0.1);
+  border: none;
   border-radius: 4px;
   padding: 12px;
   min-height: 60px;

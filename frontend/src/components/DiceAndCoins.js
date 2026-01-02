@@ -92,5 +92,3 @@ const DiceAndCoins = ({ onRoll }) => {
 };
 
 export default DiceAndCoins;
-
-export default DiceAndCoins;

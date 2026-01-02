@@ -11,7 +11,7 @@ const BattlefieldZone = ({ player, position, isActive, onUpdateLife, onUpdateCou
           onSpawnCard && onSpawnCard(position);
         }}
       >
-        <div className="empty-seat">
+        <div className={`empty-seat ${position}`}>
           <span className="seat-label">Empty Seat</span>
         </div>
       </div>

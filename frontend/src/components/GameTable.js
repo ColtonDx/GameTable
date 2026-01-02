@@ -239,6 +239,7 @@ const GameTable = ({ gameId, playerId, playerName, onBack }) => {
         onAction={handleAction}
         onGameMenu={handleGameMenu}
         onUndoTurn={handleUndoTurn}
+        onBack={onBack}
       />
     </div>
   );

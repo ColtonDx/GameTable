@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import '../styles/BottomToolbar.css';
 import DiceAndCoins from './DiceAndCoins';
 
-const BottomToolbar = ({ gameState, turnNumber, onNextTurn, onAction, onGameMenu, onUndoTurn }) => {
+const BottomToolbar = ({ gameState, turnNumber, onNextTurn, onAction, onGameMenu, onUndoTurn, onBack }) => {
   const [gameMenuOpen, setGameMenuOpen] = useState(false);
   const [diceResult, setDiceResult] = useState(null);
 
@@ -30,6 +30,9 @@ const BottomToolbar = ({ gameState, turnNumber, onNextTurn, onAction, onGameMenu
             <div className="toolbar-menu game-menu-dropdown">
               <button className="menu-item" onClick={onGameMenu}>
                 Restart Game
+              </button>
+              <button className="menu-item" onClick={onBack}>
+                Exit Game
               </button>
             </div>
           )}

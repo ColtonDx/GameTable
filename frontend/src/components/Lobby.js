@@ -37,11 +37,15 @@ const Lobby = ({ onStartGame }) => {
         <div className="game-info">
           <p className="game-id">Game ID: <strong>{gameId}</strong></p>
           <input
+            id="player-name-input-2"
             type="text"
             placeholder="Enter your name"
             value={playerName}
             onChange={(e) => setPlayerName(e.target.value)}
+            onKeyPress={(e) => e.key === 'Enter' && handleJoinGame()}
             className="input"
+            autoComplete="off"
+            autoFocus
           />
           <button onClick={handleJoinGame} className="btn btn-primary">
             Join Game
@@ -67,18 +71,24 @@ const Lobby = ({ onStartGame }) => {
         </button>
         <p className="divider">OR</p>
         <input
+          id="game-id-input"
           type="text"
           placeholder="Enter Game ID"
           value={gameId}
           onChange={(e) => setGameId(e.target.value)}
+          onKeyPress={(e) => e.key === 'Enter' && handleJoinGame()}
           className="input"
+          autoComplete="off"
         />
         <input
+          id="player-name-input"
           type="text"
           placeholder="Enter your name"
           value={playerName}
           onChange={(e) => setPlayerName(e.target.value)}
+          onKeyPress={(e) => e.key === 'Enter' && handleJoinGame()}
           className="input"
+          autoComplete="off"
         />
         <button onClick={handleJoinGame} className="btn btn-primary">
           Join Existing Game

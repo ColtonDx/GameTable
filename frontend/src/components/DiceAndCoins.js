@@ -1,17 +1,29 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import '../styles/DiceAndCoins.css';
 
 const DiceAndCoins = ({ onRoll }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [result, setResult] = useState(null);
+  const timerRef = useRef(null);
 
   useEffect(() => {
     if (result) {
-      const timer = setTimeout(() => {
+      // Clear any existing timer first
+      if (timerRef.current) {
+        clearTimeout(timerRef.current);
+      }
+      
+      timerRef.current = setTimeout(() => {
         setResult(null);
-      }, 3000);
-      return () => clearTimeout(timer);
+        timerRef.current = null;
+      }, 3200);
     }
+    
+    return () => {
+      if (timerRef.current) {
+        clearTimeout(timerRef.current);
+      }
+    };
   }, [result]);
 
   const handleCoinFlip = () => {

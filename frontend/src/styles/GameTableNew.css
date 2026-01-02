@@ -75,7 +75,7 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   grid-template-rows: 1fr 1fr;
-  gap: 8px;
+  gap: 0;
   background: rgba(0, 0, 0, 0.3);
   border: 2px solid #333;
   border-radius: 8px;

@@ -5,7 +5,7 @@
   flex-direction: column;
   background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
   border: 2px solid #444;
-  padding: 12px;
+  padding: 0;
   height: 100%;
   position: relative;
   transition: all 0.3s ease;
@@ -41,21 +41,52 @@
   letter-spacing: 1px;
 }
 
+/* Player Card */
+.player-card {
+  position: absolute;
+  padding: 8px;
+  background: rgba(0, 0, 0, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  z-index: 10;
+  max-width: 250px;
+}
+
+.player-card.bottom-left {
+  bottom: 8px;
+  left: 8px;
+  border-radius: 0 4px 4px 0;
+}
+
+.player-card.bottom-right {
+  bottom: 8px;
+  right: 8px;
+  border-radius: 4px 0 0 4px;
+}
+
+.player-card.top-left {
+  top: 8px;
+  left: 8px;
+  border-radius: 0 4px 4px 0;
+}
+
+.player-card.top-right {
+  top: 8px;
+  right: 8px;
+  border-radius: 4px 0 0 4px;
+}
+
 /* Player Info Bar */
 .player-info-bar {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 8px;
-  background: rgba(0, 0, 0, 0.5);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 4px 4px 0 0;
-  margin-bottom: 4px;
+  flex-direction: column;
+  gap: 4px;
+  padding: 4px 0;
 }
 
 .player-name {
   color: #e0e0e0;
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 1px;
@@ -67,19 +98,19 @@
   gap: 4px;
   background: rgba(239, 68, 68, 0.2);
   border: 1px solid rgba(239, 68, 68, 0.4);
-  padding: 4px 8px;
-  border-radius: 4px;
+  padding: 3px 6px;
+  border-radius: 3px;
 }
 
 .life-icon {
-  font-size: 14px;
+  font-size: 12px;
 }
 
 .life-value {
-  font-size: 14px;
+  font-size: 12px;
   font-weight: 700;
   color: #ef4444;
-  min-width: 25px;
+  min-width: 20px;
   text-align: center;
 }
 
@@ -87,10 +118,10 @@
   background: rgba(239, 68, 68, 0.3);
   border: 1px solid rgba(239, 68, 68, 0.5);
   color: #ef4444;
-  width: 20px;
-  height: 20px;
-  border-radius: 3px;
-  font-size: 12px;
+  width: 18px;
+  height: 18px;
+  border-radius: 2px;
+  font-size: 11px;
   font-weight: bold;
   cursor: pointer;
   transition: all 0.2s;
@@ -103,22 +134,21 @@
 /* Player Counters */
 .player-counters {
   display: flex;
-  gap: 6px;
+  gap: 3px;
   justify-content: center;
-  padding: 4px 0;
-  margin-bottom: 8px;
+  padding: 2px 0;
   flex-wrap: wrap;
 }
 
 .counter {
   display: flex;
   align-items: center;
-  gap: 2px;
+  gap: 1px;
   background: rgba(0, 0, 0, 0.3);
   border: 1px solid rgba(255, 255, 255, 0.1);
-  padding: 2px 4px;
-  border-radius: 3px;
-  font-size: 11px;
+  padding: 1px 3px;
+  border-radius: 2px;
+  font-size: 10px;
 }
 
 .counter-btn {
@@ -167,14 +197,14 @@
 }
 
 .counter-icon {
-  font-size: 12px;
+  font-size: 11px;
   flex-shrink: 0;
 }
 
 .counter-value {
   font-weight: 700;
   color: #e0e0e0;
-  min-width: 12px;
+  min-width: 10px;
   text-align: center;
   flex-shrink: 0;
 }

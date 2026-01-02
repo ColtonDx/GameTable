@@ -26,93 +26,85 @@ const BattlefieldZone = ({ player, position, isActive, onUpdateLife, onUpdateCou
         onSpawnCard && onSpawnCard(position);
       }}
     >
-      {/* Player Info Bar */}
-      <div className="player-info-bar">
-        <div className="player-name">{player.name}</div>
-        <div className="player-life">
-          <button 
-            className="life-btn life-minus"
-            onClick={() => onUpdateLife(player.id, -1)}
-            title="Lose 1 life"
-          >
-            −
-          </button>
-          <span className="life-icon">❤️</span>
-          <span className="life-value">{player.life}</span>
-          <button 
-            className="life-btn life-plus"
-            onClick={() => onUpdateLife(player.id, 1)}
-            title="Gain 1 life"
-          >
-            +
-          </button>
+      {/* Player Info Card */}
+      <div className={`player-card ${position}`}>
+        <div className="player-info-bar">
+          <div className="player-name">{player.name}</div>
+          <div className="player-life">
+            <button 
+              className="life-btn life-minus"
+              onClick={() => onUpdateLife(player.id, -1)}
+              title="Lose 1 life"
+            >
+              −
+            </button>
+            <span className="life-icon">❤️</span>
+            <span className="life-value">{player.life}</span>
+            <button 
+              className="life-btn life-plus"
+              onClick={() => onUpdateLife(player.id, 1)}
+              title="Gain 1 life"
+            >
+              +
+            </button>
+          </div>
         </div>
-      </div>
 
-      {/* Player Counters */}
-      <div className="player-counters">
-        <div className="counter">
-          <button 
-            className="counter-btn counter-minus"
-            onClick={() => onUpdateCounter(player.id, 'poison', -1)}
-            title="Poison -1"
-          >
-            −
-          </button>
-          <span className="counter-icon">☠️</span>
-          <span className="counter-value">{player.poison || 0}</span>
-          <button 
-            className="counter-btn counter-plus"
-            onClick={() => onUpdateCounter(player.id, 'poison', 1)}
-            title="Poison +1"
-          >
-            +
-          </button>
-        </div>
-        <div className="counter">
-          <button 
-            className="counter-btn counter-minus"
-            onClick={() => onUpdateCounter(player.id, 'energy', -1)}
-            title="Energy -1"
-          >
-            −
-          </button>
-          <span className="counter-icon">⚡</span>
-          <span className="counter-value">{player.energy || 0}</span>
-          <button 
-            className="counter-btn counter-plus"
-            onClick={() => onUpdateCounter(player.id, 'energy', 1)}
-            title="Energy +1"
-          >
-            +
-          </button>
-        </div>
-        <div className="counter">
-          <button 
-            className="counter-btn counter-minus"
-            onClick={() => onUpdateCounter(player.id, 'experience', -1)}
-            title="Experience -1"
-          >
-            −
-          </button>
-          <span className="counter-icon">⭐</span>
-          <span className="counter-value">{player.experience || 0}</span>
-          <button 
-            className="counter-btn counter-plus"
-            onClick={() => onUpdateCounter(player.id, 'experience', 1)}
-            title="Experience +1"
-          >
-            +
-          </button>
-        </div>
-      </div>
-
-      {/* Battlefield Cards Area */}
-      <div className="battlefield-cards">
-        <div className="cards-container">
-          {/* Placeholder for rendered cards */}
-          <div className="placeholder-text">
-            Right-click to spawn card
+        {/* Player Counters */}
+        <div className="player-counters">
+          <div className="counter">
+            <button 
+              className="counter-btn counter-minus"
+              onClick={() => onUpdateCounter(player.id, 'poison', -1)}
+              title="Poison -1"
+            >
+              −
+            </button>
+            <span className="counter-icon">☠️</span>
+            <span className="counter-value">{player.poison || 0}</span>
+            <button 
+              className="counter-btn counter-plus"
+              onClick={() => onUpdateCounter(player.id, 'poison', 1)}
+              title="Poison +1"
+            >
+              +
+            </button>
+          </div>
+          <div className="counter">
+            <button 
+              className="counter-btn counter-minus"
+              onClick={() => onUpdateCounter(player.id, 'energy', -1)}
+              title="Energy -1"
+            >
+              −
+            </button>
+            <span className="counter-icon">⚡</span>
+            <span className="counter-value">{player.energy || 0}</span>
+            <button 
+              className="counter-btn counter-plus"
+              onClick={() => onUpdateCounter(player.id, 'energy', 1)}
+              title="Energy +1"
+            >
+              +
+            </button>
+          </div>
+          <div className="counter">
+            <button 
+              className="counter-btn counter-minus"
+              onClick={() => onUpdateCounter(player.id, 'experience', -1)}
+              title="Experience -1"
+            >
+              −
+            </button>
+            <span className="counter-icon">⭐</span>
+            <span className="counter-value">{player.experience || 0}</span>
+            <button 
+              className="counter-btn counter-plus"
+              onClick={() => onUpdateCounter(player.id, 'experience', 1)}
+              title="Experience +1"
+            >
+              +
+            </button>
           </div>
         </div>
       </div>

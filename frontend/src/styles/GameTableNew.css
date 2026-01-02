@@ -49,6 +49,8 @@
   gap: 12px;
   padding: 12px;
   overflow: hidden;
+  width: 100%;
+  min-width: 0;
 }
 
 /* Sidebar Section */
@@ -63,6 +65,8 @@
   gap: 12px;
   overflow: hidden;
   min-height: 0;
+  width: 100%;
+  min-width: 0;
 }
 
 /* Battlefield Board - 2x2 Grid */

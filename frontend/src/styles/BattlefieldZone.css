@@ -8,6 +8,7 @@
   padding: 0;
   height: 100%;
   width: 100%;
+  flex: 1;
   position: relative;
   transition: all 0.3s ease;
   box-sizing: border-box;

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import '../styles/BottomToolbar.css';
 
-const BottomToolbar = ({ gameState, turnNumber, onNextTurn, onAction, onGameMenu }) => {
+const BottomToolbar = ({ gameState, turnNumber, onNextTurn, onAction, onGameMenu, onUndoTurn }) => {
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [gameMenuOpen, setGameMenuOpen] = useState(false);
 
@@ -27,6 +27,9 @@ const BottomToolbar = ({ gameState, turnNumber, onNextTurn, onAction, onGameMenu
           </button>
           {gameMenuOpen && (
             <div className="toolbar-menu game-menu-dropdown">
+              <button className="menu-item" onClick={onUndoTurn}>
+                Undo Turn
+              </button>
               <button className="menu-item" onClick={onGameMenu}>
                 Restart Game
               </button>

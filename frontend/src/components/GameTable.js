@@ -67,6 +67,16 @@ const GameTable = ({ gameId, playerId, playerName, onBack }) => {
     }
   };
 
+  const handleUndoTurn = () => {
+    if (ws.current && ws.current.readyState === WebSocket.OPEN) {
+      ws.current.send(
+        JSON.stringify({
+          UndoTurn: {}
+        })
+      );
+    }
+  };
+
   const handleAction = () => {
     console.log('Action clicked');
   };
@@ -133,6 +143,7 @@ const GameTable = ({ gameId, playerId, playerName, onBack }) => {
         onNextTurn={handleNextTurn}
         onAction={handleAction}
         onGameMenu={handleGameMenu}
+        onUndoTurn={handleUndoTurn}
       />
     </div>
   );

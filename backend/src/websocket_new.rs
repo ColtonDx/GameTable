@@ -21,6 +21,8 @@ pub enum Message {
     DiscardCard { card_id: String },
     #[serde(rename = "NextTurn")]
     NextTurn {},
+    #[serde(rename = "UndoTurn")]
+    UndoTurn {},
     #[serde(rename = "RestartGame")]
     RestartGame {},
     
@@ -152,6 +154,13 @@ async fn handle_socket(
                         let mut gm = game_manager.write().await;
                         if let Some(game) = gm.get_game_mut(&game_id) {
                             game.next_turn();
+                            game.broadcast_state();
+                        }
+                    },
+                    Message::UndoTurn {} => {
+                        let mut gm = game_manager.write().await;
+                        if let Some(game) = gm.get_game_mut(&game_id) {
+                            game.undo_turn();
                             game.broadcast_state();
                         }
                     },

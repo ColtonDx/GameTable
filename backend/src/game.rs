@@ -183,6 +183,32 @@ impl GameSession {
         }
     }
 
+    pub fn undo_turn(&mut self) {
+        if self.current_turn_player == 0 {
+            // If we're at player 0, we need to go back to the last player of the previous turn
+            if self.turn_number > 1 {
+                self.current_turn_player = self.players.len() - 1;
+                self.turn_number -= 1;
+            }
+        } else {
+            // Otherwise just go to the previous player
+            self.current_turn_player -= 1;
+        }
+        
+        // Update is_active for all players
+        for player in self.players.values_mut() {
+            player.is_active = false;
+        }
+        
+        // Set the current turn player as active
+        let player_ids: Vec<String> = self.players.keys().cloned().collect();
+        if let Some(active_id) = player_ids.get(self.current_turn_player) {
+            if let Some(player) = self.players.get_mut(active_id) {
+                player.is_active = true;
+            }
+        }
+    }
+
     pub fn broadcast_state(&self) {
         if let Some(tx) = &self.tx {
             let state_json = serde_json::to_string(&self).unwrap_or_default();

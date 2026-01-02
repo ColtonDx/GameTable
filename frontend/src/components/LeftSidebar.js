@@ -4,8 +4,7 @@ import '../styles/LeftSidebar.css';
 const LeftSidebar = () => {
   const [sidebarVisible, setSidebarVisible] = useState(true);
   const [expandedMenus, setExpandedMenus] = useState({
-    playtester: true,
-    gameinfo: true
+    playtester: true
   });
 
   const toggleMenu = (menu) => {
@@ -44,34 +43,7 @@ const LeftSidebar = () => {
             {expandedMenus.playtester && (
               <div className="menu-content">
                 <button className="action-btn">Draw Card</button>
-                <button className="action-btn">Mulligan</button>
                 <button className="action-btn">Reveal Hand</button>
-                <button className="action-btn">Reset Game</button>
-              </div>
-            )}
-          </div>
-
-          {/* Game Info */}
-          <div className="menu-section">
-            <button 
-              className="menu-toggle"
-              onClick={() => toggleMenu('gameinfo')}
-            >
-              <span className="toggle-icon">
-                {expandedMenus.gameinfo ? '▼' : '▶'}
-              </span>
-              <span>Game Info</span>
-            </button>
-            {expandedMenus.gameinfo && (
-              <div className="menu-content game-info">
-                <div className="info-item">
-                  <span className="label">Players:</span>
-                  <span className="value">4</span>
-                </div>
-                <div className="info-item">
-                  <span className="label">Started:</span>
-                  <span className="value">Just now</span>
-                </div>
               </div>
             )}
           </div>

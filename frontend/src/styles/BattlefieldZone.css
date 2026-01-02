@@ -103,10 +103,7 @@
 
 /* Player Info Bar */
 .player-info-bar {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  padding: 4px 0;
+  display: none;
 }
 
 .player-name {
@@ -115,6 +112,9 @@
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 1px;
+  text-align: center;
+  padding-bottom: 2px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .player-life {
@@ -123,8 +123,9 @@
   gap: 4px;
   background: rgba(239, 68, 68, 0.2);
   border: 1px solid rgba(239, 68, 68, 0.4);
-  padding: 3px 6px;
+  padding: 4px 6px;
   border-radius: 3px;
+  justify-content: center;
 }
 
 .life-icon {
@@ -159,9 +160,10 @@
 /* Player Counters */
 .player-counters {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   gap: 3px;
-  padding: 2px 0;
+  padding: 0;
+  justify-content: center;
 }
 
 .counter {
@@ -170,20 +172,21 @@
   gap: 1px;
   background: rgba(0, 0, 0, 0.3);
   border: 1px solid rgba(255, 255, 255, 0.1);
-  padding: 2px 4px;
+  padding: 2px 3px;
   border-radius: 2px;
-  font-size: 9px;
-  min-height: 18px;
+  font-size: 8px;
+  min-height: 16px;
+  white-space: nowrap;
 }
 
 .counter-btn {
   background: rgba(96, 165, 250, 0.2);
   border: 1px solid rgba(96, 165, 250, 0.4);
   color: #60a5fa;
-  width: 14px;
-  height: 14px;
-  border-radius: 2px;
-  font-size: 9px;
+  width: 12px;
+  height: 12px;
+  border-radius: 1px;
+  font-size: 8px;
   font-weight: bold;
   cursor: pointer;
   transition: all 0.2s;
@@ -222,17 +225,17 @@
 }
 
 .counter-icon {
-  font-size: 11px;
+  font-size: 9px;
   flex-shrink: 0;
 }
 
 .counter-value {
   font-weight: 700;
   color: #e0e0e0;
-  min-width: 10px;
+  min-width: 8px;
   text-align: center;
   flex-shrink: 0;
-  font-size: 9px;
+  font-size: 8px;
 }
 
 .life-btn:hover {

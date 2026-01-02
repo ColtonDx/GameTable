@@ -62,6 +62,7 @@
   flex-direction: column;
   gap: 12px;
   overflow: hidden;
+  min-height: 0;
 }
 
 /* Battlefield Board - 2x2 Grid */
@@ -76,6 +77,7 @@
   border-radius: 8px;
   padding: 8px;
   overflow: hidden;
+  min-height: 0;
 }
 
 .board-row {
@@ -87,45 +89,36 @@
   min-height: 0;
 }
 
-/* Player Panels (Hand + Zones) */
-.player-panels {
-  display: grid;
-  grid-template-columns: 200px 1fr;
-  gap: 12px;
-  height: 140px;
+/* Hand Section - below board */
+.hand-section {
+  display: flex;
+  flex-direction: column;
+  height: 120px;
   flex-shrink: 0;
-}
-
-.zones-wrapper {
-  min-height: 0;
-  display: flex;
-  flex-direction: column;
-}
-
-.hand-wrapper {
-  min-height: 0;
-  display: flex;
-  flex-direction: column;
   background: rgba(0, 0, 0, 0.4);
   border: 1px solid #444;
   border-radius: 8px;
-  padding: 0;
   overflow: hidden;
 }
 
-.hand-wrapper .panel-header {
+.hand-section .panel-header {
   padding: 12px 12px 8px 12px;
   margin: 0;
   flex-shrink: 0;
 }
 
-.hand-wrapper .hand-zone {
+.hand-section .hand-zone {
   flex: 1;
   background: transparent;
   border: none;
   border-radius: 0;
   padding: 0 12px 12px 12px;
   gap: 8px;
+}
+
+/* Zones Section - at bottom */
+.zones-section {
+  flex-shrink: 0;
 }
 
 .panel {

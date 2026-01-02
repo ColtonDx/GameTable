@@ -1,14 +1,14 @@
 /* Left Sidebar Styles */
 
 .left-sidebar {
-  background: linear-gradient(135deg, #ffffff 0%, #f5f5f5 100%);
-  border-right: 2px solid #d0d0d0;
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  border-right: 2px solid #444;
   padding: 0;
   display: flex;
   flex-direction: column;
   height: 100%;
   overflow-y: auto;
-  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.08);
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.3);
   transition: width 0.3s ease;
   width: 240px;
 }
@@ -23,8 +23,8 @@
 
 .sidebar-header {
   padding: 16px;
-  border-bottom: 2px solid #d0d0d0;
-  background: linear-gradient(135deg, #e8e8e8 0%, #d0d0d0 100%);
+  border-bottom: 2px solid #444;
+  background: linear-gradient(135deg, #16213e 0%, #0f3460 100%);
   flex-shrink: 0;
   display: flex;
   align-items: center;
@@ -34,7 +34,7 @@
 .sidebar-header h2 {
   margin: 0;
   font-size: 16px;
-  color: #333;
+  color: #60a5fa;
   text-transform: uppercase;
   letter-spacing: 1px;
   font-weight: 700;
@@ -43,7 +43,7 @@
 .collapse-btn {
   background: transparent;
   border: none;
-  color: #666;
+  color: #60a5fa;
   font-size: 14px;
   cursor: pointer;
   padding: 4px 8px;
@@ -54,8 +54,8 @@
 }
 
 .collapse-btn:hover {
-  color: #333;
-  background: rgba(0, 0, 0, 0.05);
+  color: #93c5fd;
+  background: rgba(96, 165, 250, 0.1);
   border-radius: 4px;
 }
 
@@ -65,7 +65,7 @@
 }
 
 .menu-section {
-  border-bottom: 1px solid #d0d0d0;
+  border-bottom: 1px solid #444;
 }
 
 .menu-toggle {
@@ -73,7 +73,7 @@
   background: transparent;
   border: none;
   padding: 12px 16px;
-  color: #333;
+  color: #e0e0e0;
   text-align: left;
   cursor: pointer;
   display: flex;
@@ -86,8 +86,9 @@
 }
 
 .menu-toggle:hover {
-  background: rgba(0, 0, 0, 0.05);
+  background: rgba(96, 165, 250, 0.1);
   padding-left: 20px;
+  color: #60a5fa;
 }
 
 .toggle-icon {
@@ -95,7 +96,7 @@
   width: 16px;
   text-align: center;
   font-size: 10px;
-  color: #666;
+  color: #60a5fa;
   transition: transform 0.2s;
 }
 

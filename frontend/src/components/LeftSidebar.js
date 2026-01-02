@@ -2,9 +2,9 @@ import React, { useState } from 'react';
 import '../styles/LeftSidebar.css';
 
 const LeftSidebar = () => {
-  const [sidebarVisible, setSidebarVisible] = useState(true);
+  const [sidebarVisible, setSidebarVisible] = useState(false);
   const [expandedMenus, setExpandedMenus] = useState({
-    playtester: true
+    playtester: false
   });
 
   const toggleMenu = (menu) => {

@@ -1,0 +1,59 @@
+/* Dice and Coins Styles */
+
+.dice-and-coins {
+  position: relative;
+}
+
+.dice-menu-dropdown {
+  position: absolute;
+  bottom: 100%;
+  left: 0;
+  background: rgba(15, 23, 42, 0.95);
+  border: 1px solid #1e293b;
+  border-radius: 4px 4px 0 0;
+  overflow: hidden;
+  min-width: 150px;
+  margin-bottom: 4px;
+}
+
+.roll-result {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  margin-left: 8px;
+  font-size: 20px;
+  font-weight: bold;
+  border-radius: 4px;
+  animation: popIn 0.3s ease-out;
+}
+
+.roll-result.result-coin {
+  background: rgba(251, 191, 36, 0.3);
+  border: 2px solid #fbbf24;
+  color: #fbbf24;
+}
+
+.roll-result.result-d6 {
+  background: rgba(59, 130, 246, 0.3);
+  border: 2px solid #3b82f6;
+  color: #3b82f6;
+}
+
+.roll-result.result-d20 {
+  background: rgba(139, 92, 246, 0.3);
+  border: 2px solid #8b5cf6;
+  color: #8b5cf6;
+}
+
+@keyframes popIn {
+  0% {
+    transform: scale(0.5);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}

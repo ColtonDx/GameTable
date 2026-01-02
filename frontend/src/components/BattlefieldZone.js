@@ -49,6 +49,22 @@ const BattlefieldZone = ({ player, position, isActive, onUpdateLife, onSpawnCard
         </div>
       </div>
 
+      {/* Player Counters */}
+      <div className="player-counters">
+        <div className="counter">
+          <span className="counter-icon">☠️</span>
+          <span className="counter-value">{player.poison || 0}</span>
+        </div>
+        <div className="counter">
+          <span className="counter-icon">⚡</span>
+          <span className="counter-value">{player.energy || 0}</span>
+        </div>
+        <div className="counter">
+          <span className="counter-icon">⭐</span>
+          <span className="counter-value">{player.experience || 0}</span>
+        </div>
+      </div>
+
       {/* Battlefield Cards Area */}
       <div className="battlefield-cards">
         <div className="cards-container">

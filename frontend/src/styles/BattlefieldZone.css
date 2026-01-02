@@ -50,7 +50,7 @@
   background: rgba(0, 0, 0, 0.5);
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 4px 4px 0 0;
-  margin-bottom: 8px;
+  margin-bottom: 4px;
 }
 
 .player-name {
@@ -98,6 +98,39 @@
   align-items: center;
   justify-content: center;
   padding: 0;
+}
+
+/* Player Counters */
+.player-counters {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  padding: 4px 0;
+  margin-bottom: 8px;
+  flex-wrap: wrap;
+}
+
+.counter {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 3px 6px;
+  border-radius: 3px;
+  font-size: 11px;
+}
+
+.counter-icon {
+  font-size: 12px;
+}
+
+.counter-value {
+  font-weight: 700;
+  color: #e0e0e0;
+  min-width: 16px;
+  text-align: center;
+}
 }
 
 .life-btn:hover {

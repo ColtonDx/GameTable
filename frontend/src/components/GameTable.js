@@ -171,22 +171,19 @@ const GameTable = ({ gameId, playerId, playerName, onBack }) => {
             </div>
           </div>
 
-          {/* Current Player's Hand & Zones */}
-          <div className="player-panels">
-            {/* Collapsible Zones */}
-            <div className="zones-wrapper">
-              <CollapsibleZones gameState={gameState} />
-            </div>
+          {/* Current Player's Hand */}
+          <div className="hand-section">
+            <div className="panel-header">Hand ({currentPlayer?.hand?.length || 0})</div>
+            <HandZone 
+              cards={currentPlayer?.hand || []}
+              onSelectCard={() => {}}
+              onHandOptions={() => {}}
+            />
+          </div>
 
-            {/* Hand Panel */}
-            <div className="hand-wrapper">
-              <div className="panel-header">Hand ({currentPlayer?.hand?.length || 0})</div>
-              <HandZone 
-                cards={currentPlayer?.hand || []}
-                onSelectCard={() => {}}
-                onHandOptions={() => {}}
-              />
-            </div>
+          {/* Collapsible Zones at Bottom */}
+          <div className="zones-section">
+            <CollapsibleZones gameState={gameState} />
           </div>
         </div>
       </div>

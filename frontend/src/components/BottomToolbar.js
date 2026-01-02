@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import '../styles/BottomToolbar.css';
+import DiceAndCoins from './DiceAndCoins';
 
 const BottomToolbar = ({ gameState, turnNumber, onNextTurn, onAction, onGameMenu, onUndoTurn }) => {
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [gameMenuOpen, setGameMenuOpen] = useState(false);
+  const [diceResult, setDiceResult] = useState(null);
 
   const keybinds = [
     { key: 'Space', action: 'Pass Priority' },
@@ -50,11 +52,28 @@ const BottomToolbar = ({ gameState, turnNumber, onNextTurn, onAction, onGameMenu
 
       {/* Right Section - Turn Info & Settings */}
       <div className="toolbar-section right">
+        {/* Dice and Coins */}
+        <DiceAndCoins 
+          onRoll={(result) => {
+            setDiceResult(result);
+            // Could emit to WebSocket here to show to all players
+          }}
+        />
+
         {/* Turn Counter */}
         <div className="turn-counter">
           <span className="turn-label">Turn</span>
           <span className="turn-number">{turnNumber || 1}</span>
         </div>
+
+        {/* Undo Turn Button */}
+        <button 
+          className="toolbar-btn action-btn"
+          onClick={onUndoTurn}
+          title="Undo the last turn"
+        >
+          <span>Undo</span>
+        </button>
 
         {/* Next Turn Button */}
         <button 

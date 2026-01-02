@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import '../styles/GameTableNew.css';
 import LeftSidebar from './LeftSidebar';
-import FourPlayerLifeTracker from './FourPlayerLifeTracker';
+import BattlefieldZone from './BattlefieldZone';
 import HandZone from './HandZone';
 import ZonesPanel from './ZonesPanel';
 import BottomToolbar from './BottomToolbar';
@@ -99,40 +99,83 @@ const GameTable = ({ gameId, playerId, playerName, onBack }) => {
     return <div className="game-table-new loading">Connecting to game...</div>;
   }
 
-  const currentPlayer = gameState?.players ? Object.values(gameState.players)[0] : null;
+  const players = gameState?.players ? Object.values(gameState.players) : [];
+  const currentPlayer = players[0];
+  const activePlayerIndex = gameState?.current_turn_player || 0;
 
   return (
     <div className="game-table-new">
       {error && <div className="error-banner">{error}</div>}
 
-      {/* Main 4-Quadrant Layout */}
-      <div className="main-layout">
-        {/* Top-Left: Sidebar */}
-        <div className="quadrant top-left">
+      <div className="game-container">
+        {/* Left Sidebar */}
+        <div className="sidebar-section">
           <LeftSidebar />
         </div>
 
-        {/* Top-Right: Life Tracker (4 Players) */}
-        <div className="quadrant top-right">
-          <FourPlayerLifeTracker 
-            gameState={gameState}
-            currentPlayerId={gameState?.current_turn_player !== undefined ? Object.keys(gameState.players || {})[gameState.current_turn_player] : null}
-            onUpdatePlayerLife={updatePlayerLife}
-          />
-        </div>
+        {/* Main Game Area */}
+        <div className="main-game-area">
+          {/* 4-Player Battlefield Board */}
+          <div className="battlefield-board">
+            {/* Top Row */}
+            <div className="board-row top-row">
+              {/* Top-Left Player (Player 3) */}
+              <div className="board-cell top-left">
+                <BattlefieldZone 
+                  player={players[3]}
+                  position="top-left"
+                  isActive={activePlayerIndex === 3}
+                />
+              </div>
+              {/* Top-Right Player (Player 1) */}
+              <div className="board-cell top-right">
+                <BattlefieldZone 
+                  player={players[1]}
+                  position="top-right"
+                  isActive={activePlayerIndex === 1}
+                />
+              </div>
+            </div>
 
-        {/* Bottom-Left: Hand Zone */}
-        <div className="quadrant bottom-left">
-          <HandZone 
-            cards={currentPlayer?.hand || []}
-            onSelectCard={() => {}}
-            onHandOptions={() => {}}
-          />
-        </div>
+            {/* Bottom Row */}
+            <div className="board-row bottom-row">
+              {/* Bottom-Left Player (Current/Player 0) */}
+              <div className="board-cell bottom-left">
+                <BattlefieldZone 
+                  player={players[0]}
+                  position="bottom-left"
+                  isActive={activePlayerIndex === 0}
+                />
+              </div>
+              {/* Bottom-Right Player (Player 2) */}
+              <div className="board-cell bottom-right">
+                <BattlefieldZone 
+                  player={players[2]}
+                  position="bottom-right"
+                  isActive={activePlayerIndex === 2}
+                />
+              </div>
+            </div>
+          </div>
 
-        {/* Bottom-Right: Zones Panel */}
-        <div className="quadrant bottom-right">
-          <ZonesPanel gameState={gameState} />
+          {/* Current Player's Hand & Zones */}
+          <div className="player-panels">
+            {/* Left Panel: Zones */}
+            <div className="panel zones-panel">
+              <div className="panel-header">Zones</div>
+              <ZonesPanel gameState={gameState} />
+            </div>
+
+            {/* Right Panel: Hand */}
+            <div className="panel hand-panel">
+              <div className="panel-header">Hand ({currentPlayer?.hand?.length || 0})</div>
+              <HandZone 
+                cards={currentPlayer?.hand || []}
+                onSelectCard={() => {}}
+                onHandOptions={() => {}}
+              />
+            </div>
+          </div>
         </div>
       </div>
 

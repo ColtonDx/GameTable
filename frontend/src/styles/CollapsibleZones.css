@@ -3,7 +3,7 @@
 .collapsible-zones {
   width: 100%;
   background: rgba(0, 0, 0, 0.4);
-  border: 1px solid #444;
+  border: none;
   border-radius: 8px;
   overflow: hidden;
   transition: all 0.3s ease;

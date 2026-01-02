@@ -8,6 +8,7 @@ import BottomToolbar from './BottomToolbar';
 
 const GameTable = ({ gameId, playerId, playerName, onBack }) => {
   const [gameState, setGameState] = useState(null);
+  const [playerJoinOrder, setPlayerJoinOrder] = useState(0);
   const [error, setError] = useState('');
   const [handScale, setHandScale] = useState(1);
   const ws = useRef(null);
@@ -38,6 +39,10 @@ const GameTable = ({ gameId, playerId, playerName, onBack }) => {
         if (message.GameState && message.GameState.state) {
           const state = JSON.parse(message.GameState.state);
           setGameState(state);
+          // Store the player's join order for seat rotation
+          if (message.GameState.player_join_order !== undefined) {
+            setPlayerJoinOrder(message.GameState.player_join_order);
+          }
         } else if (message.Error) {
           setError(message.Error.message);
           setTimeout(() => setError(''), 5000);
@@ -130,7 +135,17 @@ const GameTable = ({ gameId, playerId, playerName, onBack }) => {
   }
 
   const players = gameState?.players ? Object.values(gameState.players) : [];
-  const currentPlayer = players[0];
+  
+  // Rotate players so current player is always at bottom-left
+  // Clockwise seats: 0=bottom-left, 3=top-left, 2=top-right, 1=bottom-right
+  const rotatedPlayers = [
+    players[playerJoinOrder % 4],
+    players[(playerJoinOrder + 3) % 4],
+    players[(playerJoinOrder + 2) % 4],
+    players[(playerJoinOrder + 1) % 4]
+  ];
+  
+  const currentPlayer = rotatedPlayers[0];
   const activePlayerIndex = gameState?.current_turn_player || 0;
 
   return (
@@ -149,10 +164,10 @@ const GameTable = ({ gameId, playerId, playerName, onBack }) => {
           <div className="battlefield-board">
             {/* Top Row */}
             <div className="board-row top-row">
-              {/* Top-Left Player (Player 3) */}
+              {/* Top-Left Player (rotatedPlayers[3]) */}
               <div className="board-cell top-left">
                 <BattlefieldZone 
-                  player={players[3]}
+                  player={rotatedPlayers[3]}
                   position="top-left"
                   isActive={activePlayerIndex === 3}
                   onUpdateLife={updatePlayerLife}
@@ -160,12 +175,12 @@ const GameTable = ({ gameId, playerId, playerName, onBack }) => {
                   onSpawnCard={handleSpawnCard}
                 />
               </div>
-              {/* Top-Right Player (Player 1) */}
+              {/* Top-Right Player (rotatedPlayers[2]) */}
               <div className="board-cell top-right">
                 <BattlefieldZone 
-                  player={players[1]}
+                  player={rotatedPlayers[2]}
                   position="top-right"
-                  isActive={activePlayerIndex === 1}
+                  isActive={activePlayerIndex === 2}
                   onUpdateLife={updatePlayerLife}
                   onUpdateCounter={updatePlayerCounter}
                   onSpawnCard={handleSpawnCard}
@@ -175,10 +190,10 @@ const GameTable = ({ gameId, playerId, playerName, onBack }) => {
 
             {/* Bottom Row */}
             <div className="board-row bottom-row">
-              {/* Bottom-Left Player (Current/Player 0) */}
+              {/* Bottom-Left Player (Current/rotatedPlayers[0]) */}
               <div className="board-cell bottom-left">
                 <BattlefieldZone 
-                  player={players[0]}
+                  player={rotatedPlayers[0]}
                   position="bottom-left"
                   isActive={activePlayerIndex === 0}
                   onUpdateLife={updatePlayerLife}
@@ -186,12 +201,12 @@ const GameTable = ({ gameId, playerId, playerName, onBack }) => {
                   onSpawnCard={handleSpawnCard}
                 />
               </div>
-              {/* Bottom-Right Player (Player 2) */}
+              {/* Bottom-Right Player (rotatedPlayers[1]) */}
               <div className="board-cell bottom-right">
                 <BattlefieldZone 
-                  player={players[2]}
+                  player={rotatedPlayers[1]}
                   position="bottom-right"
-                  isActive={activePlayerIndex === 2}
+                  isActive={activePlayerIndex === 1}
                   onUpdateLife={updatePlayerLife}
                   onUpdateCounter={updatePlayerCounter}
                   onSpawnCard={handleSpawnCard}

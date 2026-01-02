@@ -57,9 +57,14 @@ async fn handle_socket(
     let tx = {
         let mut gm = game_manager.write().await;
         if let Some(game) = gm.get_game_mut(&game_id) {
-            if !game.players.contains_key(&player_id) {
-                let player = Player::new(player_id.clone(), format!("Player {}", game.players.len() + 1));
+            let is_new_player = !game.players.contains_key(&player_id);
+            
+            if is_new_player {
+                let join_order = game.players.len();
+                let player = Player::new(player_id.clone(), format!("Player {}", join_order + 1), join_order);
                 game.add_player(player);
+                // Broadcast state to all players so they see the new player joined
+                game.broadcast_state();
             } else {
                 if let Some(p) = game.get_player_mut(&player_id) {
                     p.is_active = true;
@@ -78,14 +83,21 @@ async fn handle_socket(
     let tx = tx.unwrap();
     let mut rx = tx.subscribe();
 
-    // Send initial game state
+    // Send initial game state with player's seat position
     {
         let gm = game_manager.read().await;
         if let Some(game) = gm.get_game(&game_id) {
+            let player_join_order = game.players
+                .get(&player_id)
+                .map(|p| p.join_order)
+                .unwrap_or(0);
+            
             let state_json = serde_json::to_string(&game).unwrap_or_default();
             let msg = serde_json::json!({
                 "GameState": {
-                    "state": state_json
+                    "state": state_json,
+                    "player_id": player_id,
+                    "player_join_order": player_join_order
                 }
             }).to_string();
             let mut s = sender.lock().await;

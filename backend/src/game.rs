@@ -31,10 +31,11 @@ pub struct Player {
     pub exile: Vec<Card>,
     pub command_zone: Vec<Card>,
     pub is_active: bool,
+    pub join_order: usize,
 }
 
 impl Player {
-    pub fn new(id: String, name: String) -> Self {
+    pub fn new(id: String, name: String, join_order: usize) -> Self {
         Self {
             id,
             name,
@@ -47,6 +48,7 @@ impl Player {
             exile: Vec::new(),
             command_zone: Vec::new(),
             is_active: true,
+            join_order,
         }
     }
 

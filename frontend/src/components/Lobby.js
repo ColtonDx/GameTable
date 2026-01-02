@@ -75,10 +75,19 @@ const Lobby = ({ onStartGame }) => {
           type="text"
           placeholder="Enter Game ID"
           value={gameId}
-          onChange={(e) => setGameId(e.target.value)}
-          onKeyPress={(e) => e.key === 'Enter' && handleJoinGame()}
+          onChange={(e) => {
+            console.log('Game ID input changed:', e.target.value);
+            setGameId(e.target.value);
+          }}
+          onKeyPress={(e) => {
+            if (e.key === 'Enter') {
+              e.preventDefault();
+              handleJoinGame();
+            }
+          }}
           className="input"
           autoComplete="off"
+          spellCheck="false"
         />
         <input
           id="player-name-input"

@@ -1,7 +1,7 @@
 import React from 'react';
 import '../styles/BattlefieldZone.css';
 
-const BattlefieldZone = ({ player, position, isActive, onUpdateLife, onUpdateCounter, onSpawnCard }) => {
+const BattlefieldZone = ({ player, position, isActive, onUpdateLife, onUpdateCounter, onSpawnCard, onZoom }) => {
   if (!player) {
     return (
       <div 
@@ -9,6 +9,10 @@ const BattlefieldZone = ({ player, position, isActive, onUpdateLife, onUpdateCou
         onContextMenu={(e) => {
           e.preventDefault();
           onSpawnCard && onSpawnCard(position);
+        }}
+        onDoubleClick={(e) => {
+          e.preventDefault();
+          onZoom && onZoom(position);
         }}
       >
         <div className={`empty-seat ${position}`}>
@@ -24,6 +28,10 @@ const BattlefieldZone = ({ player, position, isActive, onUpdateLife, onUpdateCou
       onContextMenu={(e) => {
         e.preventDefault();
         onSpawnCard && onSpawnCard(position);
+      }}
+      onDoubleClick={(e) => {
+        e.preventDefault();
+        onZoom && onZoom(position);
       }}
     >
       {/* Player Info Card */}

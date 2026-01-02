@@ -11,6 +11,7 @@ const GameTable = ({ gameId, playerId, playerName, onBack }) => {
   const [playerJoinOrder, setPlayerJoinOrder] = useState(0);
   const [error, setError] = useState('');
   const [handScale, setHandScale] = useState(1);
+  const [zoomedPosition, setZoomedPosition] = useState(null);
   const ws = useRef(null);
 
   useEffect(() => {
@@ -130,6 +131,11 @@ const GameTable = ({ gameId, playerId, playerName, onBack }) => {
     // Card spawning is now a placeholder - can be extended later
   };
 
+  const handleZoom = (position) => {
+    // Toggle zoom - if already zoomed into this position, zoom out
+    setZoomedPosition(zoomedPosition === position ? null : position);
+  };
+
   if (!gameState) {
     return <div className="game-table-new loading">Connecting to game...</div>;
   }
@@ -148,11 +154,38 @@ const GameTable = ({ gameId, playerId, playerName, onBack }) => {
   const currentPlayer = rotatedPlayers[0];
   const activePlayerIndex = gameState?.current_turn_player || 0;
 
+  // Get the zoomed player and their index if zoomed
+  let zoomedPlayer = null;
+  let zoomedIndex = -1;
+  if (zoomedPosition) {
+    const positions = ['bottom-left', 'bottom-right', 'top-right', 'top-left'];
+    zoomedIndex = positions.indexOf(zoomedPosition);
+    zoomedPlayer = rotatedPlayers[zoomedIndex];
+  }
+
   return (
     <div className="game-table-new">
       {error && <div className="error-banner">{error}</div>}
 
-      <div className="game-container">
+      {/* Zoomed Player View */}
+      {zoomedPlayer && (
+        <div className="zoomed-view-overlay">
+          <div className="zoomed-player-container">
+            <BattlefieldZone 
+              player={zoomedPlayer}
+              position={zoomedPosition}
+              isActive={activePlayerIndex === zoomedIndex}
+              onUpdateLife={updatePlayerLife}
+              onUpdateCounter={updatePlayerCounter}
+              onSpawnCard={handleSpawnCard}
+              onZoom={handleZoom}
+            />
+            <div className="zoom-hint">Double-click to exit zoom</div>
+          </div>
+        </div>
+      )}
+
+      <div className="game-container" style={{ display: zoomedPlayer ? 'none' : 'flex' }}>
         {/* Left Sidebar */}
         <div className="sidebar-section">
           <LeftSidebar />
@@ -173,6 +206,7 @@ const GameTable = ({ gameId, playerId, playerName, onBack }) => {
                   onUpdateLife={updatePlayerLife}
                   onUpdateCounter={updatePlayerCounter}
                   onSpawnCard={handleSpawnCard}
+                  onZoom={handleZoom}
                 />
               </div>
               {/* Top-Right Player (rotatedPlayers[2]) */}
@@ -184,6 +218,7 @@ const GameTable = ({ gameId, playerId, playerName, onBack }) => {
                   onUpdateLife={updatePlayerLife}
                   onUpdateCounter={updatePlayerCounter}
                   onSpawnCard={handleSpawnCard}
+                  onZoom={handleZoom}
                 />
               </div>
             </div>
@@ -199,6 +234,7 @@ const GameTable = ({ gameId, playerId, playerName, onBack }) => {
                   onUpdateLife={updatePlayerLife}
                   onUpdateCounter={updatePlayerCounter}
                   onSpawnCard={handleSpawnCard}
+                  onZoom={handleZoom}
                 />
               </div>
               {/* Bottom-Right Player (rotatedPlayers[1]) */}
@@ -210,6 +246,7 @@ const GameTable = ({ gameId, playerId, playerName, onBack }) => {
                   onUpdateLife={updatePlayerLife}
                   onUpdateCounter={updatePlayerCounter}
                   onSpawnCard={handleSpawnCard}
+                  onZoom={handleZoom}
                 />
               </div>
             </div>

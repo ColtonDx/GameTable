@@ -15,6 +15,8 @@ pub enum Message {
     UpdateLife { player_id: String, delta: i32 },
     #[serde(rename = "UpdateCounter")]
     UpdateCounter { player_id: String, counter_type: String, delta: i32 },
+    #[serde(rename = "SetPlayerName")]
+    SetPlayerName { player_id: String, name: String },
     #[serde(rename = "MoveCard")]
     MoveCard { card_id: String, from_zone: String, to_zone: String },
     #[serde(rename = "DrawCard")]
@@ -112,6 +114,15 @@ async fn handle_socket(
                         let mut gm = game_manager.write().await;
                         if let Some(game) = gm.get_game_mut(&game_id) {
                             if game.update_life(&pid, delta).is_ok() {
+                                game.broadcast_state();
+                            }
+                        }
+                    },
+                    Message::SetPlayerName { player_id: pid, name } => {
+                        let mut gm = game_manager.write().await;
+                        if let Some(game) = gm.get_game_mut(&game_id) {
+                            if let Some(player) = game.get_player_mut(&pid) {
+                                player.name = name;
                                 game.broadcast_state();
                             }
                         }

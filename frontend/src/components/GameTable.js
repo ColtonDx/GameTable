@@ -19,6 +19,16 @@ const GameTable = ({ gameId, playerId, playerName, onBack }) => {
 
     ws.current.onopen = () => {
       console.log('Connected to game server');
+      // Send player name to backend
+      if (playerName) {
+        const setNameMsg = {
+          SetPlayerName: {
+            player_id: playerId,
+            name: playerName
+          }
+        };
+        ws.current.send(JSON.stringify(setNameMsg));
+      }
     };
 
     ws.current.onmessage = (event) => {
@@ -46,7 +56,7 @@ const GameTable = ({ gameId, playerId, playerName, onBack }) => {
         ws.current.close();
       }
     };
-  }, [gameId, playerId]);
+  }, [gameId, playerId, playerName]);
 
   const updatePlayerLife = (playerId, delta) => {
     if (ws.current && ws.current.readyState === WebSocket.OPEN) {

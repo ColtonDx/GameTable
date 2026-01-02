@@ -9,7 +9,6 @@ import BottomToolbar from './BottomToolbar';
 const GameTable = ({ gameId, playerId, playerName, onBack }) => {
   const [gameState, setGameState] = useState(null);
   const [error, setError] = useState('');
-  const [boardScale, setBoardScale] = useState(1);
   const [handScale, setHandScale] = useState(1);
   const ws = useRef(null);
 
@@ -112,8 +111,8 @@ const GameTable = ({ gameId, playerId, playerName, onBack }) => {
   };
 
   const handleSpawnCard = (position) => {
-    console.log('Spawning card at position:', position);
-    // TODO: Implement card spawning
+    console.log('Right-clicked to spawn card at position:', position);
+    // Card spawning is now a placeholder - can be extended later
   };
 
   if (!gameState) {
@@ -137,7 +136,7 @@ const GameTable = ({ gameId, playerId, playerName, onBack }) => {
         {/* Main Game Area */}
         <div className="main-game-area">
           {/* 4-Player Battlefield Board */}
-          <div className="battlefield-board" style={{ transform: `scale(${boardScale})` }}>
+          <div className="battlefield-board">
             {/* Top Row */}
             <div className="board-row top-row">
               {/* Top-Left Player (Player 3) */}
@@ -192,7 +191,7 @@ const GameTable = ({ gameId, playerId, playerName, onBack }) => {
           </div>
 
           {/* Current Player's Hand */}
-          <div className="hand-section">
+          <div className="hand-section" style={{ height: `${handScale * 120}px` }}>
             <HandZone 
               cards={currentPlayer?.hand || []}
               onSelectCard={() => {}}
@@ -200,6 +199,30 @@ const GameTable = ({ gameId, playerId, playerName, onBack }) => {
               scale={handScale}
             />
           </div>
+
+          {/* Hand Resize Handle */}
+          <div 
+            className="hand-resize-handle"
+            onMouseDown={(e) => {
+              e.preventDefault();
+              const startY = e.clientY;
+              const startHeight = handScale * 120;
+              
+              const handleMouseMove = (moveEvent) => {
+                const delta = moveEvent.clientY - startY;
+                const newHeight = Math.max(60, Math.min(300, startHeight + delta));
+                setHandScale(newHeight / 120);
+              };
+              
+              const handleMouseUp = () => {
+                document.removeEventListener('mousemove', handleMouseMove);
+                document.removeEventListener('mouseup', handleMouseUp);
+              };
+              
+              document.addEventListener('mousemove', handleMouseMove);
+              document.addEventListener('mouseup', handleMouseUp);
+            }}
+          />
 
           {/* Collapsible Zones at Bottom */}
           <div className="zones-section">
@@ -216,10 +239,6 @@ const GameTable = ({ gameId, playerId, playerName, onBack }) => {
         onAction={handleAction}
         onGameMenu={handleGameMenu}
         onUndoTurn={handleUndoTurn}
-        boardScale={boardScale}
-        onBoardScaleChange={setBoardScale}
-        handScale={handScale}
-        onHandScaleChange={setHandScale}
       />
     </div>
   );

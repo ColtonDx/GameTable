@@ -101,6 +101,23 @@
   overflow: visible;
 }
 
+/* Hand Resize Handle */
+.hand-resize-handle {
+  height: 4px;
+  background: linear-gradient(180deg, rgba(96, 165, 250, 0.3), rgba(96, 165, 250, 0.1));
+  border: 1px solid rgba(96, 165, 250, 0.3);
+  cursor: row-resize;
+  flex-shrink: 0;
+  transition: all 0.2s;
+  border-radius: 2px;
+  margin: 4px 0;
+}
+
+.hand-resize-handle:hover {
+  background: linear-gradient(180deg, rgba(96, 165, 250, 0.5), rgba(96, 165, 250, 0.3));
+  border-color: rgba(96, 165, 250, 0.6);
+}
+
 .hand-section .panel-header {
   padding: 12px 12px 8px 12px;
   margin: 0;

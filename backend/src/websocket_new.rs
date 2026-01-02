@@ -13,6 +13,8 @@ use crate::game::{GameManager, Player, Zone, Card};
 pub enum Message {
     #[serde(rename = "UpdateLife")]
     UpdateLife { player_id: String, delta: i32 },
+    #[serde(rename = "UpdateCounter")]
+    UpdateCounter { player_id: String, counter_type: String, delta: i32 },
     #[serde(rename = "MoveCard")]
     MoveCard { card_id: String, from_zone: String, to_zone: String },
     #[serde(rename = "DrawCard")]
@@ -110,6 +112,20 @@ async fn handle_socket(
                         let mut gm = game_manager.write().await;
                         if let Some(game) = gm.get_game_mut(&game_id) {
                             if game.update_life(&pid, delta).is_ok() {
+                                game.broadcast_state();
+                            }
+                        }
+                    },
+                    Message::UpdateCounter { player_id: pid, counter_type, delta } => {
+                        let mut gm = game_manager.write().await;
+                        if let Some(game) = gm.get_game_mut(&game_id) {
+                            if let Some(player) = game.get_player_mut(&pid) {
+                                match counter_type.as_str() {
+                                    "poison" => player.poison = (player.poison + delta).max(0),
+                                    "energy" => player.energy = (player.energy + delta).max(0),
+                                    "experience" => player.experience = (player.experience + delta).max(0),
+                                    _ => {}
+                                }
                                 game.broadcast_state();
                             }
                         }

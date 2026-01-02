@@ -3,7 +3,6 @@ import '../styles/BottomToolbar.css';
 import DiceAndCoins from './DiceAndCoins';
 
 const BottomToolbar = ({ gameState, turnNumber, onNextTurn, onAction, onGameMenu, onUndoTurn }) => {
-  const [settingsOpen, setSettingsOpen] = useState(false);
   const [gameMenuOpen, setGameMenuOpen] = useState(false);
   const [diceResult, setDiceResult] = useState(null);
 
@@ -29,9 +28,6 @@ const BottomToolbar = ({ gameState, turnNumber, onNextTurn, onAction, onGameMenu
           </button>
           {gameMenuOpen && (
             <div className="toolbar-menu game-menu-dropdown">
-              <button className="menu-item" onClick={onUndoTurn}>
-                Undo Turn
-              </button>
               <button className="menu-item" onClick={onGameMenu}>
                 Restart Game
               </button>
@@ -77,55 +73,7 @@ const BottomToolbar = ({ gameState, turnNumber, onNextTurn, onAction, onGameMenu
         >
           <span>Next Turn</span>
         </button>
-
-        {/* Settings Button */}
-        <button 
-          className="toolbar-btn"
-          onClick={() => setSettingsOpen(!settingsOpen)}
-        >
-          <span>⚙️</span>
-          <span>Settings</span>
-        </button>
       </div>
-
-      {/* Settings Menu */}
-      {settingsOpen && (
-        <div className="toolbar-menu settings-menu">
-          <div className="settings-header">
-            <h3>Settings</h3>
-            <button 
-              className="close-btn"
-              onClick={() => setSettingsOpen(false)}
-            >
-              ✕
-            </button>
-          </div>
-
-          <div className="settings-section">
-            <h4>Keybinds</h4>
-            <div className="keybinds-list">
-              {keybinds.map(bind => (
-                <div key={bind.key} className="keybind-row">
-                  <span className="keybind-action">{bind.action}</span>
-                  <span className="keybind-key">{bind.key}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div className="settings-section">
-            <h4>Display</h4>
-            <label className="setting-label">
-              <input type="checkbox" defaultChecked />
-              Sound Effects
-            </label>
-            <label className="setting-label">
-              <input type="checkbox" defaultChecked />
-              Show Animations
-            </label>
-          </div>
-        </div>
-      )}
     </div>
   );
 };

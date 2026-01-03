@@ -24,6 +24,16 @@ const LibraryZone = ({ cards = [], ws = null, playerId = null, onInspectCard = n
     setContextMenu(null);
   };
 
+  const handleDrawCard = () => {
+    if (ws && ws.readyState === WebSocket.OPEN) {
+      ws.send(JSON.stringify({
+        DrawCard: {
+          card_name: 'Card'
+        }
+      }));
+    }
+  };
+
   // Close context menu when clicking elsewhere
   React.useEffect(() => {
     const handleClick = () => setContextMenu(null);
@@ -36,12 +46,14 @@ const LibraryZone = ({ cards = [], ws = null, playerId = null, onInspectCard = n
   return (
     <div className="library-zone">
       <div className="library-header">
-        <div className="library-zone-header">
-          <div className="library-zone-title">Library</div>
-          <div className="card-count">{cardCount}</div>
-        </div>
-      </div>
-
+        <div cllick={handleDrawCard}
+            onContextMenu={handleContextMenu}
+            title="Click to draw a card, right-click for options"
+            style={{
+              backgroundImage: `url('/GameTableData/General/back.jpg')`,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+              cursor: 'poi
       <div className="library-cards">
         {cardCount > 0 ? (
           <div

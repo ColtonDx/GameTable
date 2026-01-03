@@ -215,12 +215,13 @@ const GameTable = ({ gameId, playerId, playerName, onBack }) => {
   const players = gameState?.players ? Object.values(gameState.players) : [];
   
   // Rotate players so current player is always at bottom-left
-  // Clockwise seats: 0=bottom-left, 1=bottom-right, 2=top-right, 3=top-left
+  // Each player sees themselves at bottom-left, with others going counter-clockwise
+  // BL=current, TL=next in join order, TR=next+1, BR=next+2
   const rotatedPlayers = [
     players[playerJoinOrder % 4],
-    players[(playerJoinOrder + 1) % 4],
+    players[(playerJoinOrder + 3) % 4],
     players[(playerJoinOrder + 2) % 4],
-    players[(playerJoinOrder + 3) % 4]
+    players[(playerJoinOrder + 1) % 4]
   ];
   
   const currentPlayer = rotatedPlayers[0];

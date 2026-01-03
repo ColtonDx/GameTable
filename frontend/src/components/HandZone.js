@@ -69,10 +69,6 @@ const HandZone = ({ cards, onSelectCard, onHandOptions, scale = 1 }) => {
                 <div
                   key={card.id}
                   className={`card-in-hand ${selectedCardIndex === index ? 'selected' : ''}`}
-                  style={{
-                    transform: `translateX(${(index - scrollOffset) * 60}px) rotateY(${(index - scrollOffset) * 8}deg)`,
-                    zIndex: selectedCardIndex === index ? 10 : index
-                  }}
                   onClick={() => handleSelectCard(index)}
                 >
                   <div className="card-content">

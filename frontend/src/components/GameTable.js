@@ -16,6 +16,7 @@ const GameTable = ({ gameId, playerId, playerName, onBack }) => {
   const [diceRoll, setDiceRoll] = useState(null);
   const [gameRestart, setGameRestart] = useState(null);
   const [inspectedCard, setInspectedCard] = useState(null);
+  const [inspectViewFlipped, setInspectViewFlipped] = useState(false);
   const ws = useRef(null);
   const diceRollTimeoutRef = useRef(null);
   const restartTimeoutRef = useRef(null);
@@ -230,6 +231,11 @@ const GameTable = ({ gameId, playerId, playerName, onBack }) => {
     setZoomedPosition(zoomedPosition === position ? null : position);
   };
 
+  const handleCloseInspection = () => {
+    setInspectedCard(null);
+    setInspectViewFlipped(false);
+  };
+
   const getCardImagePath = (card) => {
     if (card.is_flipped) {
       return '/GameTableData/General/back.jpg';
@@ -339,12 +345,12 @@ const GameTable = ({ gameId, playerId, playerName, onBack }) => {
 
       {/* Card Inspection Overlay */}
       {inspectedCard && (
-        <div className="card-inspection-overlay" onClick={() => setInspectedCard(null)}>
-          <div className="card-inspection-container">
+        <div className="card-inspection-overlay" onClick={handleCloseInspection}>
+          <div className="card-inspection-container" onClick={(e) => e.stopPropagation()}>
             <div
               className="inspected-card-image"
               style={{
-                backgroundImage: `url('${getCardImagePath(inspectedCard)}')`,
+                backgroundImage: `url('${inspectViewFlipped ? '/GameTableData/General/back.jpg' : '/GameTableData/General/blank.jpg'}')`,
                 backgroundSize: 'contain',
                 backgroundPosition: 'center',
                 backgroundRepeat: 'no-repeat'
@@ -352,7 +358,19 @@ const GameTable = ({ gameId, playerId, playerName, onBack }) => {
             ></div>
             <div className="card-inspection-info">
               <h3>{inspectedCard.name}</h3>
-              <p className="close-hint">Click anywhere to close</p>
+              <div className="inspection-controls">
+                <button 
+                  className="flip-in-inspect-btn"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setInspectViewFlipped(!inspectViewFlipped);
+                  }}
+                  title={inspectViewFlipped ? 'Show front' : 'Show back'}
+                >
+                  {inspectViewFlipped ? '📋 Front' : '🔄 Back'}
+                </button>
+              </div>
+              <p className="close-hint">Click outside to close</p>
             </div>
           </div>
         </div>

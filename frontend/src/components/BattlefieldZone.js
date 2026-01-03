@@ -8,11 +8,12 @@ const BattlefieldZone = ({ player, position, isActive, onUpdateLife, onUpdateCou
   const [cardBeingDragged, setCardBeingDragged] = useState(null);
 
   const handleZoomClick = (e) => {
-    // Only trigger zoom if clicking directly on the battlefield-zone background, not on child elements
-    if (e.target.classList.contains('battlefield-zone')) {
-      e.preventDefault();
-      onZoom && onZoom(position);
+    // Trigger zoom on double-click anywhere in the battlefield zone
+    // But don't trigger if double-clicking on a card
+    if (e.target.closest('.battlefield-card')) {
+      return; // Don't zoom if clicking on a card
     }
+    onZoom && onZoom(position);
   };
 
   const getCardImagePath = (card) => {

@@ -61,13 +61,17 @@ const HandZone = ({ cards, onSelectCard, onHandOptions, scale = 1, ws = null, pl
   };
 
   const handleFlipCard = () => {
-    if (contextMenu && ws && ws.readyState === WebSocket.OPEN && playerId) {
+    if (!contextMenu) return;
+    
+    if (ws && ws.readyState === WebSocket.OPEN && playerId) {
       ws.send(JSON.stringify({
         FlipCard: {
           player_id: playerId,
           card_id: contextMenu.card.id
         }
       }));
+    } else {
+      console.warn('Cannot flip card - WebSocket not ready or playerId missing', { ws, playerId, readyState: ws?.readyState });
     }
     setContextMenu(null);
   };

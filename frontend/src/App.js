@@ -33,7 +33,8 @@ function App() {
   };
 
   const handleBackToLobby = () => {
-    // Clear session from localStorage
+    // Clear session from localStorage when returning to lobby
+    // This ensures invalid/expired sessions don't persist across page reloads
     localStorage.removeItem('gameId');
     localStorage.removeItem('playerId');
     localStorage.removeItem('playerName');

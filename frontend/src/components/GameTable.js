@@ -12,15 +12,39 @@ const GameTable = ({ gameId, playerId, playerName, onBack }) => {
   const [error, setError] = useState('');
   const [handScale, setHandScale] = useState(1);
   const [zoomedPosition, setZoomedPosition] = useState(null);
+  const [sessionValid, setSessionValid] = useState(true);
   const ws = useRef(null);
+  const connectionAttempts = useRef(0);
+  const connectionTimeoutRef = useRef(null);
+  const maxConnectionAttempts = 3;
+  const connectionTimeout = 8000; // 8 seconds timeout
 
   useEffect(() => {
+    // Set a timeout for the connection attempt
+    connectionTimeoutRef.current = setTimeout(() => {
+      if (ws.current && ws.current.readyState !== WebSocket.OPEN) {
+        console.log('WebSocket connection timeout - session likely invalid');
+        ws.current?.close();
+        setSessionValid(false);
+        setError('Connection timeout. Session may have expired. Returning to lobby...');
+        setTimeout(() => {
+          onBack();
+        }, 2000);
+      }
+    }, connectionTimeout);
+
     // Connect to WebSocket
     const wsUrl = `ws://${window.location.hostname}:3001/ws/${gameId}/${playerId}`;
     ws.current = new WebSocket(wsUrl);
 
     ws.current.onopen = () => {
       console.log('Connected to game server');
+      // Clear the connection timeout since we successfully connected
+      if (connectionTimeoutRef.current) {
+        clearTimeout(connectionTimeoutRef.current);
+      }
+      connectionAttempts.current = 0; // Reset attempts on successful connection
+      
       // Send player name to backend
       if (playerName) {
         const setNameMsg = {
@@ -54,10 +78,40 @@ const GameTable = ({ gameId, playerId, playerName, onBack }) => {
     };
 
     ws.current.onerror = (error) => {
-      setError('WebSocket error: ' + error);
+      console.error('WebSocket error:', error);
+      setError('Connection error. Attempting to reconnect...');
+      connectionAttempts.current += 1;
+      
+      // If we've failed multiple times, the session is likely invalid
+      if (connectionAttempts.current >= maxConnectionAttempts) {
+        setSessionValid(false);
+        setError('Session expired or invalid. Returning to lobby...');
+        setTimeout(() => {
+          onBack();
+        }, 2000);
+      }
+    };
+
+    ws.current.onclose = () => {
+      console.log('WebSocket closed');
+      // If closed unexpectedly (not by user), it might be a session issue
+      if (sessionValid && ws.current && ws.current.readyState === WebSocket.CLOSED) {
+        connectionAttempts.current += 1;
+        if (connectionAttempts.current >= maxConnectionAttempts) {
+          setSessionValid(false);
+          setError('Lost connection to game server. Returning to lobby...');
+          setTimeout(() => {
+            onBack();
+          }, 2000);
+        }
+      }
     };
 
     return () => {
+      // Clear the connection timeout if component unmounts
+      if (connectionTimeoutRef.current) {
+        clearTimeout(connectionTimeoutRef.current);
+      }
       if (ws.current) {
         ws.current.close();
       }
@@ -135,6 +189,10 @@ const GameTable = ({ gameId, playerId, playerName, onBack }) => {
     // Toggle zoom - if already zoomed into this position, zoom out
     setZoomedPosition(zoomedPosition === position ? null : position);
   };
+
+  if (!sessionValid) {
+    return <div className="game-table-new loading">Returning to lobby...</div>;
+  }
 
   if (!gameState) {
     return <div className="game-table-new loading">Connecting to game...</div>;

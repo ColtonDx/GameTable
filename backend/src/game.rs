@@ -72,6 +72,7 @@ impl Player {
             Zone::Graveyard => &self.graveyard,
             Zone::Exile => &self.exile,
             Zone::CommandZone => &self.command_zone,
+            Zone::Library => &self.library,
         }
     }
 
@@ -81,6 +82,7 @@ impl Player {
             Zone::Battlefield => &mut self.battlefield,
             Zone::Graveyard => &mut self.graveyard,
             Zone::Exile => &mut self.exile,
+            Zone::Library => &mut self.library,
             Zone::CommandZone => &mut self.command_zone,
         }
     }

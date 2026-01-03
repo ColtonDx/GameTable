@@ -137,6 +137,13 @@ const BattlefieldZone = ({ player, position, isActive, onUpdateLife, onUpdateCou
       card_id: cardBeingDragged.card_id,
       x: cardBeingDragged.cardX + deltaX,
       y: cardBeingDragged.cardY + deltaY
+    });
+  };
+
+  const handleMouseUp = (e) => {
+    if (!cardBeingDragged) return;
+    
+    const dragTime = Date.now() - cardBeingDragged.startTime;
     const cardId = cardBeingDragged.card_id;
     
     // If drag time is very short, treat as click (for tap/untap)
@@ -154,14 +161,7 @@ const BattlefieldZone = ({ player, position, isActive, onUpdateLife, onUpdateCou
       }));
     }
     
-    // Clear all drag state      player_id: playerId,
-          card_id: draggedBattlefieldCard.card_id,
-          x: draggedBattlefieldCard.x,
-          y: draggedBattlefieldCard.y
-        }
-      }));
-    }
-    
+    // Clear all drag state
     setCardBeingDragged(null);
     setDraggedBattlefieldCard(null);
   };

@@ -154,6 +154,11 @@ async fn handle_socket(
                                 let card = Card {
                                     id: uuid::Uuid::new_v4().to_string(),
                                     name: card_name,
+                                    is_tapped: false,
+                                    is_flipped: false,
+                                    is_commander: false,
+                                    position_x: 0.0,
+                                    position_y: 0.0,
                                 };
                                 player.hand.push(card);
                             }

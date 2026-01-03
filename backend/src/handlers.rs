@@ -31,7 +31,7 @@ pub async fn register_handler(
     State(state): State<AppState>,
     Json(payload): Json<RegisterRequest>,
 ) -> (StatusCode, Json<AuthResponse>) {
-    let pool = &*state.db_pool;
+    let pool = state.db_pool.as_ref();
 
     // Check if user already exists
     match user_exists(pool, &payload.username).await {
@@ -83,7 +83,7 @@ pub async fn login_handler(
     State(state): State<AppState>,
     Json(payload): Json<LoginRequest>,
 ) -> (StatusCode, Json<AuthResponse>) {
-    let pool = &*state.db_pool;
+    let pool = state.db_pool.as_ref();
 
     match verify_user(pool, &payload.username, &payload.password).await {
         Ok(user) => (
@@ -109,7 +109,7 @@ pub async fn reset_password_handler(
     State(state): State<AppState>,
     Json(payload): Json<ResetPasswordRequest>,
 ) -> (StatusCode, Json<AuthResponse>) {
-    let pool = &*state.db_pool;
+    let pool = state.db_pool.as_ref();
 
     match reset_password(pool, &payload.username, &payload.new_password).await {
         Ok(_) => (

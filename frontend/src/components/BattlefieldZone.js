@@ -151,16 +151,47 @@ const BattlefieldZone = ({ player, position, isActive, onUpdateLife, onUpdateCou
       if (dragTime < 150) {
         handleTapCard(cardId);
       } else {
-        // Send new position to server
-        if (ws && ws.readyState === WebSocket.OPEN && playerId) {
-          ws.send(JSON.stringify({
-            MoveCardOnBattlefield: {
-              player_id: playerId,
-              card_id: cardId,
-              x: cardBeingDragged.cardX + (e.clientX - cardBeingDragged.startX),
-              y: cardBeingDragged.cardY + (e.clientY - cardBeingDragged.startY)
-            }
-          }));
+        // Check if card was dragged to hand or command zone area
+        const elementAtDrop = document.elementFromPoint(e.clientX, e.clientY);
+        const handZone = elementAtDrop?.closest('.hand-display-area') || elementAtDrop?.closest('.hand-section');
+        const commandZone = elementAtDrop?.closest('.command-zone');
+        
+        if (handZone) {
+          // Drag to hand
+          if (ws && ws.readyState === WebSocket.OPEN && playerId) {
+            ws.send(JSON.stringify({
+              MoveCard: {
+                player_id: playerId,
+                card_id: cardId,
+                from_zone: 'battlefield',
+                to_zone: 'hand'
+              }
+            }));
+          }
+        } else if (commandZone) {
+          // Drag to command zone
+          if (ws && ws.readyState === WebSocket.OPEN && playerId) {
+            ws.send(JSON.stringify({
+              MoveCard: {
+                player_id: playerId,
+                card_id: cardId,
+                from_zone: 'battlefield',
+                to_zone: 'command_zone'
+              }
+            }));
+          }
+        } else {
+          // Stay on battlefield - send new position
+          if (ws && ws.readyState === WebSocket.OPEN && playerId) {
+            ws.send(JSON.stringify({
+              MoveCardOnBattlefield: {
+                player_id: playerId,
+                card_id: cardId,
+                x: cardBeingDragged.cardX + (e.clientX - cardBeingDragged.startX),
+                y: cardBeingDragged.cardY + (e.clientY - cardBeingDragged.startY)
+              }
+            }));
+          }
         }
       }
       

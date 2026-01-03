@@ -23,11 +23,11 @@ const HandZone = ({ cards, onSelectCard, onHandOptions, scale = 1, ws = null, pl
     }
     // Future: implement set-based lookup here
     // For now, default to blank if image not found
-    retCard selection removed - just keep hover feedback setSelectedCardIndex(null);
-    } else {
-      setSelectedCardIndex(index);
-      if (onSelectCard) onSelectCard(cards[index]);
-    }
+    return '/GameTableData/General/blank.jpg';
+  };
+
+  const handleSelectCard = () => {
+    // Card selection removed - just keep hover feedback
   };
 
   const handleScroll = (direction) => {
@@ -46,6 +46,30 @@ const HandZone = ({ cards, onSelectCard, onHandOptions, scale = 1, ws = null, pl
 
   const handleDragEnd = () => {
     setDraggedCard(null);
+  };
+
+  const handleDragOver = (e) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+  };
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    try {
+      const data = JSON.parse(e.dataTransfer.getData('application/json'));
+      if (ws && ws.readyState === WebSocket.OPEN && playerId) {
+        ws.send(JSON.stringify({
+          MoveCard: {
+            player_id: playerId,
+            card_id: data.card_id,
+            from_zone: data.from_zone,
+            to_zone: 'hand'
+          }
+        }));
+      }
+    } catch (err) {
+      console.error('Drop error:', err);
+    }
   };
 
   const handleContextMenu = (e, card, index) => {
@@ -104,7 +128,7 @@ const HandZone = ({ cards, onSelectCard, onHandOptions, scale = 1, ws = null, pl
         </button>
       </div>
 
-      <div className="hand-display-area">
+      <div className="hand-display-area" onDragOver={handleDragOver} onDrop={handleDrop}>
         {/* Left Navigation Arrow - Outside scaled container */}
         {cards.length > 0 && (
           <button 
@@ -125,23 +149,21 @@ const HandZone = ({ cards, onSelectCard, onHandOptions, scale = 1, ws = null, pl
                 cards.map((card, index) => (
                   <div
                     key={card.id}
-                    className={`card-in-hand ${selectedCardIndex === index ? 'selected' : ''} ${draggedCard?.card.id === card.id ? 'dragging' : ''}`}
-                    onClick={() => handleSelectCard(index)}
+                    className={`card-in-hand ${draggedCard?.card.id === card.id ? 'dragging' : ''}`}
                     draggable
                     onDragStart={(e) => handleDragStart(e, card, index)}
                     onDragEnd={handleDragEnd}
                     onContextMenu={(e) => handleContextMenu(e, card, index)}
-                  >draggedCard?.card.id === card.id ? 'dragging' : ''}`
-                      <div 
-                        className="card-image"
-                        style={{
-                          backgroundImage: `url('${getCardImagePath(card)}')`,
-                          backgroundSize: 'cover',
-                          backgroundPosition: 'center'
-                        }}
-                      ></div>
-                      <div className="card-name">{card.name}</div>
-                    </div>
+                  >
+                    <div 
+                      className="card-image"
+                      style={{
+                        backgroundImage: `url('${getCardImagePath(card)}')`,
+                        backgroundSize: 'cover',
+                        backgroundPosition: 'center'
+                      }}
+                    ></div>
+                    <div className="card-name">{card.name}</div>
                   </div>
                 ))
               ) : (

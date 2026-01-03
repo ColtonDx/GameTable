@@ -35,6 +35,16 @@ const LeftSidebar = ({ gameId, playerId, ws }) => {
     }
   };
 
+  const handleShuffleLibrary = () => {
+    if (ws && ws.readyState === WebSocket.OPEN && playerId) {
+      ws.send(JSON.stringify({
+        ShuffleLibrary: {
+          player_id: playerId
+        }
+      }));
+    }
+  };
+
   const handleLoadBlankCards = () => {
     if (ws && ws.readyState === WebSocket.OPEN) {
       ws.send(JSON.stringify({
@@ -95,6 +105,12 @@ const LeftSidebar = ({ gameId, playerId, ws }) => {
                   onClick={handleMillCard}
                 >
                   Mill a Card
+                </button>
+                <button 
+                  className="action-btn"
+                  onClick={handleShuffleLibrary}
+                >
+                  🔀 Shuffle Library
                 </button>
                 <button 
                   className="action-btn"

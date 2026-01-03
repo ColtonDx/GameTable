@@ -27,6 +27,30 @@ const CommandZone = ({ cards, ws = null, playerId = null, onInspectCard = null }
     setDraggedCard(null);
   };
 
+  const handleDragOver = (e) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+  };
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    try {
+      const data = JSON.parse(e.dataTransfer.getData('application/json'));
+      if (ws && ws.readyState === WebSocket.OPEN && playerId) {
+        ws.send(JSON.stringify({
+          MoveCard: {
+            player_id: playerId,
+            card_id: data.card_id,
+            from_zone: data.from_zone,
+            to_zone: 'command_zone'
+          }
+        }));
+      }
+    } catch (err) {
+      console.error('Drop error:', err);
+    }
+  };
+
   const handleContextMenu = (e, card, index) => {
     e.preventDefault();
     setContextMenu({
@@ -72,7 +96,7 @@ const CommandZone = ({ cards, ws = null, playerId = null, onInspectCard = null }
         <span className="card-count">{cards.length} card{cards.length !== 1 ? 's' : ''}</span>
       </div>
 
-      <div className="command-zone-cards">
+      <div className="command-zone-cards" onDragOver={handleDragOver} onDrop={handleDrop}>
         {cards.length > 0 ? (
           cards.map((card, index) => (
             <div

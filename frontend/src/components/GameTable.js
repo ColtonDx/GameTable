@@ -225,7 +225,20 @@ const GameTable = ({ gameId, playerId, playerName, onBack }) => {
   ];
   
   const currentPlayer = rotatedPlayers[0];
-  const activePlayerIndex = gameState?.current_turn_player || 0;
+  const activePlayerJoinOrder = gameState?.current_turn_player || 0;
+  
+  // Map the backend's active player index to the rotated view
+  // The backend uses the original player order, we need to find which rotated index it corresponds to
+  let activeRotatedIndex = -1;
+  if (activePlayerJoinOrder === playerJoinOrder % 4) {
+    activeRotatedIndex = 0; // Current player is active
+  } else if (activePlayerJoinOrder === (playerJoinOrder + 3) % 4) {
+    activeRotatedIndex = 1; // BR player is active
+  } else if (activePlayerJoinOrder === (playerJoinOrder + 2) % 4) {
+    activeRotatedIndex = 2; // TR player is active
+  } else if (activePlayerJoinOrder === (playerJoinOrder + 1) % 4) {
+    activeRotatedIndex = 3; // TL player is active
+  }
 
   // Get the zoomed player and their index if zoomed
   let zoomedPlayer = null;
@@ -287,7 +300,7 @@ const GameTable = ({ gameId, playerId, playerName, onBack }) => {
                 <BattlefieldZone 
                   player={rotatedPlayers[3]}
                   position="top-left"
-                  isActive={activePlayerIndex === 3}
+                  isActive={activeRotatedIndex === 3}
                   onUpdateLife={updatePlayerLife}
                   onUpdateCounter={updatePlayerCounter}
                   onSpawnCard={handleSpawnCard}
@@ -299,7 +312,7 @@ const GameTable = ({ gameId, playerId, playerName, onBack }) => {
                 <BattlefieldZone 
                   player={rotatedPlayers[2]}
                   position="top-right"
-                  isActive={activePlayerIndex === 2}
+                  isActive={activeRotatedIndex === 2}
                   onUpdateLife={updatePlayerLife}
                   onUpdateCounter={updatePlayerCounter}
                   onSpawnCard={handleSpawnCard}
@@ -315,7 +328,7 @@ const GameTable = ({ gameId, playerId, playerName, onBack }) => {
                 <BattlefieldZone 
                   player={rotatedPlayers[0]}
                   position="bottom-left"
-                  isActive={activePlayerIndex === 0}
+                  isActive={activeRotatedIndex === 0}
                   onUpdateLife={updatePlayerLife}
                   onUpdateCounter={updatePlayerCounter}
                   onSpawnCard={handleSpawnCard}
@@ -327,7 +340,7 @@ const GameTable = ({ gameId, playerId, playerName, onBack }) => {
                 <BattlefieldZone 
                   player={rotatedPlayers[1]}
                   position="bottom-right"
-                  isActive={activePlayerIndex === 1}
+                  isActive={activeRotatedIndex === 1}
                   onUpdateLife={updatePlayerLife}
                   onUpdateCounter={updatePlayerCounter}
                   onSpawnCard={handleSpawnCard}

@@ -67,7 +67,7 @@
   flex: 1;
   min-height: 80px;
   position: relative;
-  overflow: visible;
+  overflow: hidden;
 }
 
 .nav-arrow {

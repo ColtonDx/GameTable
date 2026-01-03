@@ -182,7 +182,16 @@ impl GameSession {
         
         for player in self.players.values_mut() {
             player.life = 40;
+            player.poison = 0;
+            player.energy = 0;
+            player.experience = 0;
             player.is_active = false;
+            
+            // Move all cards back to library
+            player.library.append(&mut player.hand);
+            player.library.append(&mut player.graveyard);
+            player.library.append(&mut player.exile);
+            player.library.append(&mut player.command_zone);
         }
         
         // Set first player as active

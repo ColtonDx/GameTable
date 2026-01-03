@@ -4,7 +4,6 @@ import '../styles/LeftSidebar.css';
 const LeftSidebar = ({ gameId, playerId, ws }) => {
   const [sidebarVisible, setSidebarVisible] = useState(false);
   const [expandedMenus, setExpandedMenus] = useState({
-    playtester: false,
     library: false
   });
   const [showLoadLibraryModal, setShowLoadLibraryModal] = useState(false);
@@ -103,25 +102,6 @@ const LeftSidebar = ({ gameId, playerId, ws }) => {
                 >
                   Load Library
                 </button>
-              </div>
-            )}
-          </div>
-
-          {/* Playtester Actions */}
-          <div className="menu-section">
-            <button 
-              className="menu-toggle"
-              onClick={() => toggleMenu('playtester')}
-            >
-              <span className="toggle-icon">
-                {expandedMenus.playtester ? '▼' : '▶'}
-              </span>
-              <span>Playtester Actions</span>
-            </button>
-            {expandedMenus.playtester && (
-              <div className="menu-content">
-                <button className="action-btn">Draw Card</button>
-                <button className="action-btn">Reveal Hand</button>
               </div>
             )}
           </div>

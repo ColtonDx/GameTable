@@ -21,8 +21,13 @@ const HandZone = ({ cards, onSelectCard, onHandOptions, scale = 1 }) => {
   };
 
   const handleSelectCard = (index) => {
-    setSelectedCardIndex(index);
-    if (onSelectCard) onSelectCard(cards[index]);
+    // Toggle deselection if clicking the same card
+    if (selectedCardIndex === index) {
+      setSelectedCardIndex(null);
+    } else {
+      setSelectedCardIndex(index);
+      if (onSelectCard) onSelectCard(cards[index]);
+    }
   };
 
   const handleScroll = (direction) => {

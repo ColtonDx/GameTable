@@ -5,6 +5,16 @@ const HandZone = ({ cards, onSelectCard, onHandOptions, scale = 1 }) => {
   const [selectedCardIndex, setSelectedCardIndex] = useState(null);
   const [scrollOffset, setScrollOffset] = useState(0);
 
+  const getCardImagePath = (card) => {
+    // For now, all blank cards use the blank.jpg image
+    if (card.name && card.name.includes('Blank')) {
+      return '/GameTableData/General/blank.jpg';
+    }
+    // Future: implement set-based lookup here
+    // For now, default to blank if image not found
+    return '/GameTableData/General/blank.jpg';
+  };
+
   const handleSelectCard = (index) => {
     setSelectedCardIndex(index);
     if (onSelectCard) onSelectCard(cards[index]);
@@ -61,7 +71,14 @@ const HandZone = ({ cards, onSelectCard, onHandOptions, scale = 1 }) => {
                   onClick={() => handleSelectCard(index)}
                 >
                   <div className="card-content">
-                    <div className="card-image"></div>
+                    <div 
+                      className="card-image"
+                      style={{
+                        backgroundImage: `url('${getCardImagePath(card)}')`,
+                        backgroundSize: 'cover',
+                        backgroundPosition: 'center'
+                      }}
+                    ></div>
                     <div className="card-name">{card.name}</div>
                   </div>
                 </div>

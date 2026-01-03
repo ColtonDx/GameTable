@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import '../styles/BottomToolbar.css';
 import DiceAndCoins from './DiceAndCoins';
 
-const BottomToolbar = ({ gameState, turnNumber, onNextTurn, onAction, onGameMenu, onUndoTurn, onBack }) => {
+const BottomToolbar = ({ gameState, turnNumber, onNextTurn, onAction, onGameMenu, onUndoTurn, onBack, ws, playerId }) => {
   const [gameMenuOpen, setGameMenuOpen] = useState(false);
   const [diceResult, setDiceResult] = useState(null);
 
@@ -47,9 +47,10 @@ const BottomToolbar = ({ gameState, turnNumber, onNextTurn, onAction, onGameMenu
       <div className="toolbar-section right">
         {/* Dice and Coins */}
         <DiceAndCoins 
+          ws={ws}
+          playerId={playerId}
           onRoll={(result) => {
             setDiceResult(result);
-            // Could emit to WebSocket here to show to all players
           }}
         />
 

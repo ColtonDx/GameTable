@@ -17,6 +17,8 @@ pub enum Message {
     UpdateCounter { player_id: String, counter_type: String, delta: i32 },
     #[serde(rename = "SetPlayerName")]
     SetPlayerName { player_id: String, name: String },
+    #[serde(rename = "DiceRoll")]
+    DiceRoll { player_id: String, roll_type: String, result: String },
     #[serde(rename = "MoveCard")]
     MoveCard { card_id: String, from_zone: String, to_zone: String },
     #[serde(rename = "DrawCard")]
@@ -208,6 +210,22 @@ async fn handle_socket(
                         if let Some(game) = gm.get_game_mut(&game_id) {
                             game.restart_game();
                             game.broadcast_state();
+                        }
+                    },
+                    Message::DiceRoll { player_id: _, roll_type, result } => {
+                        // Just broadcast the dice roll to all players
+                        let gm = game_manager.read().await;
+                        if let Some(game) = gm.get_game(&game_id) {
+                            if let Some(tx) = &game.tx {
+                                let msg = serde_json::json!({
+                                    "DiceRoll": {
+                                        "roll_type": roll_type,
+                                        "result": result,
+                                        "player_name": game.players.get(&player_id).map(|p| &p.name).unwrap_or(&"Unknown".to_string()).clone()
+                                    }
+                                });
+                                let _ = tx.send(axum::extract::ws::Message::Text(msg.to_string()));
+                            }
                         }
                     },
                     _ => {}

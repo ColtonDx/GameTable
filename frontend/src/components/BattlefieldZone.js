@@ -2,6 +2,14 @@ import React from 'react';
 import '../styles/BattlefieldZone.css';
 
 const BattlefieldZone = ({ player, position, isActive, onUpdateLife, onUpdateCounter, onSpawnCard, onZoom }) => {
+  const handleZoomClick = (e) => {
+    // Only trigger zoom if clicking directly on the battlefield-zone background, not on child elements
+    if (e.target.classList.contains('battlefield-zone')) {
+      e.preventDefault();
+      onZoom && onZoom(position);
+    }
+  };
+
   if (!player) {
     return (
       <div 
@@ -10,10 +18,7 @@ const BattlefieldZone = ({ player, position, isActive, onUpdateLife, onUpdateCou
           e.preventDefault();
           onSpawnCard && onSpawnCard(position);
         }}
-        onDoubleClick={(e) => {
-          e.preventDefault();
-          onZoom && onZoom(position);
-        }}
+        onDoubleClick={handleZoomClick}
       >
         <div className={`empty-seat ${position}`}>
           <span className="seat-label">Empty Seat</span>
@@ -29,10 +34,7 @@ const BattlefieldZone = ({ player, position, isActive, onUpdateLife, onUpdateCou
         e.preventDefault();
         onSpawnCard && onSpawnCard(position);
       }}
-      onDoubleClick={(e) => {
-        e.preventDefault();
-        onZoom && onZoom(position);
-      }}
+      onDoubleClick={handleZoomClick}
     >
       {/* Player Info Card */}
       <div className={`player-card ${position}`}>

@@ -14,10 +14,6 @@ const LeftSidebar = ({ gameId }) => {
     }));
   };
 
-  const copyGameCode = () => {
-    navigator.clipboard.writeText(gameId);
-  };
-
   return (
     <div className={`left-sidebar ${!sidebarVisible ? 'collapsed' : ''}`}>
       <div className="sidebar-header">
@@ -38,13 +34,6 @@ const LeftSidebar = ({ gameId }) => {
             <div className="game-code-label">Game Code</div>
             <div className="game-code-display">
               <span className="code-value">{gameId}</span>
-              <button 
-                className="copy-btn"
-                onClick={copyGameCode}
-                title="Copy game code"
-              >
-                📋
-              </button>
             </div>
           </div>
 

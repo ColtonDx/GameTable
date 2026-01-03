@@ -1,10 +1,22 @@
 import React, { useState, useEffect, useRef } from 'react';
 import '../styles/DiceAndCoins.css';
 
-const DiceAndCoins = ({ onRoll }) => {
+const DiceAndCoins = ({ onRoll, ws, playerId }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [result, setResult] = useState(null);
   const timerRef = useRef(null);
+
+  const broadcastRoll = (rollType, rollResult) => {
+    if (ws && ws.readyState === WebSocket.OPEN) {
+      ws.send(JSON.stringify({
+        DiceRoll: {
+          player_id: playerId,
+          roll_type: rollType,
+          result: String(rollResult)
+        }
+      }));
+    }
+  };
 
   useEffect(() => {
     if (result) {
@@ -30,6 +42,7 @@ const DiceAndCoins = ({ onRoll }) => {
     const rollResult = Math.random() < 0.5 ? 'Heads' : 'Tails';
     setResult({ type: 'coin', value: rollResult });
     setIsOpen(false);
+    broadcastRoll('coin', rollResult);
     onRoll({ type: 'coin', result: rollResult });
   };
 
@@ -37,6 +50,7 @@ const DiceAndCoins = ({ onRoll }) => {
     const value = Math.floor(Math.random() * 6) + 1;
     setResult({ type: 'd6', value });
     setIsOpen(false);
+    broadcastRoll('d6', value);
     onRoll({ type: 'd6', result: value });
   };
 
@@ -44,6 +58,7 @@ const DiceAndCoins = ({ onRoll }) => {
     const value = Math.floor(Math.random() * 20) + 1;
     setResult({ type: 'd20', value });
     setIsOpen(false);
+    broadcastRoll('d20', value);
     onRoll({ type: 'd20', result: value });
   };
 

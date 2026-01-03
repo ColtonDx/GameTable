@@ -13,7 +13,9 @@ const GameTable = ({ gameId, playerId, playerName, onBack }) => {
   const [handScale, setHandScale] = useState(1);
   const [zoomedPosition, setZoomedPosition] = useState(null);
   const [sessionValid, setSessionValid] = useState(true);
+  const [diceRoll, setDiceRoll] = useState(null);
   const ws = useRef(null);
+  const diceRollTimeoutRef = useRef(null);
   const connectionAttempts = useRef(0);
   const connectionTimeoutRef = useRef(null);
   const maxConnectionAttempts = 3;
@@ -68,6 +70,15 @@ const GameTable = ({ gameId, playerId, playerName, onBack }) => {
           if (message.GameState.player_join_order !== undefined) {
             setPlayerJoinOrder(message.GameState.player_join_order);
           }
+        } else if (message.DiceRoll) {
+          setDiceRoll(message.DiceRoll);
+          // Auto-hide dice roll after 4 seconds
+          if (diceRollTimeoutRef.current) {
+            clearTimeout(diceRollTimeoutRef.current);
+          }
+          diceRollTimeoutRef.current = setTimeout(() => {
+            setDiceRoll(null);
+          }, 4000);
         } else if (message.Error) {
           setError(message.Error.message);
           setTimeout(() => setError(''), 5000);
@@ -111,6 +122,9 @@ const GameTable = ({ gameId, playerId, playerName, onBack }) => {
       // Clear the connection timeout if component unmounts
       if (connectionTimeoutRef.current) {
         clearTimeout(connectionTimeoutRef.current);
+      }
+      if (diceRollTimeoutRef.current) {
+        clearTimeout(diceRollTimeoutRef.current);
       }
       if (ws.current) {
         ws.current.close();
@@ -224,6 +238,18 @@ const GameTable = ({ gameId, playerId, playerName, onBack }) => {
   return (
     <div className="game-table-new">
       {error && <div className="error-banner">{error}</div>}
+
+      {/* Dice Roll Broadcast */}
+      {diceRoll && (
+        <div className="dice-roll-broadcast">
+          <div className="broadcast-content">
+            <span className="broadcast-player">{diceRoll.player_name} rolled:</span>
+            <span className="broadcast-result">
+              {diceRoll.roll_type === 'coin' ? '🪙' : '🎲'} {diceRoll.result}
+            </span>
+          </div>
+        </div>
+      )}
 
       {/* Zoomed Player View */}
       {zoomedPlayer && (
@@ -360,6 +386,8 @@ const GameTable = ({ gameId, playerId, playerName, onBack }) => {
         onGameMenu={handleGameMenu}
         onUndoTurn={handleUndoTurn}
         onBack={onBack}
+        ws={ws.current}
+        playerId={playerId}
       />
     </div>
   );

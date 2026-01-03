@@ -244,6 +244,12 @@ const GameTable = ({ gameId, playerId, playerName, onBack }) => {
   const currentPlayer = rotatedPlayers[0];
   const activePlayerJoinOrder = gameState?.current_turn_player || 0;
   
+  // Debug logging
+  React.useEffect(() => {
+    console.log('Current player:', currentPlayer);
+    console.log('Current player hand:', currentPlayer?.hand);
+  }, [currentPlayer]);
+  
   // Map the backend's active player index to the rotated view
   // The backend uses the original player order, we need to find which rotated index it corresponds to
   let activeRotatedIndex = -1;

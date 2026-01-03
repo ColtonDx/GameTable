@@ -5,6 +5,11 @@ const HandZone = ({ cards, onSelectCard, onHandOptions, scale = 1 }) => {
   const [selectedCardIndex, setSelectedCardIndex] = useState(null);
   const [scrollOffset, setScrollOffset] = useState(0);
 
+  // Debug logging
+  React.useEffect(() => {
+    console.log('HandZone received cards:', cards);
+  }, [cards]);
+
   const getCardImagePath = (card) => {
     // For now, all blank cards use the blank.jpg image
     if (card.name && card.name.includes('Blank')) {

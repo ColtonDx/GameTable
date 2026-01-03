@@ -8,33 +8,20 @@ function App() {
   const [playerId, setPlayerId] = useState(null);
   const [playerName, setPlayerName] = useState(null);
 
-  // Load session from localStorage on mount
-  useEffect(() => {
-    const savedGameId = localStorage.getItem('gameId');
-    const savedPlayerId = localStorage.getItem('playerId');
-    const savedPlayerName = localStorage.getItem('playerName');
-    
-    if (savedGameId && savedPlayerId && savedPlayerName) {
-      setGameId(savedGameId);
-      setPlayerId(savedPlayerId);
-      setPlayerName(savedPlayerName);
-    }
-  }, []);
+  // Don't load session from localStorage on mount
+  // Sessions should not persist after page reloads or docker rebuilds
+  // Users must explicitly rejoin through the lobby
 
   const handleStartGame = (gId, pId, pName) => {
-    // Store session in localStorage
-    localStorage.setItem('gameId', gId);
-    localStorage.setItem('playerId', pId);
-    localStorage.setItem('playerName', pName);
-    
+    // Don't store in localStorage - sessions are transient
     setGameId(gId);
     setPlayerId(pId);
     setPlayerName(pName);
   };
 
   const handleBackToLobby = () => {
-    // Clear session from localStorage when returning to lobby
-    // This ensures invalid/expired sessions don't persist across page reloads
+    // Clear session when returning to lobby
+    // Clear localStorage just in case any old sessions exist
     localStorage.removeItem('gameId');
     localStorage.removeItem('playerId');
     localStorage.removeItem('playerName');

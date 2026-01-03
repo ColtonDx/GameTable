@@ -168,6 +168,7 @@ async fn handle_socket(
                     Message::MoveCard { card_id, from_zone, to_zone } => {
                         let from_enum = match from_zone.as_str() {
                             "hand" => Zone::Hand,
+                            "battlefield" => Zone::Battlefield,
                             "graveyard" => Zone::Graveyard,
                             "exile" => Zone::Exile,
                             "command_zone" => Zone::CommandZone,
@@ -175,6 +176,7 @@ async fn handle_socket(
                         };
                         let to_enum = match to_zone.as_str() {
                             "hand" => Zone::Hand,
+                            "battlefield" => Zone::Battlefield,
                             "graveyard" => Zone::Graveyard,
                             "exile" => Zone::Exile,
                             "command_zone" => Zone::CommandZone,

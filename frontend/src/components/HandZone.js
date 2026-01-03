@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import '../styles/HandZone.css';
 
-const HandZone = ({ cards, onSelectCard, onHandOptions, scale = 1, ws = null, playerId = null, position = 'bottom-left' }) => {
+const HandZone = ({ cards, onSelectCard, onHandOptions, scale = 1, ws = null, playerId = null, position = 'bottom-left', onInspectCard = null }) => {
   const [selectedCardIndex, setSelectedCardIndex] = useState(null);
   const [scrollOffset, setScrollOffset] = useState(0);
   const [draggedCard, setDraggedCard] = useState(null);
@@ -68,6 +68,13 @@ const HandZone = ({ cards, onSelectCard, onHandOptions, scale = 1, ws = null, pl
           card_id: contextMenu.card.id
         }
       }));
+    }
+    setContextMenu(null);
+  };
+
+  const handleInspectCard = () => {
+    if (contextMenu && onInspectCard) {
+      onInspectCard(contextMenu.card);
     }
     setContextMenu(null);
   };
@@ -163,6 +170,9 @@ const HandZone = ({ cards, onSelectCard, onHandOptions, scale = 1, ws = null, pl
         >
           <button className="context-menu-item" onClick={handleFlipCard}>
             Flip Card
+          </button>
+          <button className="context-menu-item" onClick={handleInspectCard}>
+            Inspect
           </button>
         </div>
       )}

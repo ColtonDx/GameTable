@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import '../styles/BattlefieldZone.css';
 
-const BattlefieldZone = ({ player, position, isActive, onUpdateLife, onUpdateCounter, onSpawnCard, onZoom, ws = null, playerId = null }) => {
+const BattlefieldZone = ({ player, position, isActive, onUpdateLife, onUpdateCounter, onSpawnCard, onZoom, ws = null, playerId = null, onInspectCard = null }) => {
   const [dragOverZone, setDragOverZone] = useState(false);
+  const [contextMenu, setContextMenu] = useState(null);
 
   const handleZoomClick = (e) => {
     // Only trigger zoom if clicking directly on the battlefield-zone background, not on child elements
@@ -65,6 +66,42 @@ const BattlefieldZone = ({ player, position, isActive, onUpdateLife, onUpdateCou
       }));
     }
   };
+
+  const handleContextMenu = (e, card) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setContextMenu({
+      x: e.clientX,
+      y: e.clientY,
+      card: card
+    });
+  };
+
+  const handleFlipCard = () => {
+    if (contextMenu && ws && ws.readyState === WebSocket.OPEN && playerId) {
+      ws.send(JSON.stringify({
+        FlipCard: {
+          player_id: playerId,
+          card_id: contextMenu.card.id
+        }
+      }));
+    }
+    setContextMenu(null);
+  };
+
+  const handleInspectCard = () => {
+    if (contextMenu && onInspectCard) {
+      onInspectCard(contextMenu.card);
+    }
+    setContextMenu(null);
+  };
+
+  // Close context menu when clicking elsewhere
+  React.useEffect(() => {
+    const handleClick = () => setContextMenu(null);
+    document.addEventListener('click', handleClick);
+    return () => document.removeEventListener('click', handleClick);
+  }, []);
 
   if (!player) {
     return (
@@ -192,6 +229,7 @@ const BattlefieldZone = ({ player, position, isActive, onUpdateLife, onUpdateCou
             key={card.id}
             className={`battlefield-card ${card.is_tapped ? 'tapped' : ''}`}
             onClick={() => handleTapCard(card.id)}
+            onContextMenu={(e) => handleContextMenu(e, card)}
             title={`Click to ${card.is_tapped ? 'untap' : 'tap'}`}
           >
             <div
@@ -208,6 +246,21 @@ const BattlefieldZone = ({ player, position, isActive, onUpdateLife, onUpdateCou
 
       {/* Active Turn Indicator */}
       {isActive && <div className={`active-badge ${position}`}>ACTIVE TURN</div>}
+
+      {/* Context Menu for Card Actions */}
+      {contextMenu && (
+        <div 
+          className="card-context-menu" 
+          style={{ top: contextMenu.y, left: contextMenu.x }}
+        >
+          <button className="context-menu-item" onClick={handleFlipCard}>
+            Flip Card
+          </button>
+          <button className="context-menu-item" onClick={handleInspectCard}>
+            Inspect
+          </button>
+        </div>
+      )}
     </div>
   );
 };

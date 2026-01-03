@@ -15,6 +15,7 @@ const GameTable = ({ gameId, playerId, playerName, onBack }) => {
   const [sessionValid, setSessionValid] = useState(true);
   const [diceRoll, setDiceRoll] = useState(null);
   const [gameRestart, setGameRestart] = useState(null);
+  const [inspectedCard, setInspectedCard] = useState(null);
   const ws = useRef(null);
   const diceRollTimeoutRef = useRef(null);
   const restartTimeoutRef = useRef(null);
@@ -229,6 +230,16 @@ const GameTable = ({ gameId, playerId, playerName, onBack }) => {
     setZoomedPosition(zoomedPosition === position ? null : position);
   };
 
+  const getCardImagePath = (card) => {
+    if (card.is_flipped) {
+      return '/GameTableData/General/back.jpg';
+    }
+    if (card.name && card.name.includes('Blank')) {
+      return '/GameTableData/General/blank.jpg';
+    }
+    return '/GameTableData/General/blank.jpg';
+  };
+
   if (!sessionValid) {
     return <div className="game-table-new loading">Returning to lobby...</div>;
   }
@@ -319,8 +330,30 @@ const GameTable = ({ gameId, playerId, playerName, onBack }) => {
               onZoom={handleZoom}
               ws={zoomedIndex === 0 ? ws.current : null}
               playerId={zoomedIndex === 0 ? playerId : null}
+              onInspectCard={setInspectedCard}
             />
             <div className="zoom-hint">Double-click to exit zoom</div>
+          </div>
+        </div>
+      )}
+
+      {/* Card Inspection Overlay */}
+      {inspectedCard && (
+        <div className="card-inspection-overlay" onClick={() => setInspectedCard(null)}>
+          <div className="card-inspection-container">
+            <div
+              className="inspected-card-image"
+              style={{
+                backgroundImage: `url('${getCardImagePath(inspectedCard)}')`,
+                backgroundSize: 'contain',
+                backgroundPosition: 'center',
+                backgroundRepeat: 'no-repeat'
+              }}
+            ></div>
+            <div className="card-inspection-info">
+              <h3>{inspectedCard.name}</h3>
+              <p className="close-hint">Click anywhere to close</p>
+            </div>
           </div>
         </div>
       )}
@@ -377,6 +410,7 @@ const GameTable = ({ gameId, playerId, playerName, onBack }) => {
                   onZoom={handleZoom}
                   ws={ws.current}
                   playerId={playerId}
+                  onInspectCard={setInspectedCard}
                 />
               </div>
               {/* Bottom-Right Player (rotatedPlayers[1]) */}
@@ -404,6 +438,7 @@ const GameTable = ({ gameId, playerId, playerName, onBack }) => {
               ws={ws.current}
               playerId={playerId}
               position="bottom-left"
+              onInspectCard={setInspectedCard}
             />
           </div>
 

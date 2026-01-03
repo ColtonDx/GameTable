@@ -168,6 +168,75 @@
   font-style: italic;
 }
 
+/* Card Inspection Overlay */
+.card-inspection-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 3000;
+  cursor: pointer;
+  animation: fadeIn 0.2s ease-out;
+}
+
+.card-inspection-container {
+  position: relative;
+  max-width: 90vw;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: default;
+}
+
+.inspected-card-image {
+  width: 400px;
+  height: 570px;
+  border-radius: 8px;
+  box-shadow: 0 8px 32px rgba(96, 165, 250, 0.4);
+  border: 2px solid #60a5fa;
+  animation: zoomIn 0.3s ease-out;
+}
+
+.card-inspection-info {
+  margin-top: 20px;
+  text-align: center;
+}
+
+.card-inspection-info h3 {
+  font-size: 16px;
+  color: #93c5fd;
+  margin: 0 0 8px 0;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.close-hint {
+  font-size: 12px;
+  color: #6b7280;
+  margin: 0;
+  font-style: italic;
+}
+
+@keyframes zoomIn {
+  from {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
 /* Main Game Container */
 .game-container {
   flex: 1;

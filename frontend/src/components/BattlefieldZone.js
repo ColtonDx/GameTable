@@ -44,11 +44,18 @@ const BattlefieldZone = ({ player, position, isActive, onUpdateLife, onUpdateCou
       try {
         const data = JSON.parse(e.dataTransfer.getData('application/json'));
         if (data.card_id && data.from_zone) {
+          // Calculate center position for the dropped card
+          const battlefieldElement = e.currentTarget.querySelector('.battlefield-cards');
+          const centerX = battlefieldElement ? (battlefieldElement.offsetWidth / 2) - 30 : 100;
+          const centerY = battlefieldElement ? (battlefieldElement.offsetHeight / 2) - 43 : 100;
+          
           ws.send(JSON.stringify({
             MoveCard: {
               card_id: data.card_id,
               from_zone: data.from_zone,
-              to_zone: 'battlefield'
+              to_zone: 'battlefield',
+              position_x: centerX,
+              position_y: centerY
             }
           }));
         }
@@ -130,25 +137,24 @@ const BattlefieldZone = ({ player, position, isActive, onUpdateLife, onUpdateCou
       card_id: cardBeingDragged.card_id,
       x: cardBeingDragged.cardX + deltaX,
       y: cardBeingDragged.cardY + deltaY
-    });
-  };
-
-  const handleMouseUp = (e) => {
-    if (!cardBeingDragged) return;
-    
-    const dragTime = Date.now() - cardBeingDragged.startTime;
+    const cardId = cardBeingDragged.card_id;
     
     // If drag time is very short, treat as click (for tap/untap)
-    if (dragTime < 150 && draggedBattlefieldCard) {
-      const card = player.battlefield.find(c => c.id === cardBeingDragged.card_id);
-      if (card) {
-        handleTapCard(card.id);
-      }
+    if (dragTime < 150) {
+      handleTapCard(cardId);
     } else if (draggedBattlefieldCard && ws && ws.readyState === WebSocket.OPEN && playerId) {
-      // Send new position to server
+      // Send new position to server only if card actually moved
       ws.send(JSON.stringify({
         MoveCardOnBattlefield: {
           player_id: playerId,
+          card_id: draggedBattlefieldCard.card_id,
+          x: draggedBattlefieldCard.x,
+          y: draggedBattlefieldCard.y
+        }
+      }));
+    }
+    
+    // Clear all drag state      player_id: playerId,
           card_id: draggedBattlefieldCard.card_id,
           x: draggedBattlefieldCard.x,
           y: draggedBattlefieldCard.y
@@ -166,9 +172,13 @@ const BattlefieldZone = ({ player, position, isActive, onUpdateLife, onUpdateCou
       document.addEventListener('mousemove', handleMouseMove);
       document.addEventListener('mouseup', handleMouseUp);
       return () => {
+      
+      return () => {
         document.removeEventListener('mousemove', handleMouseMove);
         document.removeEventListener('mouseup', handleMouseUp);
-      };
+        // Ensure drag state is cleared on unmount
+        setCardBeingDragged(null);
+        setDraggedBattlefieldCard(null
     }
   }, [cardBeingDragged, draggedBattlefieldCard, player, ws, playerId]);
 

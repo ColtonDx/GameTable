@@ -22,7 +22,7 @@ pub enum Message {
     #[serde(rename = "LoadLibrary")]
     LoadLibrary { player_id: String, card_count: usize, card_type: String },
     #[serde(rename = "MoveCard")]
-    MoveCard { card_id: String, from_zone: String, to_zone: String },
+    MoveCard { card_id: String, from_zone: String, to_zone: String, #[serde(skip_serializing_if = "Option::is_none")] position_x: Option<f32>, #[serde(skip_serializing_if = "Option::is_none")] position_y: Option<f32> },
     #[serde(rename = "DrawCard")]
     DrawCard { card_name: String },
     #[serde(rename = "MillCard")]
@@ -167,7 +167,7 @@ async fn handle_socket(
                             }
                         }
                     },
-                    Message::MoveCard { card_id, from_zone, to_zone } => {
+                    Message::MoveCard { card_id, from_zone, to_zone, position_x, position_y } => {
                         let from_enum = match from_zone.as_str() {
                             "hand" => Zone::Hand,
                             "battlefield" => Zone::Battlefield,
@@ -188,6 +188,19 @@ async fn handle_socket(
                         let mut gm = game_manager.write().await;
                         if let Some(game) = gm.get_game_mut(&game_id) {
                             if game.move_card(&player_id, &card_id, from_enum, to_enum).is_ok() {
+                                // If moving to battlefield with position, update card position
+                                if to_enum == Zone::Battlefield {
+                                    if let Some(player) = game.get_player_mut(&player_id) {
+                                        if let Some(card) = player.battlefield.iter_mut().find(|c| c.id == card_id) {
+                                            if let Some(x) = position_x {
+                                                card.position_x = x;
+                                            }
+                                            if let Some(y) = position_y {
+                                                card.position_y = y;
+                                            }
+                                        }
+                                    }
+                                }
                                 game.broadcast_state();
                             }
                         }

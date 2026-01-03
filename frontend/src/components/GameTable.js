@@ -4,6 +4,7 @@ import LeftSidebar from './LeftSidebar';
 import BattlefieldZone from './BattlefieldZone';
 import HandZone from './HandZone';
 import CommandZone from './CommandZone';
+import LibraryZone from './LibraryZone';
 import CollapsibleZones from './CollapsibleZones';
 import BottomToolbar from './BottomToolbar';
 
@@ -449,6 +450,15 @@ const GameTable = ({ gameId, playerId, playerName, onBack }) => {
 
           {/* Current Player's Hand and Command Zone */}
           <div className="hand-and-command-area">
+            <div style={{ height: `${handScale * 219}px` }}>
+              <LibraryZone
+                cards={currentPlayer?.library || []}
+                ws={ws.current}
+                playerId={playerId}
+                onInspectCard={setInspectedCard}
+              />
+            </div>
+
             <div className="hand-section" style={{ height: `${handScale * 219}px`, flex: 1 }}>
               <HandZone 
                 cards={currentPlayer?.hand || []}

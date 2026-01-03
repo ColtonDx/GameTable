@@ -9,7 +9,7 @@
   flex-direction: column;
   gap: 12px;
   height: 100%;
-  overflow: hidden;
+  overflow: visible;
 }
 
 .hand-header {

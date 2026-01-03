@@ -449,7 +449,7 @@ const GameTable = ({ gameId, playerId, playerName, onBack }) => {
 
           {/* Current Player's Hand and Command Zone */}
           <div className="hand-and-command-area">
-            <div className="hand-section" style={{ height: `${handScale * 175}px`, flex: 1 }}>
+            <div className="hand-section" style={{ height: `${handScale * 219}px`, flex: 1 }}>
               <HandZone 
                 cards={currentPlayer?.hand || []}
                 onSelectCard={() => {}}

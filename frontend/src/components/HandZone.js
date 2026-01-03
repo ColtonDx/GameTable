@@ -54,8 +54,8 @@ const HandZone = ({ cards, onSelectCard, onHandOptions, scale = 1 }) => {
         </button>
       </div>
 
-      <div className="hand-container" style={{ transform: `scale(${scale})`, transformOrigin: 'center' }}>
-        {/* Left Navigation Arrow */}
+      <div className="hand-display-area">
+        {/* Left Navigation Arrow - Outside scaled container */}
         {cards.length > 0 && (
           <button 
             className="nav-arrow left-arrow"
@@ -66,36 +66,39 @@ const HandZone = ({ cards, onSelectCard, onHandOptions, scale = 1 }) => {
           </button>
         )}
 
-        {/* Card Fan Display */}
-        <div className="cards-fan-wrapper">
-          <div className="cards-fan">
-            {cards.length > 0 ? (
-              cards.map((card, index) => (
-                <div
-                  key={card.id}
-                  className={`card-in-hand ${selectedCardIndex === index ? 'selected' : ''}`}
-                  onClick={() => handleSelectCard(index)}
-                >
-                  <div className="card-content">
-                    <div 
-                      className="card-image"
-                      style={{
-                        backgroundImage: `url('${getCardImagePath(card)}')`,
-                        backgroundSize: 'cover',
-                        backgroundPosition: 'center'
-                      }}
-                    ></div>
-                    <div className="card-name">{card.name}</div>
+        {/* Scaled Cards Container */}
+        <div className="hand-container" style={{ transform: `scale(${scale})`, transformOrigin: 'center' }}>
+          {/* Card Fan Display */}
+          <div className="cards-fan-wrapper">
+            <div className="cards-fan">
+              {cards.length > 0 ? (
+                cards.map((card, index) => (
+                  <div
+                    key={card.id}
+                    className={`card-in-hand ${selectedCardIndex === index ? 'selected' : ''}`}
+                    onClick={() => handleSelectCard(index)}
+                  >
+                    <div className="card-content">
+                      <div 
+                        className="card-image"
+                        style={{
+                          backgroundImage: `url('${getCardImagePath(card)}')`,
+                          backgroundSize: 'cover',
+                          backgroundPosition: 'center'
+                        }}
+                      ></div>
+                      <div className="card-name">{card.name}</div>
+                    </div>
                   </div>
-                </div>
-              ))
-            ) : (
-              <div className="empty-hand">No cards in hand</div>
-            )}
+                ))
+              ) : (
+                <div className="empty-hand">No cards in hand</div>
+              )}
+            </div>
           </div>
         </div>
 
-        {/* Right Navigation Arrow */}
+        {/* Right Navigation Arrow - Outside scaled container */}
         {cards.length > 0 && (
           <button 
             className="nav-arrow right-arrow"

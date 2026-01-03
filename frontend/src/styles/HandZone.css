@@ -60,7 +60,7 @@
   border-color: rgba(37, 99, 235, 0.5);
 }
 
-.hand-container {
+.hand-display-area {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -93,6 +93,16 @@
 .nav-arrow:disabled {
   opacity: 0.3;
   cursor: not-allowed;
+}
+
+.hand-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  min-height: 80px;
+  position: relative;
+  overflow: hidden;
 }
 
 .cards-fan-wrapper {

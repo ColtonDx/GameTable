@@ -1,5 +1,5 @@
 # Stage 1: Build backend
-FROM rust:1.82 as backend-builder
+FROM rust:latest as backend-builder
 WORKDIR /app/backend
 COPY backend/ .
 RUN cargo build --release

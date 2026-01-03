@@ -224,7 +224,7 @@ async fn handle_socket(
                                         "player_name": game.players.get(&player_id).map(|p| &p.name).unwrap_or(&"Unknown".to_string()).clone()
                                     }
                                 });
-                                let _ = tx.send(axum::extract::ws::Message::Text(msg.to_string()));
+                                let _ = tx.send(msg.to_string());
                             }
                         }
                     },

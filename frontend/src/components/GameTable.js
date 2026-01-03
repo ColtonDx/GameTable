@@ -298,7 +298,7 @@ const GameTable = ({ gameId, playerId, playerName, onBack }) => {
             <BattlefieldZone 
               player={zoomedPlayer}
               position={zoomedPosition}
-              isActive={activePlayerIndex === zoomedIndex}
+              isActive={activeRotatedIndex === zoomedIndex}
               onUpdateLife={updatePlayerLife}
               onUpdateCounter={updatePlayerCounter}
               onSpawnCard={handleSpawnCard}

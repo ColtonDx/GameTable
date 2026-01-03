@@ -8,6 +8,7 @@ use std::sync::Arc;
 use tokio::sync::{RwLock, Mutex};
 
 use crate::game::{GameManager, Player, Zone, Card};
+use crate::AppState;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub enum Message {
@@ -59,8 +60,9 @@ pub enum Message {
 pub async fn ws_handler(
     Path((game_id, player_id)): Path<(String, String)>,
     ws: WebSocketUpgrade,
-    State(game_manager): State<Arc<RwLock<GameManager>>>,
+    State(state): State<AppState>,
 ) -> impl IntoResponse {
+    let game_manager = state.game_manager.clone();
     ws.on_upgrade(|socket| handle_socket(socket, game_id, player_id, game_manager))
 }
 

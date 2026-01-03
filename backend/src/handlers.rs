@@ -4,11 +4,8 @@ use axum::{
     response::Json,
 };
 use serde_json::json;
-use std::sync::Arc;
-use tokio::sync::RwLock;
 
-use crate::game::GameManager;
-use crate::users::{LoginRequest, RegisterRequest, ResetPasswordRequest, AuthResponse, create_user, verify_user, user_exists, reset_password, is_admin};
+use crate::users::{LoginRequest, RegisterRequest, ResetPasswordRequest, AuthResponse, create_user, verify_user, user_exists, reset_password};
 use crate::AppState;
 
 pub async fn health_handler() -> &'static str {

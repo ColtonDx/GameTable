@@ -35,6 +35,8 @@ pub enum Message {
     TapCard { player_id: String, card_id: String },
     #[serde(rename = "FlipCard")]
     FlipCard { player_id: String, card_id: String },
+    #[serde(rename = "Copy")]
+    Copy { player_id: String, card_id: String },
     #[serde(rename = "UntapAll")]
     UntapAll { player_id: String },
     #[serde(rename = "MoveCardOnBattlefield")]
@@ -178,6 +180,7 @@ async fn handle_socket(
                             "graveyard" => Zone::Graveyard,
                             "exile" => Zone::Exile,
                             "command_zone" => Zone::CommandZone,
+                            "library" => Zone::Library,
                             _ => Zone::Hand,
                         };
                         let to_enum = match to_zone.as_str() {
@@ -186,13 +189,32 @@ async fn handle_socket(
                             "graveyard" => Zone::Graveyard,
                             "exile" => Zone::Exile,
                             "command_zone" => Zone::CommandZone,
+                            "library" => Zone::Library,
                             _ => Zone::Hand,
                         };
                         let is_moving_to_battlefield = to_enum == Zone::Battlefield;
 
                         let mut gm = game_manager.write().await;
                         if let Some(game) = gm.get_game_mut(&game_id) {
-                            if game.move_card(&player_id, &card_id, from_enum, to_enum).is_ok() {
+                            // Check if this is a token moving off battlefield
+                            let is_token_leaving = {
+                                if let Some(player) = game.get_player_mut(&player_id) {
+                                    if let Some(card) = player.battlefield.iter().find(|c| c.id == card_id) {
+                                        card.is_token && !is_moving_to_battlefield
+                                    } else {
+                                        false
+                                    }
+                                } else {
+                                    false
+                                }
+                            };
+
+                            if is_token_leaving {
+                                // Delete the token instead of moving it
+                                if let Some(player) = game.get_player_mut(&player_id) {
+                                    player.battlefield.retain(|c| c.id != card_id);
+                                }
+                            } else if game.move_card(&player_id, &card_id, from_enum, to_enum).is_ok() {
                                 // If moving to battlefield with position, update card position
                                 if is_moving_to_battlefield {
                                     if let Some(player) = game.get_player_mut(&player_id) {
@@ -206,8 +228,8 @@ async fn handle_socket(
                                         }
                                     }
                                 }
-                                game.broadcast_state();
                             }
+                            game.broadcast_state();
                         }
                     },
                     Message::DrawCard { card_name: _ } => {
@@ -309,6 +331,29 @@ async fn handle_socket(
                             }
                         }
                     },
+                    Message::Copy { player_id: pid, card_id } => {
+                        let mut gm = game_manager.write().await;
+                        if let Some(game) = gm.get_game_mut(&game_id) {
+                            if let Some(player) = game.get_player_mut(&pid) {
+                                // Find the card on the battlefield
+                                if let Some(card_to_copy) = player.battlefield.iter().find(|c| c.id == card_id) {
+                                    // Create a token copy
+                                    let token = Card {
+                                        id: uuid::Uuid::new_v4().to_string(),
+                                        name: card_to_copy.name.clone(),
+                                        is_tapped: card_to_copy.is_tapped,
+                                        is_flipped: card_to_copy.is_flipped,
+                                        is_commander: false,
+                                        is_token: true,
+                                        position_x: card_to_copy.position_x,
+                                        position_y: card_to_copy.position_y,
+                                    };
+                                    player.battlefield.push(token);
+                                    game.broadcast_state();
+                                }
+                            }
+                        }
+                    },
                     Message::UntapAll { player_id: pid } => {
                         let mut gm = game_manager.write().await;
                         if let Some(game) = gm.get_game_mut(&game_id) {
@@ -391,6 +436,7 @@ async fn handle_socket(
                                         is_tapped: false,
                                         is_flipped: false,
                                         is_commander: false,
+                                        is_token: false,
                                         position_x: 0.0,
                                         position_y: 0.0,
                                     };
@@ -404,6 +450,7 @@ async fn handle_socket(
                                         name: format!("Blank Card {}", card_count),
                                         is_tapped: false,
                                         is_flipped: false,
+                                        is_token: false,
                                         is_commander: true,
                                         position_x: 0.0,
                                         position_y: 0.0,

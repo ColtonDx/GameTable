@@ -132,7 +132,9 @@ const CommandZone = ({ cards, ws = null, playerId = null, onInspectCard = null }
                     backgroundSize: 'cover',
                     backgroundPosition: 'center'
                   }}
-                ></div>
+                >
+                  {card.is_token && <div className="token-label">TOKEN</div>}
+                </div>
                 <div className="card-name">{card.name}</div>
               </div>
             </div>

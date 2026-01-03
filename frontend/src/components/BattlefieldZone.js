@@ -106,6 +106,18 @@ const BattlefieldZone = ({ player, position, isActive, onUpdateLife, onUpdateCou
     setContextMenu(null);
   };
 
+  const handleCopyCard = () => {
+    if (contextMenu && ws && ws.readyState === WebSocket.OPEN && playerId) {
+      ws.send(JSON.stringify({
+        Copy: {
+          player_id: playerId,
+          card_id: contextMenu.card.id
+        }
+      }));
+    }
+    setContextMenu(null);
+  };
+
   const sendCardTo = (toZone) => {
     if (!contextMenu || !ws || ws.readyState !== WebSocket.OPEN || !playerId) return;
 
@@ -373,7 +385,9 @@ const BattlefieldZone = ({ player, position, isActive, onUpdateLife, onUpdateCou
                   backgroundSize: 'cover',
                   backgroundPosition: 'center'
                 }}
-              ></div>
+              >
+                {card.is_token && <div className="token-label">TOKEN</div>}
+              </div>
             </div>
           );
         })}
@@ -393,6 +407,9 @@ const BattlefieldZone = ({ player, position, isActive, onUpdateLife, onUpdateCou
           </button>
           <button className="context-menu-item" onClick={handleInspectCard}>
             Inspect
+          </button>
+          <button className="context-menu-item" onClick={handleCopyCard}>
+            Copy (Token)
           </button>
           <div className="context-submenu-divider"></div>
           <div className="context-submenu">

@@ -173,6 +173,19 @@
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
+  position: relative;
+}
+
+.token-label {
+  position: absolute;
+  bottom: 2px;
+  background: rgba(255, 0, 0, 0.85);
+  color: white;
+  font-size: 9px;
+  font-weight: bold;
+  padding: 1px 3px;
+  border-radius: 2px;
+  letter-spacing: 0.5px;
 }
 
 .card-name {

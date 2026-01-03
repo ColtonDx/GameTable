@@ -10,6 +10,7 @@ pub struct Card {
     pub is_tapped: bool,
     pub is_flipped: bool,
     pub is_commander: bool,
+    pub is_token: bool,
     pub position_x: f32,
     pub position_y: f32,
 }
@@ -21,6 +22,7 @@ pub enum Zone {
     Graveyard,
     Exile,
     CommandZone,
+    Library,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]

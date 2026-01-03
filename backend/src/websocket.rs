@@ -157,6 +157,7 @@ async fn handle_socket(
                                     is_tapped: false,
                                     is_flipped: false,
                                     is_commander: false,
+                                    is_token: false,
                                     position_x: 0.0,
                                     position_y: 0.0,
                                 };

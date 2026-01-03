@@ -178,7 +178,9 @@ const HandZone = ({ cards, onSelectCard, onHandOptions, scale = 1, ws = null, pl
                         backgroundSize: 'cover',
                         backgroundPosition: 'center'
                       }}
-                    ></div>
+                    >
+                      {card.is_token && <div className="token-label">TOKEN</div>}
+                    </div>
                     <div className="card-name">{card.name}</div>
                   </div>
                 ))

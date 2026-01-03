@@ -409,6 +409,22 @@
   background-position: center;
   border-radius: 2px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.token-label {
+  position: absolute;
+  bottom: 2px;
+  background: rgba(255, 0, 0, 0.85);
+  color: white;
+  font-size: 10px;
+  font-weight: bold;
+  padding: 2px 4px;
+  border-radius: 2px;
+  letter-spacing: 0.5px;
 }
 
 .battlefield-zone.drag-over {

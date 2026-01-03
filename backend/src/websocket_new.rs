@@ -208,8 +208,19 @@ async fn handle_socket(
                     Message::RestartGame {} => {
                         let mut gm = game_manager.write().await;
                         if let Some(game) = gm.get_game_mut(&game_id) {
+                            let player_name = game.players.get(&player_id).map(|p| &p.name).unwrap_or(&"Unknown".to_string()).clone();
                             game.restart_game();
                             game.broadcast_state();
+                            
+                            // Broadcast restart notification
+                            if let Some(tx) = &game.tx {
+                                let msg = serde_json::json!({
+                                    "GameRestarted": {
+                                        "player_name": player_name
+                                    }
+                                });
+                                let _ = tx.send(msg.to_string());
+                            }
                         }
                     },
                     Message::DiceRoll { player_id: _, roll_type, result } => {

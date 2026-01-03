@@ -14,8 +14,10 @@ const GameTable = ({ gameId, playerId, playerName, onBack }) => {
   const [zoomedPosition, setZoomedPosition] = useState(null);
   const [sessionValid, setSessionValid] = useState(true);
   const [diceRoll, setDiceRoll] = useState(null);
+  const [gameRestart, setGameRestart] = useState(null);
   const ws = useRef(null);
   const diceRollTimeoutRef = useRef(null);
+  const restartTimeoutRef = useRef(null);
   const connectionAttempts = useRef(0);
   const connectionTimeoutRef = useRef(null);
   const maxConnectionAttempts = 3;
@@ -79,6 +81,15 @@ const GameTable = ({ gameId, playerId, playerName, onBack }) => {
           diceRollTimeoutRef.current = setTimeout(() => {
             setDiceRoll(null);
           }, 4000);
+        } else if (message.GameRestarted) {
+          setGameRestart(message.GameRestarted);
+          // Auto-hide restart notification after 5 seconds
+          if (restartTimeoutRef.current) {
+            clearTimeout(restartTimeoutRef.current);
+          }
+          restartTimeoutRef.current = setTimeout(() => {
+            setGameRestart(null);
+          }, 5000);
         } else if (message.Error) {
           setError(message.Error.message);
           setTimeout(() => setError(''), 5000);
@@ -125,6 +136,9 @@ const GameTable = ({ gameId, playerId, playerName, onBack }) => {
       }
       if (diceRollTimeoutRef.current) {
         clearTimeout(diceRollTimeoutRef.current);
+      }
+      if (restartTimeoutRef.current) {
+        clearTimeout(restartTimeoutRef.current);
       }
       if (ws.current) {
         ws.current.close();
@@ -252,6 +266,16 @@ const GameTable = ({ gameId, playerId, playerName, onBack }) => {
   return (
     <div className="game-table-new">
       {error && <div className="error-banner">{error}</div>}
+
+      {/* Game Restart Notification */}
+      {gameRestart && (
+        <div className="game-restart-notification">
+          <div className="notification-content">
+            <span className="notification-icon">🔄</span>
+            <span className="notification-text">Game restarted by {gameRestart.player_name}</span>
+          </div>
+        </div>
+      )}
 
       {/* Dice Roll Broadcast */}
       {diceRoll && (

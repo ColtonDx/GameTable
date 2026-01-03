@@ -427,6 +427,14 @@ async fn handle_socket(
                         let mut gm = game_manager.write().await;
                         if let Some(game) = gm.get_game_mut(&game_id) {
                             if let Some(player) = game.get_player_mut(&pid) {
+                                // Clear all zones before loading
+                                player.hand.clear();
+                                player.battlefield.clear();
+                                player.graveyard.clear();
+                                player.exile.clear();
+                                player.library.clear();
+                                player.command_zone.clear();
+                                
                                 let lib_count = if card_count > 0 { card_count - 1 } else { 0 };
                                 
                                 for i in 0..lib_count {

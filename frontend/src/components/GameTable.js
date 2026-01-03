@@ -146,6 +146,17 @@ const GameTable = ({ gameId, playerId, playerName, onBack }) => {
     };
   }, [gameId, playerId, playerName]);
 
+  // Debug logging for hand zone
+  useEffect(() => {
+    if (gameState?.players) {
+      const allPlayers = Object.values(gameState.players);
+      console.log('Game state players:', allPlayers);
+      allPlayers.forEach(player => {
+        console.log(`Player ${player.id} hand:`, player.hand);
+      });
+    }
+  }, [gameState]);
+
   const updatePlayerLife = (playerId, delta) => {
     if (ws.current && ws.current.readyState === WebSocket.OPEN) {
       ws.current.send(
@@ -243,12 +254,6 @@ const GameTable = ({ gameId, playerId, playerName, onBack }) => {
   
   const currentPlayer = rotatedPlayers[0];
   const activePlayerJoinOrder = gameState?.current_turn_player || 0;
-  
-  // Debug logging
-  React.useEffect(() => {
-    console.log('Current player:', currentPlayer);
-    console.log('Current player hand:', currentPlayer?.hand);
-  }, [currentPlayer]);
   
   // Map the backend's active player index to the rotated view
   // The backend uses the original player order, we need to find which rotated index it corresponds to

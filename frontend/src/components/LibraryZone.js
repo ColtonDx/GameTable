@@ -46,24 +46,24 @@ const LibraryZone = ({ cards = [], ws = null, playerId = null, onInspectCard = n
   return (
     <div className="library-zone">
       <div className="library-header">
-        <div cllick={handleDrawCard}
+        <div className="library-zone-header">
+          <div className="library-zone-title">Library</div>
+          <div className="card-count">{cardCount}</div>
+        </div>
+      </div>
+
+      <div className="library-cards">
+        {cardCount > 0 ? (
+          <div
+            className="library-card back-card"
+            onClick={handleDrawCard}
             onContextMenu={handleContextMenu}
             title="Click to draw a card, right-click for options"
             style={{
               backgroundImage: `url('/GameTableData/General/back.jpg')`,
               backgroundSize: 'cover',
               backgroundPosition: 'center',
-              cursor: 'poi
-      <div className="library-cards">
-        {cardCount > 0 ? (
-          <div
-            className="library-card back-card"
-            onContextMenu={handleContextMenu}
-            title="Right-click for options"
-            style={{
-              backgroundImage: `url('/GameTableData/General/back.jpg')`,
-              backgroundSize: 'cover',
-              backgroundPosition: 'center'
+              cursor: 'pointer'
             }}
           ></div>
         ) : (

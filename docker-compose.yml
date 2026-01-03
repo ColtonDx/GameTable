@@ -1,10 +1,29 @@
 services:
+  postgres:
+    image: postgres:15-alpine
+    environment:
+      - POSTGRES_USER=gametable
+      - POSTGRES_PASSWORD=gametable_dev_pass
+      - POSTGRES_DB=gametable_db
+    volumes:
+      - /GameTableData/Postgres:/var/lib/postgresql/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U gametable"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
   game-server:
     build: .
     ports:
       - "3001:3001"
     environment:
       - RUST_LOG=info
+      - DATABASE_URL=postgres://gametable:gametable_dev_pass@postgres:5432/gametable_db
     restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
     volumes:
       - /GameTableData:/GameTableData

@@ -15,6 +15,9 @@ futures = "0.3"
 tracing = "0.1"
 tracing-subscriber = "0.3"
 rand = "0.8"
+sqlx = { version = "0.7", features = ["postgres", "runtime-tokio-rustls", "uuid"] }
+bcrypt = "0.15"
+dotenv = "0.15"
 
 [profile.release]
 opt-level = 3

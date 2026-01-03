@@ -1,13 +1,38 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import '../styles/Lobby.css';
+import Login from './Login';
 
 const Lobby = ({ onStartGame }) => {
+  const [currentUser, setCurrentUser] = useState(null);
   const [playerName, setPlayerName] = useState('');
   const [gameId, setGameId] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [gameSelected, setGameSelected] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
   const gameIdInputRef = useRef(null);
+
+  useEffect(() => {
+    // Check if user is logged in
+    const user = localStorage.getItem('currentUser');
+    if (user) {
+      const userData = JSON.parse(user);
+      setCurrentUser(userData);
+      setPlayerName(userData.username);
+    }
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem('currentUser');
+    setCurrentUser(null);
+    setPlayerName('');
+    setGameId('');
+    setGameSelected(false);
+  };
+
+  if (!currentUser) {
+    return <Login onLoginSuccess={setCurrentUser} />;
+  }
 
   const handleGameIdChange = (e) => {
     // Convert to uppercase for game ID input
@@ -106,7 +131,25 @@ const Lobby = ({ onStartGame }) => {
         backgroundAttachment: 'fixed'
       }}
     >
+      <button className="settings-btn" onClick={() => setShowSettings(!showSettings)} title="Settings">
+        ⚙️
+      </button>
+      
       <h1>Game Table</h1>
+      
+      {showSettings && (
+        <div className="settings-menu">
+          <h3>Settings</h3>
+          <p>Logged in as: <strong>{currentUser.username}</strong></p>
+          <button onClick={handleLogout} className="btn btn-secondary">
+            Logout
+          </button>
+          <button onClick={() => setShowSettings(false)} className="btn btn-secondary">
+            Close
+          </button>
+        </div>
+      )}
+      
       <div className="lobby-buttons">
         <button
           onClick={handleCreateGame}
@@ -126,7 +169,7 @@ const Lobby = ({ onStartGame }) => {
           onKeyDown={(e) => {
             if (e.key === 'Enter') {
               e.preventDefault();
-              handleJoinGame();
+              handleStartJoin();
             }
           }}
           className="input"

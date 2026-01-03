@@ -5,6 +5,62 @@
   justify-content: center;
   min-height: 100vh;
   padding: 20px;
+  position: relative;
+}
+
+.settings-btn {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: rgba(96, 165, 250, 0.2);
+  border: 1px solid rgba(96, 165, 250, 0.3);
+  color: #60a5fa;
+  width: 50px;
+  height: 50px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 24px;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.settings-btn:hover {
+  background: rgba(96, 165, 250, 0.3);
+  border-color: rgba(96, 165, 250, 0.5);
+  transform: rotate(15deg);
+}
+
+.settings-menu {
+  position: fixed;
+  top: 80px;
+  right: 20px;
+  background: rgba(15, 23, 42, 0.95);
+  border: 1px solid rgba(96, 165, 250, 0.3);
+  border-radius: 8px;
+  padding: 20px;
+  min-width: 250px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(10px);
+  z-index: 1000;
+}
+
+.settings-menu h3 {
+  color: #60a5fa;
+  margin-top: 0;
+  font-size: 18px;
+}
+
+.settings-menu p {
+  color: #93c5fd;
+  margin: 12px 0;
+  font-size: 14px;
+}
+
+.settings-menu .btn {
+  width: 100%;
+  margin-top: 8px;
 }
 
 .lobby h1 {

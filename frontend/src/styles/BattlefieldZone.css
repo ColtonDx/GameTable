@@ -292,11 +292,11 @@
   position: absolute;
   background: linear-gradient(135deg, #10b981, #059669);
   color: white;
-  padding: 12px 20px;
-  border-radius: 8px;
-  font-size: 18px;
+  padding: 8px 14px;
+  border-radius: 6px;
+  font-size: 13px;
   font-weight: 700;
-  letter-spacing: 2px;
+  letter-spacing: 1px;
   box-shadow: 0 4px 20px rgba(16, 185, 129, 0.5);
   z-index: 100;
   pointer-events: none;

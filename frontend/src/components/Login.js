@@ -44,7 +44,12 @@ const Login = ({ onLoginSuccess }) => {
   };
 
   return (
-    <div className="login-container">
+    <div className="login-container" style={{
+      backgroundImage: "url('/GameTableData/General/wallpaper.jpg')",
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
+      backgroundAttachment: 'fixed'
+    }}>
       <div className="login-card">
         <h1 className="login-title">Game Table</h1>
         <form onSubmit={handleAuth}>

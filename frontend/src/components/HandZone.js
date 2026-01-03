@@ -105,6 +105,22 @@ const HandZone = ({ cards, onSelectCard, onHandOptions, scale = 1, ws = null, pl
     setContextMenu(null);
   };
 
+  const sendCardTo = (toZone) => {
+    if (!contextMenu || !ws || ws.readyState !== WebSocket.OPEN || !playerId) return;
+
+    const payload = {
+      MoveCard: {
+        player_id: playerId,
+        card_id: contextMenu.card.id,
+        from_zone: 'hand',
+        to_zone: toZone === 'library_top' || toZone === 'library_bottom' || toZone === 'library_shuffle' ? 'library' : toZone
+      }
+    };
+
+    ws.send(JSON.stringify(payload));
+    setContextMenu(null);
+  };
+
   // Close context menu when clicking elsewhere
   React.useEffect(() => {
     const handleClick = () => setContextMenu(null);
@@ -197,6 +213,32 @@ const HandZone = ({ cards, onSelectCard, onHandOptions, scale = 1, ws = null, pl
           <button className="context-menu-item" onClick={handleInspectCard}>
             Inspect
           </button>
+          <div className="context-submenu-divider"></div>
+          <div className="context-submenu">
+            <button className="context-menu-item submenu-trigger">
+              Send To...
+            </button>
+            <div className="submenu-items">
+              <button className="submenu-item" onClick={() => sendCardTo('hand')}>
+                To the Hand
+              </button>
+              <button className="submenu-item" onClick={() => sendCardTo('exile')}>
+                To Exile
+              </button>
+              <button className="submenu-item" onClick={() => sendCardTo('graveyard')}>
+                To the Graveyard
+              </button>
+              <button className="submenu-item" onClick={() => sendCardTo('library_top')}>
+                To the Top of the Library
+              </button>
+              <button className="submenu-item" onClick={() => sendCardTo('library_bottom')}>
+                To the Bottom of the Library
+              </button>
+              <button className="submenu-item" onClick={() => sendCardTo('library_shuffle')}>
+                Shuffled into the Library
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>

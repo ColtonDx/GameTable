@@ -289,10 +289,7 @@
 
 /* Active Turn Badge */
 .active-badge {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  position: absolute;
   background: linear-gradient(135deg, #10b981, #059669);
   color: white;
   padding: 12px 20px;
@@ -301,8 +298,29 @@
   font-weight: 700;
   letter-spacing: 2px;
   box-shadow: 0 4px 20px rgba(16, 185, 129, 0.5);
-  z-index: 1000;
+  z-index: 100;
   pointer-events: none;
+}
+
+/* Position badge in the corner closest to the center for each quadrant */
+.active-badge.bottom-left {
+  top: 8px;
+  right: 8px;
+}
+
+.active-badge.bottom-right {
+  top: 8px;
+  left: 8px;
+}
+
+.active-badge.top-left {
+  bottom: 8px;
+  right: 8px;
+}
+
+.active-badge.top-right {
+  bottom: 8px;
+  left: 8px;
 }
 
 /* Position-specific styling */

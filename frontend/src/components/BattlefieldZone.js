@@ -119,7 +119,7 @@ const BattlefieldZone = ({ player, position, isActive, onUpdateLife, onUpdateCou
       </div>
 
       {/* Active Turn Indicator */}
-      {isActive && <div className="active-badge">ACTIVE TURN</div>}
+      {isActive && <div className={`active-badge ${position}`}>ACTIVE TURN</div>}
     </div>
   );
 };

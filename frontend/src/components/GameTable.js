@@ -257,7 +257,9 @@ const GameTable = ({ gameId, playerId, playerName, onBack }) => {
       {diceRoll && (
         <div className="dice-roll-broadcast">
           <div className="broadcast-content">
-            <span className="broadcast-player">{diceRoll.player_name} rolled:</span>
+            <span className="broadcast-player">
+              {diceRoll.roll_type === 'coin' ? `${diceRoll.player_name} flipped:` : `${diceRoll.player_name} rolled:`}
+            </span>
             <span className="broadcast-result">
               {diceRoll.roll_type === 'coin' ? '🪙' : '🎲'} {diceRoll.result}
             </span>

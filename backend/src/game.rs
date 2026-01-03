@@ -7,6 +7,8 @@ use tokio::sync::broadcast;
 pub struct Card {
     pub id: String,
     pub name: String,
+    pub is_tapped: bool,
+    pub is_flipped: bool,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
@@ -28,11 +30,13 @@ pub struct Player {
     pub experience: i32,
     pub hand: Vec<Card>,
     pub library: Vec<Card>,
+    pub battlefield: Vec<Card>,
     pub graveyard: Vec<Card>,
     pub exile: Vec<Card>,
     pub command_zone: Vec<Card>,
     pub is_active: bool,
     pub join_order: usize,
+    pub profile_picture: String,
 }
 
 impl Player {
@@ -46,18 +50,20 @@ impl Player {
             experience: 0,
             hand: Vec::new(),
             library: Vec::new(),
+            battlefield: Vec::new(),
             graveyard: Vec::new(),
             exile: Vec::new(),
             command_zone: Vec::new(),
             is_active: true,
             join_order,
+            profile_picture: String::from("/GameTableData/General/standin.jpg"),
         }
     }
 
     pub fn get_zone(&self, zone: &Zone) -> &Vec<Card> {
         match zone {
             Zone::Hand => &self.hand,
-            Zone::Battlefield => &self.hand,
+            Zone::Battlefield => &self.battlefield,
             Zone::Graveyard => &self.graveyard,
             Zone::Exile => &self.exile,
             Zone::CommandZone => &self.command_zone,
@@ -67,7 +73,7 @@ impl Player {
     pub fn get_zone_mut(&mut self, zone: &Zone) -> &mut Vec<Card> {
         match zone {
             Zone::Hand => &mut self.hand,
-            Zone::Battlefield => &mut self.hand,
+            Zone::Battlefield => &mut self.battlefield,
             Zone::Graveyard => &mut self.graveyard,
             Zone::Exile => &mut self.exile,
             Zone::CommandZone => &mut self.command_zone,
@@ -189,6 +195,7 @@ impl GameSession {
             
             // Move all cards back to library
             player.library.append(&mut player.hand);
+            player.library.append(&mut player.battlefield);
             player.library.append(&mut player.graveyard);
             player.library.append(&mut player.exile);
             player.library.append(&mut player.command_zone);

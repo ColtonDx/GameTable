@@ -317,6 +317,8 @@ const GameTable = ({ gameId, playerId, playerName, onBack }) => {
               onUpdateCounter={updatePlayerCounter}
               onSpawnCard={handleSpawnCard}
               onZoom={handleZoom}
+              ws={zoomedIndex === 0 ? ws.current : null}
+              playerId={zoomedIndex === 0 ? playerId : null}
             />
             <div className="zoom-hint">Double-click to exit zoom</div>
           </div>
@@ -373,6 +375,8 @@ const GameTable = ({ gameId, playerId, playerName, onBack }) => {
                   onUpdateCounter={updatePlayerCounter}
                   onSpawnCard={handleSpawnCard}
                   onZoom={handleZoom}
+                  ws={ws.current}
+                  playerId={playerId}
                 />
               </div>
               {/* Bottom-Right Player (rotatedPlayers[1]) */}
@@ -397,6 +401,9 @@ const GameTable = ({ gameId, playerId, playerName, onBack }) => {
               onSelectCard={() => {}}
               onHandOptions={() => {}}
               scale={handScale}
+              ws={ws.current}
+              playerId={playerId}
+              position="bottom-left"
             />
           </div>
 

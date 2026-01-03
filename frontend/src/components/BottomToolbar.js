@@ -14,6 +14,18 @@ const BottomToolbar = ({ gameState, turnNumber, onNextTurn, onAction, onGameMenu
     { key: 'Enter', action: 'Confirm Action' },
   ];
 
+  const handleLeaveTable = () => {
+    if (ws && ws.readyState === WebSocket.OPEN) {
+      ws.send(JSON.stringify({
+        LeaveTable: {}
+      }));
+      // After a short delay, return to lobby
+      setTimeout(() => {
+        onBack();
+      }, 500);
+    }
+  };
+
   return (
     <div className="bottom-toolbar">
       {/* Left Section - Game Menu */}
@@ -29,10 +41,13 @@ const BottomToolbar = ({ gameState, turnNumber, onNextTurn, onAction, onGameMenu
           {gameMenuOpen && (
             <div className="toolbar-menu game-menu-dropdown">
               <button className="menu-item" onClick={onGameMenu}>
-                Restart Game
+                Restart Game (Vote)
+              </button>
+              <button className="menu-item" onClick={handleLeaveTable}>
+                Leave Table
               </button>
               <button className="menu-item" onClick={onBack}>
-                Exit Game
+                Main Menu
               </button>
             </div>
           )}

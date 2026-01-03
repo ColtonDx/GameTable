@@ -117,6 +117,38 @@
   border-bottom: 1px solid rgba(255, 255, 255, 0.2);
 }
 
+.player-name-with-avatar {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding-bottom: 2px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.player-avatar {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 1px solid rgba(96, 165, 250, 0.4);
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.player-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+.player-name-with-avatar .player-name {
+  padding-bottom: 0;
+  border-bottom: none;
+  margin: 0;
+  text-align: left;
+  font-size: 10px;
+}
+
 .player-life {
   display: flex;
   align-items: center;
@@ -326,6 +358,50 @@
 /* Position-specific styling */
 .battlefield-zone.top-left {
   border-radius: 8px 0 0 0;
+}
+
+/* Battlefield Cards Display */
+.battlefield-cards {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 12px;
+  flex: 1;
+  overflow-y: auto;
+  align-content: flex-start;
+}
+
+.battlefield-card {
+  width: 60px;
+  height: 86px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border-radius: 2px;
+  position: relative;
+  transform-origin: center;
+}
+
+.battlefield-card:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(96, 165, 250, 0.3);
+}
+
+.battlefield-card.tapped {
+  transform: rotate(90deg);
+}
+
+.battlefield-card .card-image {
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  border-radius: 2px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+}
+
+.battlefield-zone.drag-over {
+  background: linear-gradient(135deg, #1a4d2e 0%, #1f3a3a 100%);
+  box-shadow: inset 0 0 20px rgba(16, 185, 129, 0.3);
 }
 
 .battlefield-zone.top-right {

@@ -29,12 +29,18 @@ pub enum Message {
     MillCard { card_name: String },
     #[serde(rename = "DiscardCard")]
     DiscardCard { card_id: String },
+    #[serde(rename = "TapCard")]
+    TapCard { player_id: String, card_id: String },
+    #[serde(rename = "FlipCard")]
+    FlipCard { player_id: String, card_id: String },
     #[serde(rename = "NextTurn")]
     NextTurn {},
     #[serde(rename = "UndoTurn")]
     UndoTurn {},
     #[serde(rename = "RestartGame")]
     RestartGame {},
+    #[serde(rename = "LeaveTable")]
+    LeaveTable {},
     
     #[serde(rename = "GameState")]
     GameState { state: String },
@@ -238,6 +244,62 @@ async fn handle_socket(
                             }
                         }
                     },
+                    Message::TapCard { player_id: pid, card_id } => {
+                        let mut gm = game_manager.write().await;
+                        if let Some(game) = gm.get_game_mut(&game_id) {
+                            if let Some(player) = game.get_player_mut(&pid) {
+                                // Find card in battlefield and toggle tap state
+                                if let Some(card) = player.battlefield.iter_mut().find(|c| c.id == card_id) {
+                                    card.is_tapped = !card.is_tapped;
+                                    game.broadcast_state();
+                                }
+                            }
+                        }
+                    },
+                    Message::FlipCard { player_id: pid, card_id } => {
+                        let mut gm = game_manager.write().await;
+                        if let Some(game) = gm.get_game_mut(&game_id) {
+                            if let Some(player) = game.get_player_mut(&pid) {
+                                // Search for card in all zones and toggle flip state
+                                let mut found = false;
+                                if let Some(card) = player.hand.iter_mut().find(|c| c.id == card_id) {
+                                    card.is_flipped = !card.is_flipped;
+                                    found = true;
+                                } else if let Some(card) = player.battlefield.iter_mut().find(|c| c.id == card_id) {
+                                    card.is_flipped = !card.is_flipped;
+                                    found = true;
+                                } else if let Some(card) = player.library.iter_mut().find(|c| c.id == card_id) {
+                                    card.is_flipped = !card.is_flipped;
+                                    found = true;
+                                } else if let Some(card) = player.graveyard.iter_mut().find(|c| c.id == card_id) {
+                                    card.is_flipped = !card.is_flipped;
+                                    found = true;
+                                } else if let Some(card) = player.exile.iter_mut().find(|c| c.id == card_id) {
+                                    card.is_flipped = !card.is_flipped;
+                                    found = true;
+                                } else if let Some(card) = player.command_zone.iter_mut().find(|c| c.id == card_id) {
+                                    card.is_flipped = !card.is_flipped;
+                                    found = true;
+                                }
+                                if found {
+                                    game.broadcast_state();
+                                }
+                            }
+                        }
+                    },
+                    Message::LeaveTable {} => {
+                        let mut gm = game_manager.write().await;
+                        if let Some(game) = gm.get_game_mut(&game_id) {
+                            // Remove the player from the game
+                            game.players.remove(&player_id);
+                            // If no players left, delete the game session
+                            if game.players.is_empty() {
+                                gm.delete_game(&game_id);
+                            } else {
+                                game.broadcast_state();
+                            }
+                        }
+                    },
                     Message::DiceRoll { player_id: _, roll_type, result } => {
                         // Just broadcast the dice roll to all players
                         let gm = game_manager.read().await;
@@ -263,6 +325,8 @@ async fn handle_socket(
                                     let card = Card {
                                         id: uuid::Uuid::new_v4().to_string(),
                                         name: format!("Blank Card {}", i + 1),
+                                        is_tapped: false,
+                                        is_flipped: false,
                                     };
                                     player.library.push(card);
                                 }

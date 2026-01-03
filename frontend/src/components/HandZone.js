@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import '../styles/HandZone.css';
 
-const HandZone = ({ cards, onSelectCard, onHandOptions, scale = 1 }) => {
+const HandZone = ({ cards, onSelectCard, onHandOptions, scale = 1, ws = null, playerId = null, position = 'bottom-left' }) => {
   const [selectedCardIndex, setSelectedCardIndex] = useState(null);
   const [scrollOffset, setScrollOffset] = useState(0);
+  const [draggedCard, setDraggedCard] = useState(null);
+  const [contextMenu, setContextMenu] = useState(null);
 
   // Debug logging
   React.useEffect(() => {
@@ -37,6 +39,45 @@ const HandZone = ({ cards, onSelectCard, onHandOptions, scale = 1 }) => {
       : Math.min(maxScroll, scrollOffset + 1);
     setScrollOffset(newOffset);
   };
+
+  const handleDragStart = (e, card, index) => {
+    setDraggedCard({ card, index });
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('application/json', JSON.stringify({ card_id: card.id, from_zone: 'hand' }));
+  };
+
+  const handleDragEnd = () => {
+    setDraggedCard(null);
+  };
+
+  const handleContextMenu = (e, card, index) => {
+    e.preventDefault();
+    setContextMenu({
+      x: e.clientX,
+      y: e.clientY,
+      card: card,
+      cardIndex: index
+    });
+  };
+
+  const handleFlipCard = () => {
+    if (contextMenu && ws && ws.readyState === WebSocket.OPEN && playerId) {
+      ws.send(JSON.stringify({
+        FlipCard: {
+          player_id: playerId,
+          card_id: contextMenu.card.id
+        }
+      }));
+    }
+    setContextMenu(null);
+  };
+
+  // Close context menu when clicking elsewhere
+  React.useEffect(() => {
+    const handleClick = () => setContextMenu(null);
+    document.addEventListener('click', handleClick);
+    return () => document.removeEventListener('click', handleClick);
+  }, []);
 
   return (
     <div className="hand-zone">
@@ -75,8 +116,12 @@ const HandZone = ({ cards, onSelectCard, onHandOptions, scale = 1 }) => {
                 cards.map((card, index) => (
                   <div
                     key={card.id}
-                    className={`card-in-hand ${selectedCardIndex === index ? 'selected' : ''}`}
+                    className={`card-in-hand ${selectedCardIndex === index ? 'selected' : ''} ${draggedCard?.card.id === card.id ? 'dragging' : ''}`}
                     onClick={() => handleSelectCard(index)}
+                    draggable
+                    onDragStart={(e) => handleDragStart(e, card, index)}
+                    onDragEnd={handleDragEnd}
+                    onContextMenu={(e) => handleContextMenu(e, card, index)}
                   >
                     <div className="card-content">
                       <div 
@@ -109,6 +154,18 @@ const HandZone = ({ cards, onSelectCard, onHandOptions, scale = 1 }) => {
           </button>
         )}
       </div>
+
+      {/* Context Menu for Card Actions */}
+      {contextMenu && (
+        <div 
+          className="card-context-menu" 
+          style={{ top: contextMenu.y, left: contextMenu.x }}
+        >
+          <button className="context-menu-item" onClick={handleFlipCard}>
+            Flip Card
+          </button>
+        </div>
+      )}
     </div>
   );
 };

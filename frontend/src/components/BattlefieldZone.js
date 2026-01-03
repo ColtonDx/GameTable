@@ -4,6 +4,8 @@ import '../styles/BattlefieldZone.css';
 const BattlefieldZone = ({ player, position, isActive, onUpdateLife, onUpdateCounter, onSpawnCard, onZoom, ws = null, playerId = null, onInspectCard = null }) => {
   const [dragOverZone, setDragOverZone] = useState(false);
   const [contextMenu, setContextMenu] = useState(null);
+  const [draggedBattlefieldCard, setDraggedBattlefieldCard] = useState(null);
+  const [cardBeingDragged, setCardBeingDragged] = useState(null);
 
   const handleZoomClick = (e) => {
     // Only trigger zoom if clicking directly on the battlefield-zone background, not on child elements
@@ -102,6 +104,73 @@ const BattlefieldZone = ({ player, position, isActive, onUpdateLife, onUpdateCou
     document.addEventListener('click', handleClick);
     return () => document.removeEventListener('click', handleClick);
   }, []);
+
+  const handleCardMouseDown = (e, card) => {
+    // Don't drag if right-clicking (context menu) or already dragging
+    if (e.button !== 0) return;
+    e.preventDefault();
+    
+    setCardBeingDragged({
+      card_id: card.id,
+      startX: e.clientX,
+      startY: e.clientY,
+      cardX: card.position_x,
+      cardY: card.position_y,
+      startTime: Date.now()
+    });
+  };
+
+  const handleMouseMove = (e) => {
+    if (!cardBeingDragged) return;
+    
+    const deltaX = e.clientX - cardBeingDragged.startX;
+    const deltaY = e.clientY - cardBeingDragged.startY;
+    
+    setDraggedBattlefieldCard({
+      card_id: cardBeingDragged.card_id,
+      x: cardBeingDragged.cardX + deltaX,
+      y: cardBeingDragged.cardY + deltaY
+    });
+  };
+
+  const handleMouseUp = (e) => {
+    if (!cardBeingDragged) return;
+    
+    const dragTime = Date.now() - cardBeingDragged.startTime;
+    
+    // If drag time is very short, treat as click (for tap/untap)
+    if (dragTime < 150 && draggedBattlefieldCard) {
+      const card = player.battlefield.find(c => c.id === cardBeingDragged.card_id);
+      if (card) {
+        handleTapCard(card.id);
+      }
+    } else if (draggedBattlefieldCard && ws && ws.readyState === WebSocket.OPEN && playerId) {
+      // Send new position to server
+      ws.send(JSON.stringify({
+        MoveCardOnBattlefield: {
+          player_id: playerId,
+          card_id: draggedBattlefieldCard.card_id,
+          x: draggedBattlefieldCard.x,
+          y: draggedBattlefieldCard.y
+        }
+      }));
+    }
+    
+    setCardBeingDragged(null);
+    setDraggedBattlefieldCard(null);
+  };
+
+  // Add mouse move and up listeners when dragging
+  React.useEffect(() => {
+    if (cardBeingDragged) {
+      document.addEventListener('mousemove', handleMouseMove);
+      document.addEventListener('mouseup', handleMouseUp);
+      return () => {
+        document.removeEventListener('mousemove', handleMouseMove);
+        document.removeEventListener('mouseup', handleMouseUp);
+      };
+    }
+  }, [cardBeingDragged, draggedBattlefieldCard, player, ws, playerId]);
 
   if (!player) {
     return (
@@ -224,24 +293,37 @@ const BattlefieldZone = ({ player, position, isActive, onUpdateLife, onUpdateCou
 
       {/* Battlefield Cards */}
       <div className="battlefield-cards">
-        {player.battlefield && player.battlefield.map((card) => (
-          <div
-            key={card.id}
-            className={`battlefield-card ${card.is_tapped ? 'tapped' : ''}`}
-            onClick={() => handleTapCard(card.id)}
-            onContextMenu={(e) => handleContextMenu(e, card)}
-            title={`Click to ${card.is_tapped ? 'untap' : 'tap'}`}
-          >
+        {player.battlefield && player.battlefield.map((card) => {
+          // Use real position if available, otherwise use drag position
+          const displayCard = draggedBattlefieldCard?.card_id === card.id 
+            ? { ...card, position_x: draggedBattlefieldCard.x, position_y: draggedBattlefieldCard.y }
+            : card;
+          
+          return (
             <div
-              className="card-image"
+              key={card.id}
+              className={`battlefield-card ${card.is_tapped ? 'tapped' : ''} ${draggedBattlefieldCard?.card_id === card.id ? 'being-dragged' : ''}`}
               style={{
-                backgroundImage: `url('${getCardImagePath(card)}')`,
-                backgroundSize: 'cover',
-                backgroundPosition: 'center'
+                position: 'absolute',
+                left: `${displayCard.position_x}px`,
+                top: `${displayCard.position_y}px`,
+                cursor: cardBeingDragged?.card_id === card.id ? 'grabbing' : 'grab'
               }}
-            ></div>
-          </div>
-        ))}
+              onMouseDown={(e) => handleCardMouseDown(e, card)}
+              onContextMenu={(e) => handleContextMenu(e, card)}
+              title="Drag to move, click to tap, right-click for options"
+            >
+              <div
+                className="card-image"
+                style={{
+                  backgroundImage: `url('${getCardImagePath(card)}')`,
+                  backgroundSize: 'cover',
+                  backgroundPosition: 'center'
+                }}
+              ></div>
+            </div>
+          );
+        })}
       </div>
 
       {/* Active Turn Indicator */}

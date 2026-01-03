@@ -33,6 +33,8 @@ pub enum Message {
     TapCard { player_id: String, card_id: String },
     #[serde(rename = "FlipCard")]
     FlipCard { player_id: String, card_id: String },
+    #[serde(rename = "MoveCardOnBattlefield")]
+    MoveCardOnBattlefield { player_id: String, card_id: String, x: f32, y: f32 },
     #[serde(rename = "NextTurn")]
     NextTurn {},
     #[serde(rename = "UndoTurn")]
@@ -289,6 +291,19 @@ async fn handle_socket(
                             }
                         }
                     },
+                    Message::MoveCardOnBattlefield { player_id: pid, card_id, x, y } => {
+                        let mut gm = game_manager.write().await;
+                        if let Some(game) = gm.get_game_mut(&game_id) {
+                            if let Some(player) = game.get_player_mut(&pid) {
+                                // Update position of card on battlefield
+                                if let Some(card) = player.battlefield.iter_mut().find(|c| c.id == card_id) {
+                                    card.position_x = x;
+                                    card.position_y = y;
+                                    game.broadcast_state();
+                                }
+                            }
+                        }
+                    },
                     Message::LeaveTable {} => {
                         let mut gm = game_manager.write().await;
                         if let Some(game) = gm.get_game_mut(&game_id) {
@@ -329,6 +344,8 @@ async fn handle_socket(
                                         name: format!("Blank Card {}", i + 1),
                                         is_tapped: false,
                                         is_flipped: false,
+                                        position_x: 0.0,
+                                        position_y: 0.0,
                                     };
                                     player.library.push(card);
                                 }

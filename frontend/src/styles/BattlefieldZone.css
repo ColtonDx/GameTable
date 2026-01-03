@@ -293,15 +293,14 @@
 /* Battlefield Cards Area */
 .battlefield-cards {
   flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  display: block;
   background: rgba(0, 0, 0, 0.3);
   border: none;
   border-radius: 4px;
   padding: 12px;
   min-height: 60px;
   position: relative;
+  overflow: hidden;
 }
 
 .cards-container {
@@ -374,16 +373,21 @@
 .battlefield-card {
   width: 60px;
   height: 86px;
-  cursor: pointer;
-  transition: all 0.3s ease;
   border-radius: 2px;
-  position: relative;
   transform-origin: center;
+  user-select: none;
+  transition: box-shadow 0.2s ease;
+  z-index: 10;
 }
 
 .battlefield-card:hover {
-  transform: scale(1.05);
-  box-shadow: 0 4px 12px rgba(96, 165, 250, 0.3);
+  box-shadow: 0 4px 12px rgba(96, 165, 250, 0.5);
+  z-index: 15;
+}
+
+.battlefield-card.being-dragged {
+  box-shadow: 0 8px 24px rgba(96, 165, 250, 0.8);
+  z-index: 20;
 }
 
 .battlefield-card.tapped {

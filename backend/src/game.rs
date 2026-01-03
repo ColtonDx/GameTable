@@ -9,6 +9,8 @@ pub struct Card {
     pub name: String,
     pub is_tapped: bool,
     pub is_flipped: bool,
+    pub position_x: f32,
+    pub position_y: f32,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]

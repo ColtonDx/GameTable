@@ -1,0 +1,123 @@
+import React, { useState } from 'react';
+import '../styles/CommandZone.css';
+
+const CommandZone = ({ cards, ws = null, playerId = null, onInspectCard = null }) => {
+  const [draggedCard, setDraggedCard] = useState(null);
+  const [contextMenu, setContextMenu] = useState(null);
+
+  const getCardImagePath = (card) => {
+    // Show back if card is flipped
+    if (card.is_flipped) {
+      return '/GameTableData/General/back.jpg';
+    }
+    // For now, all blank cards use the blank.jpg image
+    if (card.name && card.name.includes('Blank')) {
+      return '/GameTableData/General/blank.jpg';
+    }
+    return '/GameTableData/General/blank.jpg';
+  };
+
+  const handleDragStart = (e, card, index) => {
+    setDraggedCard({ card, index });
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('application/json', JSON.stringify({ card_id: card.id, from_zone: 'command_zone' }));
+  };
+
+  const handleDragEnd = () => {
+    setDraggedCard(null);
+  };
+
+  const handleContextMenu = (e, card, index) => {
+    e.preventDefault();
+    setContextMenu({
+      x: e.clientX,
+      y: e.clientY,
+      card: card,
+      cardIndex: index
+    });
+  };
+
+  const handleFlipCard = () => {
+    if (!contextMenu) return;
+    
+    if (ws && ws.readyState === WebSocket.OPEN && playerId) {
+      ws.send(JSON.stringify({
+        FlipCard: {
+          player_id: playerId,
+          card_id: contextMenu.card.id
+        }
+      }));
+    }
+    setContextMenu(null);
+  };
+
+  const handleInspectCard = () => {
+    if (contextMenu && onInspectCard) {
+      onInspectCard(contextMenu.card);
+    }
+    setContextMenu(null);
+  };
+
+  // Close context menu when clicking elsewhere
+  React.useEffect(() => {
+    const handleClick = () => setContextMenu(null);
+    document.addEventListener('click', handleClick);
+    return () => document.removeEventListener('click', handleClick);
+  }, []);
+
+  return (
+    <div className="command-zone">
+      <div className="command-zone-header">
+        <span className="command-zone-title">Command Zone</span>
+        <span className="card-count">{cards.length} card{cards.length !== 1 ? 's' : ''}</span>
+      </div>
+
+      <div className="command-zone-cards">
+        {cards.length > 0 ? (
+          cards.map((card, index) => (
+            <div
+              key={card.id}
+              className={`card-in-command ${draggedCard?.card.id === card.id ? 'dragging' : ''}`}
+              draggable
+              onDragStart={(e) => handleDragStart(e, card, index)}
+              onDragEnd={handleDragEnd}
+              onContextMenu={(e) => handleContextMenu(e, card, index)}
+              title={card.name}
+            >
+              <div className="card-content">
+                <div 
+                  className="card-image"
+                  style={{
+                    backgroundImage: `url('${getCardImagePath(card)}')`,
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center'
+                  }}
+                ></div>
+                <div className="card-name">{card.name}</div>
+              </div>
+            </div>
+          ))
+        ) : (
+          <div className="empty-command">No cards</div>
+        )}
+      </div>
+
+      {/* Context Menu for Card Actions */}
+      {contextMenu && (
+        <div 
+          className="card-context-menu" 
+          style={{ top: contextMenu.y, left: contextMenu.x }}
+        >
+          <button className="context-menu-item" onClick={handleFlipCard}>
+            Flip Card
+          </button>
+          <button className="context-menu-item" onClick={handleInspectCard}>
+            Inspect
+          </button>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default CommandZone;

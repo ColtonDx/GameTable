@@ -3,6 +3,7 @@ import '../styles/GameTableNew.css';
 import LeftSidebar from './LeftSidebar';
 import BattlefieldZone from './BattlefieldZone';
 import HandZone from './HandZone';
+import CommandZone from './CommandZone';
 import CollapsibleZones from './CollapsibleZones';
 import BottomToolbar from './BottomToolbar';
 
@@ -446,16 +447,25 @@ const GameTable = ({ gameId, playerId, playerName, onBack }) => {
             </div>
           </div>
 
-          {/* Current Player's Hand */}
-          <div className="hand-section" style={{ height: `${handScale * 120}px` }}>
-            <HandZone 
-              cards={currentPlayer?.hand || []}
-              onSelectCard={() => {}}
-              onHandOptions={() => {}}
-              scale={handScale}
+          {/* Current Player's Hand and Command Zone */}
+          <div className="hand-and-command-area">
+            <div className="hand-section" style={{ height: `${handScale * 120}px`, flex: 1 }}>
+              <HandZone 
+                cards={currentPlayer?.hand || []}
+                onSelectCard={() => {}}
+                onHandOptions={() => {}}
+                scale={handScale}
+                ws={ws.current}
+                playerId={playerId}
+                position="bottom-left"
+                onInspectCard={setInspectedCard}
+              />
+            </div>
+
+            <CommandZone
+              cards={currentPlayer?.command_zone || []}
               ws={ws.current}
               playerId={playerId}
-              position="bottom-left"
               onInspectCard={setInspectedCard}
             />
           </div>

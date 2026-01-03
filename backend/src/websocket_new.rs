@@ -21,6 +21,8 @@ pub enum Message {
     DiceRoll { player_id: String, roll_type: String, result: String },
     #[serde(rename = "LoadLibrary")]
     LoadLibrary { player_id: String, card_count: usize, card_type: String },
+    #[serde(rename = "ShuffleLibrary")]
+    ShuffleLibrary { player_id: String },
     #[serde(rename = "MoveCard")]
     MoveCard { card_id: String, from_zone: String, to_zone: String, #[serde(skip_serializing_if = "Option::is_none")] position_x: Option<f32>, #[serde(skip_serializing_if = "Option::is_none")] position_y: Option<f32> },
     #[serde(rename = "DrawCard")]
@@ -349,10 +351,10 @@ async fn handle_socket(
                     },
                     Message::LoadLibrary { player_id: pid, card_count, card_type: _ } => {
                         let mut gm = game_manager.write().await;
-                        if let Some(game) = gm.get_game_mut(&game_id) {
-                            if let Some(player) = game.get_player_mut(&pid) {
-                                // Generate blank white cards
-                                for i in 0..card_count {
+                        if let Some(game) = gm.get_game_mut(& - split into 99 library + 1 command zone
+                                let lib_count = if card_count > 0 { card_count - 1 } else { 0 };
+                                
+                                for i in 0..lib_count {
                                     let card = Card {
                                         id: uuid::Uuid::new_v4().to_string(),
                                         name: format!("Blank Card {}", i + 1),
@@ -361,6 +363,34 @@ async fn handle_socket(
                                         position_x: 0.0,
                                         position_y: 0.0,
                                     };
+                                    player.library.push(card);
+                                }
+                                
+                                // Add 1 card to command zone if card_count > 0
+                                if card_count > 0 {
+                                    let card = Card {
+                                        id: uuid::Uuid::new_v4().to_string(),
+                                        name: format!("Blank Card {}", card_count),
+                                        is_tapped: false,
+                                        is_flipped: false,
+                                        position_x: 0.0,
+                                        position_y: 0.0,
+                                    };
+                                    player.command_zone.push(card);
+                                }
+                                
+                                game.broadcast_state();
+                            }
+                        }
+                    },
+                    Message::ShuffleLibrary { player_id: pid } => {
+                        let mut gm = game_manager.write().await;
+                        if let Some(game) = gm.get_game_mut(&game_id) {
+                            if let Some(player) = game.get_player_mut(&pid) {
+                                // Shuffle library using Fisher-Yates shuffle
+                                use rand::seq::SliceRandom;
+                                let mut rng = rand::thread_rng();
+                                player.library.shuffle(&mut rng);   };
                                     player.library.push(card);
                                 }
                                 game.broadcast_state();

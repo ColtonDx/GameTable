@@ -13,19 +13,17 @@ const HandZone = ({ cards, onSelectCard, onHandOptions, scale = 1, ws = null, pl
   }, [cards]);
 
   const getCardImagePath = (card) => {
+    // Show back if card is flipped
+    if (card.is_flipped) {
+      return '/GameTableData/General/back.jpg';
+    }
     // For now, all blank cards use the blank.jpg image
     if (card.name && card.name.includes('Blank')) {
       return '/GameTableData/General/blank.jpg';
     }
     // Future: implement set-based lookup here
     // For now, default to blank if image not found
-    return '/GameTableData/General/blank.jpg';
-  };
-
-  const handleSelectCard = (index) => {
-    // Toggle deselection if clicking the same card
-    if (selectedCardIndex === index) {
-      setSelectedCardIndex(null);
+    retCard selection removed - just keep hover feedback setSelectedCardIndex(null);
     } else {
       setSelectedCardIndex(index);
       if (onSelectCard) onSelectCard(cards[index]);
@@ -133,8 +131,7 @@ const HandZone = ({ cards, onSelectCard, onHandOptions, scale = 1, ws = null, pl
                     onDragStart={(e) => handleDragStart(e, card, index)}
                     onDragEnd={handleDragEnd}
                     onContextMenu={(e) => handleContextMenu(e, card, index)}
-                  >
-                    <div className="card-content">
+                  >draggedCard?.card.id === card.id ? 'dragging' : ''}`
                       <div 
                         className="card-image"
                         style={{

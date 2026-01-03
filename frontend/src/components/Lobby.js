@@ -10,8 +10,8 @@ const Lobby = ({ onStartGame }) => {
   const gameIdInputRef = useRef(null);
 
   const handleGameIdChange = (e) => {
-    const newValue = e.target.value;
-    console.log('onChange fired:', newValue, 'e.target.value:', e.target.value);
+    // Convert to uppercase for game ID input
+    const newValue = e.target.value.toUpperCase();
     setGameId(newValue);
   };
 
@@ -35,8 +35,15 @@ const Lobby = ({ onStartGame }) => {
       setError('Please enter both game ID and player name');
       return;
     }
-    const playerId = `player_${Date.now()}`;
-    onStartGame(gameId, playerId, playerName);
+    // Generate and store a persistent player ID for this game session
+    // This ensures the player maintains their seat if they reload the page
+    let playerId = sessionStorage.getItem(`playerId_${gameId}`);
+    if (!playerId) {
+      playerId = `player_${Date.now()}`;
+      sessionStorage.setItem(`playerId_${gameId}`, playerId);
+    }
+    // Ensure gameId is uppercase before sending
+    onStartGame(gameId.toUpperCase(), playerId, playerName);
   };
 
   const handleStartJoin = () => {
@@ -68,6 +75,8 @@ const Lobby = ({ onStartGame }) => {
             Join Game
           </button>
           <button onClick={() => {
+            // Clear the stored player ID for this game when going back
+            sessionStorage.removeItem(`playerId_${gameId}`);
             setGameSelected(false);
             setGameId('');
             setPlayerName('');

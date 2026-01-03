@@ -21,6 +21,10 @@ function App() {
 
   const handleBackToLobby = () => {
     // Clear session when returning to lobby
+    // Clear sessionStorage player ID for this game
+    if (gameId) {
+      sessionStorage.removeItem(`playerId_${gameId}`);
+    }
     // Clear localStorage just in case any old sessions exist
     localStorage.removeItem('gameId');
     localStorage.removeItem('playerId');

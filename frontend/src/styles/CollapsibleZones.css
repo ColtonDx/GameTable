@@ -15,7 +15,7 @@
 
 .collapsible-zones.open {
   height: auto;
-  max-height: 300px;
+  max-height: 120px;
 }
 
 .zones-toggle {
@@ -54,9 +54,10 @@
 }
 
 .zones-content {
-  padding: 12px;
-  max-height: 250px;
-  overflow-y: auto;
+  padding: 8px 12px;
+  max-height: 100px;
+  overflow-x: auto;
+  overflow-y: hidden;
 }
 
 /* Override zones-panel styling when inside collapsible */

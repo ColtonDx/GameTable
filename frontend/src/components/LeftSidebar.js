@@ -16,16 +16,23 @@ const LeftSidebar = ({ gameId, playerId, ws }) => {
     }));
   };
 
-  const handleLoadBlankCards = () => {
+  const handleDrawCard = () => {
     if (ws && ws.readyState === WebSocket.OPEN) {
       ws.send(JSON.stringify({
-        LoadLibrary: {
-          player_id: playerId,
-          card_count: 100,
-          card_type: 'blank_white'
+        DrawCard: {
+          card_name: 'Card'
         }
       }));
-      setShowLoadLibraryModal(false);
+    }
+  };
+
+  const handleMillCard = () => {
+    if (ws && ws.readyState === WebSocket.OPEN) {
+      ws.send(JSON.stringify({
+        MillCard: {
+          card_name: 'Card'
+        }
+      }));
     }
   };
 
@@ -65,6 +72,18 @@ const LeftSidebar = ({ gameId, playerId, ws }) => {
             </button>
             {expandedMenus.library && (
               <div className="menu-content">
+                <button 
+                  className="action-btn"
+                  onClick={handleDrawCard}
+                >
+                  Draw a Card
+                </button>
+                <button 
+                  className="action-btn"
+                  onClick={handleMillCard}
+                >
+                  Mill a Card
+                </button>
                 <button 
                   className="action-btn"
                   onClick={() => setShowLoadLibraryModal(true)}

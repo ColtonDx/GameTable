@@ -25,6 +25,8 @@ pub enum Message {
     MoveCard { card_id: String, from_zone: String, to_zone: String },
     #[serde(rename = "DrawCard")]
     DrawCard { card_name: String },
+    #[serde(rename = "MillCard")]
+    MillCard { card_name: String },
     #[serde(rename = "DiscardCard")]
     DiscardCard { card_id: String },
     #[serde(rename = "NextTurn")]
@@ -184,12 +186,23 @@ async fn handle_socket(
                         let mut gm = game_manager.write().await;
                         if let Some(game) = gm.get_game_mut(&game_id) {
                             if let Some(player) = game.get_player_mut(&player_id) {
-                                let card = Card {
-                                    id: uuid::Uuid::new_v4().to_string(),
-                                    name: card_name,
-                                };
-                                player.hand.push(card);
-                                game.broadcast_state();
+                                // Move one card from library to hand
+                                if let Some(card) = player.library.pop() {
+                                    player.hand.push(card);
+                                    game.broadcast_state();
+                                }
+                            }
+                        }
+                    },
+                    Message::MillCard { card_name } => {
+                        let mut gm = game_manager.write().await;
+                        if let Some(game) = gm.get_game_mut(&game_id) {
+                            if let Some(player) = game.get_player_mut(&player_id) {
+                                // Move one card from library to graveyard
+                                if let Some(card) = player.library.pop() {
+                                    player.graveyard.push(card);
+                                    game.broadcast_state();
+                                }
                             }
                         }
                     },

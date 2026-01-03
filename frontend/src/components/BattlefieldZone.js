@@ -167,18 +167,19 @@ const BattlefieldZone = ({ player, position, isActive, onUpdateLife, onUpdateCou
   };
 
   // Add mouse move and up listeners when dragging
+  // Add mouse move and up listeners when dragging
   React.useEffect(() => {
     if (cardBeingDragged) {
       document.addEventListener('mousemove', handleMouseMove);
       document.addEventListener('mouseup', handleMouseUp);
-      return () => {
       
       return () => {
         document.removeEventListener('mousemove', handleMouseMove);
         document.removeEventListener('mouseup', handleMouseUp);
         // Ensure drag state is cleared on unmount
         setCardBeingDragged(null);
-        setDraggedBattlefieldCard(null
+        setDraggedBattlefieldCard(null);
+      };
     }
   }, [cardBeingDragged, draggedBattlefieldCard, player, ws, playerId]);
 

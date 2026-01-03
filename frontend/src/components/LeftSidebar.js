@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import '../styles/LeftSidebar.css';
 
-const LeftSidebar = () => {
+const LeftSidebar = ({ gameId }) => {
   const [sidebarVisible, setSidebarVisible] = useState(false);
   const [expandedMenus, setExpandedMenus] = useState({
     playtester: false
@@ -12,6 +12,10 @@ const LeftSidebar = () => {
       ...prev,
       [menu]: !prev[menu]
     }));
+  };
+
+  const copyGameCode = () => {
+    navigator.clipboard.writeText(gameId);
   };
 
   return (
@@ -29,6 +33,21 @@ const LeftSidebar = () => {
 
       {sidebarVisible && (
         <div className="sidebar-menu">
+          {/* Game Code Section */}
+          <div className="game-code-section">
+            <div className="game-code-label">Game Code</div>
+            <div className="game-code-display">
+              <span className="code-value">{gameId}</span>
+              <button 
+                className="copy-btn"
+                onClick={copyGameCode}
+                title="Copy game code"
+              >
+                📋
+              </button>
+            </div>
+          </div>
+
           {/* Playtester Actions */}
           <div className="menu-section">
             <button 

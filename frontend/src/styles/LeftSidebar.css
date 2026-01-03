@@ -64,6 +64,69 @@
   padding: 12px 0;
 }
 
+/* Game Code Section */
+.game-code-section {
+  padding: 16px;
+  border-bottom: 1px solid #444;
+  background: rgba(96, 165, 250, 0.05);
+}
+
+.game-code-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  color: #60a5fa;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  margin-bottom: 8px;
+  opacity: 0.8;
+}
+
+.game-code-display {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid #60a5fa;
+  border-radius: 6px;
+  padding: 10px 12px;
+}
+
+.code-value {
+  font-family: 'Courier New', monospace;
+  font-size: 14px;
+  font-weight: 600;
+  color: #60a5fa;
+  letter-spacing: 1px;
+  flex: 1;
+  user-select: all;
+}
+
+.copy-btn {
+  background: rgba(96, 165, 250, 0.2);
+  border: 1px solid #60a5fa;
+  color: #60a5fa;
+  padding: 6px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.copy-btn:hover {
+  background: rgba(96, 165, 250, 0.3);
+  border-color: #93c5fd;
+  color: #93c5fd;
+  transform: scale(1.05);
+}
+
+.copy-btn:active {
+  transform: scale(0.95);
+}
+
 .menu-section {
   border-bottom: 1px solid #444;
 }

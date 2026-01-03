@@ -2,7 +2,6 @@ import React from 'react';
 import '../styles/ZonesPanel.css';
 
 const ZonesPanel = ({ gameState }) => {
-  const library = gameState?.players?.[Object.keys(gameState.players || {})[0]]?.library || [];
   const graveyard = gameState?.players?.[Object.keys(gameState.players || {})[0]]?.graveyard || [];
   const exile = gameState?.players?.[Object.keys(gameState.players || {})[0]]?.exile || [];
   const battlefield = gameState?.battlefield || [];
@@ -25,23 +24,6 @@ const ZonesPanel = ({ gameState }) => {
   return (
     <div className="zones-panel">
       <div className="zones-container">
-        {/* Library */}
-        <div className="zone">
-          <div className="zone-header">
-            <span className="zone-name">Library</span>
-            <span className="zone-count">{library.length}</span>
-          </div>
-          <div className="zone-content">
-            <div className="library-placeholder">
-              {library.length > 0 ? (
-                <div className="card-stack-visual">{library.length}</div>
-              ) : (
-                <div className="zone-empty">Empty</div>
-              )}
-            </div>
-          </div>
-        </div>
-
         {/* Graveyard */}
         <div className="zone">
           <div className="zone-header">

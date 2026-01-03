@@ -289,17 +289,20 @@
 
 /* Active Turn Badge */
 .active-badge {
-  position: absolute;
-  top: 8px;
-  right: 8px;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   background: linear-gradient(135deg, #10b981, #059669);
   color: white;
-  padding: 4px 8px;
-  border-radius: 3px;
-  font-size: 9px;
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-size: 18px;
   font-weight: 700;
-  letter-spacing: 1px;
-  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+  letter-spacing: 2px;
+  box-shadow: 0 4px 20px rgba(16, 185, 129, 0.5);
+  z-index: 1000;
+  pointer-events: none;
 }
 
 /* Position-specific styling */

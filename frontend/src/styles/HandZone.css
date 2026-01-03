@@ -189,6 +189,14 @@
   opacity: 0.6;
 }
 
+.card-in-hand.commander {
+  box-shadow: 0 0 20px rgba(217, 119, 6, 0.8), 0 0 40px rgba(217, 119, 6, 0.4);
+}
+
+.card-in-hand.commander .card-image {
+  filter: drop-shadow(0 0 8px rgba(217, 119, 6, 0.6));
+}
+
 .card-context-menu {
   position: fixed;
   background: rgba(26, 26, 46, 0.95);

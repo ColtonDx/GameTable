@@ -9,6 +9,7 @@ pub struct Card {
     pub name: String,
     pub is_tapped: bool,
     pub is_flipped: bool,
+    pub is_commander: bool,
     pub position_x: f32,
     pub position_y: f32,
 }

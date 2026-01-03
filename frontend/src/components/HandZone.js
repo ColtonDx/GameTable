@@ -149,7 +149,7 @@ const HandZone = ({ cards, onSelectCard, onHandOptions, scale = 1, ws = null, pl
                 cards.map((card, index) => (
                   <div
                     key={card.id}
-                    className={`card-in-hand ${draggedCard?.card.id === card.id ? 'dragging' : ''}`}
+                    className={`card-in-hand ${draggedCard?.card.id === card.id ? 'dragging' : ''} ${card.is_commander ? 'commander' : ''}`}
                     draggable
                     onDragStart={(e) => handleDragStart(e, card, index)}
                     onDragEnd={handleDragEnd}

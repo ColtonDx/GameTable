@@ -374,6 +374,7 @@ async fn handle_socket(
                                         name: format!("Blank Card {}", card_count),
                                         is_tapped: false,
                                         is_flipped: false,
+                                        is_commander: true,
                                         position_x: 0.0,
                                         position_y: 0.0,
                                     };

@@ -296,15 +296,7 @@ const GameTable = ({ gameId, playerId, playerName, onBack }) => {
   }
 
   return (
-    <div 
-      className="game-table-new"
-      style={{
-        backgroundImage: "url('/GameTableData/General/wallpaper.jpg')",
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundAttachment: 'fixed'
-      }}
-    >
+    <div className="game-table-new">
       {error && <div className="error-banner">{error}</div>}
 
       {/* Game Restart Notification */}

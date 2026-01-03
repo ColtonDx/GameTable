@@ -89,7 +89,15 @@ const Lobby = ({ onStartGame }) => {
   }
 
   return (
-    <div className="lobby">
+    <div 
+      className="lobby"
+      style={{
+        backgroundImage: "url('/GameTableData/General/wallpaper.jpg')",
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundAttachment: 'fixed'
+      }}
+    >
       <h1>Game Table</h1>
       <div className="lobby-buttons">
         <button

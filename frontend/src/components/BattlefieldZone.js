@@ -339,7 +339,7 @@ const BattlefieldZone = ({ player, position, isActive, onUpdateLife, onUpdateCou
           return (
             <div
               key={card.id}
-              className={`battlefield-card ${card.is_tapped ? 'tapped' : ''} ${draggedBattlefieldCard?.card_id === card.id ? 'being-dragged' : ''}`}
+              className={`battlefield-card ${card.is_tapped ? 'tapped' : ''} ${draggedBattlefieldCard?.card_id === card.id ? 'being-dragged' : ''} ${card.is_commander ? 'commander' : ''}`}
               style={{
                 position: 'absolute',
                 left: `${displayCard.position_x}px`,

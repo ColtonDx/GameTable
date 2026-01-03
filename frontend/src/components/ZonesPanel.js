@@ -5,7 +5,6 @@ const ZonesPanel = ({ gameState }) => {
   const library = gameState?.players?.[Object.keys(gameState.players || {})[0]]?.library || [];
   const graveyard = gameState?.players?.[Object.keys(gameState.players || {})[0]]?.graveyard || [];
   const exile = gameState?.players?.[Object.keys(gameState.players || {})[0]]?.exile || [];
-  const commandZone = gameState?.players?.[Object.keys(gameState.players || {})[0]]?.command_zone || [];
   const battlefield = gameState?.battlefield || [];
 
   const renderZoneStack = (cards, maxShow = 3) => {
@@ -62,17 +61,6 @@ const ZonesPanel = ({ gameState }) => {
           </div>
           <div className="zone-content">
             {renderZoneStack(exile)}
-          </div>
-        </div>
-
-        {/* Command Zone */}
-        <div className="zone">
-          <div className="zone-header">
-            <span className="zone-name">Command Zone</span>
-            <span className="zone-count">{commandZone.length}</span>
-          </div>
-          <div className="zone-content">
-            {renderZoneStack(commandZone)}
           </div>
         </div>
       </div>

@@ -9,6 +9,7 @@
   border: 1px solid #334155;
   min-width: 120px;
   max-width: 150px;
+  height: 140px;
   flex-shrink: 0;
 }
 
@@ -63,6 +64,14 @@
   opacity: 0.7;
   cursor: grabbing;
   box-shadow: 0 8px 24px rgba(96, 165, 250, 0.4);
+}
+
+.card-in-command.commander {
+  box-shadow: 0 0 20px rgba(217, 119, 6, 0.8), 0 0 40px rgba(217, 119, 6, 0.4);
+}
+
+.card-in-command.commander .card-image {
+  filter: drop-shadow(0 0 8px rgba(217, 119, 6, 0.6));
 }
 
 .card-in-command .card-content {

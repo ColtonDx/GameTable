@@ -394,6 +394,14 @@
   transform: rotate(90deg);
 }
 
+.battlefield-card.commander {
+  box-shadow: 0 0 20px rgba(217, 119, 6, 0.8), 0 0 40px rgba(217, 119, 6, 0.4);
+}
+
+.battlefield-card.commander .card-image {
+  filter: drop-shadow(0 0 8px rgba(217, 119, 6, 0.6));
+}
+
 .battlefield-card .card-image {
   width: 100%;
   height: 100%;

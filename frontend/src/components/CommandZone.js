@@ -101,7 +101,7 @@ const CommandZone = ({ cards, ws = null, playerId = null, onInspectCard = null }
           cards.map((card, index) => (
             <div
               key={card.id}
-              className={`card-in-command ${draggedCard?.card.id === card.id ? 'dragging' : ''}`}
+              className={`card-in-command ${draggedCard?.card.id === card.id ? 'dragging' : ''} ${card.is_commander ? 'commander' : ''}`}
               draggable
               onDragStart={(e) => handleDragStart(e, card, index)}
               onDragEnd={handleDragEnd}

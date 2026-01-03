@@ -43,12 +43,12 @@ pub async fn create_user(
     let hashed_password = bcrypt::hash(password, 10)
         .map_err(|e| format!("Failed to hash password: {}", e))?;
 
-    let user_id = Uuid::new_v4().to_string();
+    let user_id = Uuid::new_v4();
 
     sqlx::query(
         "INSERT INTO users (id, username, password_hash) VALUES ($1, $2, $3)",
     )
-    .bind(&user_id)
+    .bind(user_id)
     .bind(username)
     .bind(&hashed_password)
     .execute(pool)
@@ -56,7 +56,7 @@ pub async fn create_user(
     .map_err(|e| format!("Failed to create user: {}", e))?;
 
     Ok(User {
-        id: user_id,
+        id: user_id.to_string(),
         username: username.to_string(),
         profile_picture_url: None,
     })

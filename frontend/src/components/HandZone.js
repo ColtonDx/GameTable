@@ -54,7 +54,7 @@ const HandZone = ({ cards, onSelectCard, onHandOptions, scale = 1 }) => {
         </button>
       </div>
 
-      <div className="hand-container" style={{ transform: `scale(${scale})`, transformOrigin: 'top center' }}>
+      <div className="hand-container" style={{ transform: `scale(${scale})`, transformOrigin: 'center' }}>
         {/* Left Navigation Arrow */}
         {cards.length > 0 && (
           <button 

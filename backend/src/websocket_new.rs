@@ -35,6 +35,8 @@ pub enum Message {
     TapCard { player_id: String, card_id: String },
     #[serde(rename = "FlipCard")]
     FlipCard { player_id: String, card_id: String },
+    #[serde(rename = "UntapAll")]
+    UntapAll { player_id: String },
     #[serde(rename = "MoveCardOnBattlefield")]
     MoveCardOnBattlefield { player_id: String, card_id: String, x: f32, y: f32 },
     #[serde(rename = "NextTurn")]
@@ -304,6 +306,33 @@ async fn handle_socket(
                                 if found {
                                     game.broadcast_state();
                                 }
+                            }
+                        }
+                    },
+                    Message::UntapAll { player_id: pid } => {
+                        let mut gm = game_manager.write().await;
+                        if let Some(game) = gm.get_game_mut(&game_id) {
+                            if let Some(player) = game.get_player_mut(&pid) {
+                                // Untap all cards in all zones
+                                for card in player.hand.iter_mut() {
+                                    card.is_tapped = false;
+                                }
+                                for card in player.battlefield.iter_mut() {
+                                    card.is_tapped = false;
+                                }
+                                for card in player.library.iter_mut() {
+                                    card.is_tapped = false;
+                                }
+                                for card in player.graveyard.iter_mut() {
+                                    card.is_tapped = false;
+                                }
+                                for card in player.exile.iter_mut() {
+                                    card.is_tapped = false;
+                                }
+                                for card in player.command_zone.iter_mut() {
+                                    card.is_tapped = false;
+                                }
+                                game.broadcast_state();
                             }
                         }
                     },

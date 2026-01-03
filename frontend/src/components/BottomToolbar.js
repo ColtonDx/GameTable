@@ -26,6 +26,16 @@ const BottomToolbar = ({ gameState, turnNumber, onNextTurn, onAction, onGameMenu
     }
   };
 
+  const handleUntapAll = () => {
+    if (ws && ws.readyState === WebSocket.OPEN && playerId) {
+      ws.send(JSON.stringify({
+        UntapAll: {
+          player_id: playerId
+        }
+      }));
+    }
+  };
+
   return (
     <div className="bottom-toolbar">
       {/* Left Section - Game Menu */}
@@ -68,6 +78,15 @@ const BottomToolbar = ({ gameState, turnNumber, onNextTurn, onAction, onGameMenu
             setDiceResult(result);
           }}
         />
+
+        {/* Untap All Button */}
+        <button 
+          className="toolbar-btn action-btn"
+          onClick={handleUntapAll}
+          title="Untap all cards on your board"
+        >
+          <span>Untap All</span>
+        </button>
 
         {/* Turn Counter */}
         <div className="turn-counter">

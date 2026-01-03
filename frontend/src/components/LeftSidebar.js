@@ -1,17 +1,32 @@
 import React, { useState } from 'react';
 import '../styles/LeftSidebar.css';
 
-const LeftSidebar = ({ gameId }) => {
+const LeftSidebar = ({ gameId, playerId, ws }) => {
   const [sidebarVisible, setSidebarVisible] = useState(false);
   const [expandedMenus, setExpandedMenus] = useState({
-    playtester: false
+    playtester: false,
+    library: false
   });
+  const [showLoadLibraryModal, setShowLoadLibraryModal] = useState(false);
 
   const toggleMenu = (menu) => {
     setExpandedMenus(prev => ({
       ...prev,
       [menu]: !prev[menu]
     }));
+  };
+
+  const handleLoadBlankCards = () => {
+    if (ws && ws.readyState === WebSocket.OPEN) {
+      ws.send(JSON.stringify({
+        LoadLibrary: {
+          player_id: playerId,
+          card_count: 100,
+          card_type: 'blank_white'
+        }
+      }));
+      setShowLoadLibraryModal(false);
+    }
   };
 
   return (
@@ -37,6 +52,29 @@ const LeftSidebar = ({ gameId }) => {
             </div>
           </div>
 
+          {/* Library Section */}
+          <div className="menu-section">
+            <button 
+              className="menu-toggle"
+              onClick={() => toggleMenu('library')}
+            >
+              <span className="toggle-icon">
+                {expandedMenus.library ? '▼' : '▶'}
+              </span>
+              <span>Library</span>
+            </button>
+            {expandedMenus.library && (
+              <div className="menu-content">
+                <button 
+                  className="action-btn"
+                  onClick={() => setShowLoadLibraryModal(true)}
+                >
+                  Load Library
+                </button>
+              </div>
+            )}
+          </div>
+
           {/* Playtester Actions */}
           <div className="menu-section">
             <button 
@@ -54,6 +92,32 @@ const LeftSidebar = ({ gameId }) => {
                 <button className="action-btn">Reveal Hand</button>
               </div>
             )}
+          </div>
+        </div>
+      )}
+
+      {/* Load Library Modal */}
+      {showLoadLibraryModal && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h3>Load Library</h3>
+              <button 
+                className="modal-close"
+                onClick={() => setShowLoadLibraryModal(false)}
+              >
+                ✕
+              </button>
+            </div>
+            <div className="modal-body">
+              <button 
+                className="library-option"
+                onClick={handleLoadBlankCards}
+              >
+                <span className="option-icon">⚪</span>
+                <span className="option-name">100 Blank White Cards</span>
+              </button>
+            </div>
           </div>
         </div>
       )}

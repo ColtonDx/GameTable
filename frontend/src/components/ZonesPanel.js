@@ -2,7 +2,7 @@ import React from 'react';
 import '../styles/ZonesPanel.css';
 
 const ZonesPanel = ({ gameState }) => {
-  const library = gameState?.players?.[Object.keys(gameState.players || {})[0]]?.hand || [];
+  const library = gameState?.players?.[Object.keys(gameState.players || {})[0]]?.library || [];
   const graveyard = gameState?.players?.[Object.keys(gameState.players || {})[0]]?.graveyard || [];
   const exile = gameState?.players?.[Object.keys(gameState.players || {})[0]]?.exile || [];
   const commandZone = gameState?.players?.[Object.keys(gameState.players || {})[0]]?.command_zone || [];

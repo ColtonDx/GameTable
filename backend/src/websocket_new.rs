@@ -19,6 +19,8 @@ pub enum Message {
     SetPlayerName { player_id: String, name: String },
     #[serde(rename = "DiceRoll")]
     DiceRoll { player_id: String, roll_type: String, result: String },
+    #[serde(rename = "LoadLibrary")]
+    LoadLibrary { player_id: String, card_count: usize, card_type: String },
     #[serde(rename = "MoveCard")]
     MoveCard { card_id: String, from_zone: String, to_zone: String },
     #[serde(rename = "DrawCard")]
@@ -236,6 +238,22 @@ async fn handle_socket(
                                     }
                                 });
                                 let _ = tx.send(msg.to_string());
+                            }
+                        }
+                    },
+                    Message::LoadLibrary { player_id: pid, card_count, card_type } => {
+                        let mut gm = game_manager.write().await;
+                        if let Some(game) = gm.get_game_mut(&game_id) {
+                            if let Some(player) = game.get_player_mut(&pid) {
+                                // Generate blank white cards
+                                for i in 0..card_count {
+                                    let card = Card {
+                                        id: uuid::Uuid::new_v4().to_string(),
+                                        name: format!("Blank Card {}", i + 1),
+                                    };
+                                    player.library.push(card);
+                                }
+                                game.broadcast_state();
                             }
                         }
                     },

@@ -184,12 +184,13 @@ async fn handle_socket(
                             "command_zone" => Zone::CommandZone,
                             _ => Zone::Hand,
                         };
+                        let is_moving_to_battlefield = to_enum == Zone::Battlefield;
 
                         let mut gm = game_manager.write().await;
                         if let Some(game) = gm.get_game_mut(&game_id) {
                             if game.move_card(&player_id, &card_id, from_enum, to_enum).is_ok() {
                                 // If moving to battlefield with position, update card position
-                                if to_enum == Zone::Battlefield {
+                                if is_moving_to_battlefield {
                                     if let Some(player) = game.get_player_mut(&player_id) {
                                         if let Some(card) = player.battlefield.iter_mut().find(|c| c.id == card_id) {
                                             if let Some(x) = position_x {
@@ -205,7 +206,7 @@ async fn handle_socket(
                             }
                         }
                     },
-                    Message::DrawCard { card_name } => {
+                    Message::DrawCard { card_name: _ } => {
                         let mut gm = game_manager.write().await;
                         if let Some(game) = gm.get_game_mut(&game_id) {
                             if let Some(player) = game.get_player_mut(&player_id) {
@@ -217,7 +218,7 @@ async fn handle_socket(
                             }
                         }
                     },
-                    Message::MillCard { card_name } => {
+                    Message::MillCard { card_name: _ } => {
                         let mut gm = game_manager.write().await;
                         if let Some(game) = gm.get_game_mut(&game_id) {
                             if let Some(player) = game.get_player_mut(&player_id) {
@@ -346,7 +347,7 @@ async fn handle_socket(
                             }
                         }
                     },
-                    Message::LoadLibrary { player_id: pid, card_count, card_type } => {
+                    Message::LoadLibrary { player_id: pid, card_count, card_type: _ } => {
                         let mut gm = game_manager.write().await;
                         if let Some(game) = gm.get_game_mut(&game_id) {
                             if let Some(player) = game.get_player_mut(&pid) {

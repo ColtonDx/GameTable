@@ -127,61 +127,55 @@ const BattlefieldZone = ({ player, position, isActive, onUpdateLife, onUpdateCou
     });
   };
 
-  const handleMouseMove = (e) => {
-    if (!cardBeingDragged) return;
-    
-    const deltaX = e.clientX - cardBeingDragged.startX;
-    const deltaY = e.clientY - cardBeingDragged.startY;
-    
-    setDraggedBattlefieldCard({
-      card_id: cardBeingDragged.card_id,
-      x: cardBeingDragged.cardX + deltaX,
-      y: cardBeingDragged.cardY + deltaY
-    });
-  };
-
-  const handleMouseUp = (e) => {
-    if (!cardBeingDragged) return;
-    
-    const dragTime = Date.now() - cardBeingDragged.startTime;
-    const cardId = cardBeingDragged.card_id;
-    
-    // If drag time is very short, treat as click (for tap/untap)
-    if (dragTime < 150) {
-      handleTapCard(cardId);
-    } else if (draggedBattlefieldCard && ws && ws.readyState === WebSocket.OPEN && playerId) {
-      // Send new position to server only if card actually moved
-      ws.send(JSON.stringify({
-        MoveCardOnBattlefield: {
-          player_id: playerId,
-          card_id: draggedBattlefieldCard.card_id,
-          x: draggedBattlefieldCard.x,
-          y: draggedBattlefieldCard.y
-        }
-      }));
-    }
-    
-    // Clear all drag state
-    setCardBeingDragged(null);
-    setDraggedBattlefieldCard(null);
-  };
-
-  // Add mouse move and up listeners when dragging
   // Add mouse move and up listeners when dragging
   React.useEffect(() => {
-    if (cardBeingDragged) {
-      document.addEventListener('mousemove', handleMouseMove);
-      document.addEventListener('mouseup', handleMouseUp);
+    if (!cardBeingDragged) return;
+
+    const handleMouseMove = (e) => {
+      const deltaX = e.clientX - cardBeingDragged.startX;
+      const deltaY = e.clientY - cardBeingDragged.startY;
       
-      return () => {
-        document.removeEventListener('mousemove', handleMouseMove);
-        document.removeEventListener('mouseup', handleMouseUp);
-        // Ensure drag state is cleared on unmount
-        setCardBeingDragged(null);
-        setDraggedBattlefieldCard(null);
-      };
-    }
-  }, [cardBeingDragged, draggedBattlefieldCard, player, ws, playerId]);
+      setDraggedBattlefieldCard({
+        card_id: cardBeingDragged.card_id,
+        x: cardBeingDragged.cardX + deltaX,
+        y: cardBeingDragged.cardY + deltaY
+      });
+    };
+
+    const handleMouseUp = (e) => {
+      const dragTime = Date.now() - cardBeingDragged.startTime;
+      const cardId = cardBeingDragged.card_id;
+      
+      // If drag time is very short, treat as click (for tap/untap)
+      if (dragTime < 150) {
+        handleTapCard(cardId);
+      } else {
+        // Send new position to server
+        if (ws && ws.readyState === WebSocket.OPEN && playerId) {
+          ws.send(JSON.stringify({
+            MoveCardOnBattlefield: {
+              player_id: playerId,
+              card_id: cardId,
+              x: cardBeingDragged.cardX + (e.clientX - cardBeingDragged.startX),
+              y: cardBeingDragged.cardY + (e.clientY - cardBeingDragged.startY)
+            }
+          }));
+        }
+      }
+      
+      // Clear all drag state
+      setCardBeingDragged(null);
+      setDraggedBattlefieldCard(null);
+    };
+
+    document.addEventListener('mousemove', handleMouseMove);
+    document.addEventListener('mouseup', handleMouseUp);
+    
+    return () => {
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseup', handleMouseUp);
+    };
+  }, [cardBeingDragged, ws, playerId]);
 
   if (!player) {
     return (

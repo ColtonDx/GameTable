@@ -351,7 +351,8 @@ async fn handle_socket(
                     },
                     Message::LoadLibrary { player_id: pid, card_count, card_type: _ } => {
                         let mut gm = game_manager.write().await;
-                        if let Some(game) = gm.get_game_mut(& - split into 99 library + 1 command zone
+                        if let Some(game) = gm.get_game_mut(&game_id) {
+                            if let Some(player) = game.get_player_mut(&pid) {
                                 let lib_count = if card_count > 0 { card_count - 1 } else { 0 };
                                 
                                 for i in 0..lib_count {
@@ -387,12 +388,9 @@ async fn handle_socket(
                         let mut gm = game_manager.write().await;
                         if let Some(game) = gm.get_game_mut(&game_id) {
                             if let Some(player) = game.get_player_mut(&pid) {
-                                // Shuffle library using Fisher-Yates shuffle
                                 use rand::seq::SliceRandom;
                                 let mut rng = rand::thread_rng();
-                                player.library.shuffle(&mut rng);   };
-                                    player.library.push(card);
-                                }
+                                player.library.shuffle(&mut rng);
                                 game.broadcast_state();
                             }
                         }

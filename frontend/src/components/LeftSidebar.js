@@ -36,6 +36,19 @@ const LeftSidebar = ({ gameId, playerId, ws }) => {
     }
   };
 
+  const handleLoadBlankCards = () => {
+    if (ws && ws.readyState === WebSocket.OPEN) {
+      ws.send(JSON.stringify({
+        LoadLibrary: {
+          player_id: playerId,
+          card_count: 100,
+          card_type: 'blank_white'
+        }
+      }));
+      setShowLoadLibraryModal(false);
+    }
+  };
+
   return (
     <div className={`left-sidebar ${!sidebarVisible ? 'collapsed' : ''}`}>
       <div className="sidebar-header">

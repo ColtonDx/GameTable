@@ -99,8 +99,9 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  overflow: hidden;
+  overflow: visible;
   perspective: 1000px;
+  min-height: 80px;
 }
 
 .cards-fan {
@@ -111,6 +112,7 @@
   align-items: center;
   justify-content: flex-start;
   padding: 0 20px;
+  min-height: 80px;
 }
 
 .card-in-hand {
@@ -118,7 +120,7 @@
   width: 100px;
   height: 140px;
   background: linear-gradient(135deg, #ffffff, #f5f5f5);
-  border: 2px solid #9ca3af;
+  border: 3px solid #f00;
   border-radius: 6px;
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
@@ -129,6 +131,8 @@
   align-items: center;
   justify-content: flex-end;
   padding: 8px;
+  top: 0;
+  left: 0;
 }
 
 .card-in-hand:hover {

@@ -33,6 +33,10 @@ async fn main() {
         .route("/game/create", get(handlers::create_game_handler))
         .route("/ws/:game_id/:player_id", get(websocket::ws_handler));
 
+    // Serve card images from /GameTableData
+    let card_data_routes = Router::new()
+        .nest_service("/GameTableData", ServeDir::new("/GameTableData"));
+
     // Serve static files from /app/public (React build output)
     let static_routes = Router::new()
         .nest_service("/", ServeDir::new("/app/public"))
@@ -41,6 +45,7 @@ async fn main() {
     // Combine routes
     let app = Router::new()
         .nest("/", api_routes)
+        .nest("/", card_data_routes)
         .fallback_service(static_routes)
         .layer(cors)
         .layer(DefaultBodyLimit::max(1024))

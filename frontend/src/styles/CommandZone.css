@@ -9,8 +9,8 @@
   border: 1px solid #334155;
   min-width: 120px;
   max-width: 150px;
-  height: 175px;
   flex-shrink: 0;
+  height: 100%;
 }
 
 .command-zone-header {

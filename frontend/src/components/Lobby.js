@@ -56,7 +56,15 @@ const Lobby = ({ onStartGame }) => {
 
   if (gameSelected) {
     return (
-      <div className="lobby">
+      <div 
+        className="lobby"
+        style={{
+          backgroundImage: "url('/GameTableData/General/wallpaper.jpg')",
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundAttachment: 'fixed'
+        }}
+      >
         <h1>Game Table</h1>
         <div className="game-info">
           <p className="game-id">Game ID: <strong>{gameId}</strong></p>

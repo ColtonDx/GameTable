@@ -8,7 +8,7 @@ RUN cargo build --release
 FROM node:18-alpine as frontend-builder
 WORKDIR /app/frontend
 COPY frontend/package.json ./
-RUN npm install --legacy-peer-deps && npm cache clean --force
+RUN npm install --legacy-peer-deps --no-optional && npm cache clean --force
 COPY frontend/ .
 RUN npm run build
 

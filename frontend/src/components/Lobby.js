@@ -10,6 +10,11 @@ const Lobby = ({ onStartGame }) => {
   const [error, setError] = useState('');
   const [gameSelected, setGameSelected] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
+  const [showPasswordChange, setShowPasswordChange] = useState(false);
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [passwordError, setPasswordError] = useState('');
+  const [passwordLoading, setPasswordLoading] = useState(false);
   const gameIdInputRef = useRef(null);
 
   useEffect(() => {
@@ -81,6 +86,57 @@ const Lobby = ({ onStartGame }) => {
     onStartGame(gameId.toUpperCase(), playerId, playerName);
   };
 
+  const handlePasswordChange = async (e) => {
+    e.preventDefault();
+    setPasswordError('');
+    
+    if (!newPassword || !confirmPassword) {
+      setPasswordError('Please fill in both password fields');
+      return;
+    }
+
+    if (newPassword !== confirmPassword) {
+      setPasswordError('Passwords do not match');
+      return;
+    }
+
+    if (newPassword.length < 6) {
+      setPasswordError('Password must be at least 6 characters');
+      return;
+    }
+
+    setPasswordLoading(true);
+
+    try {
+      const response = await fetch('/auth/reset-password', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          username: currentUser.username,
+          new_password: newPassword,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        setPasswordError('');
+        setNewPassword('');
+        setConfirmPassword('');
+        setShowPasswordChange(false);
+        alert('Password changed successfully!');
+      } else {
+        setPasswordError(data.message || 'Failed to change password');
+      }
+    } catch (err) {
+      setPasswordError('Network error: ' + err.message);
+    } finally {
+      setPasswordLoading(false);
+    }
+  };
+
   const handleStartJoin = () => {
     if (!gameId) {
       setError('Please enter a game ID');
@@ -140,12 +196,63 @@ const Lobby = ({ onStartGame }) => {
         <div className="settings-menu">
           <h3>Settings</h3>
           <p>Logged in as: <strong>{currentUser.username}</strong></p>
-          <button onClick={handleLogout} className="btn btn-secondary">
-            Logout
-          </button>
-          <button onClick={() => setShowSettings(false)} className="btn btn-secondary">
-            Close
-          </button>
+          
+          {!showPasswordChange ? (
+            <>
+              <button onClick={() => setShowPasswordChange(true)} className="btn btn-primary">
+                Change Password
+              </button>
+              <button onClick={handleLogout} className="btn btn-secondary">
+                Logout
+              </button>
+              <button onClick={() => setShowSettings(false)} className="btn btn-secondary">
+                Close
+              </button>
+            </>
+          ) : (
+            <>
+              <form onSubmit={handlePasswordChange}>
+                <div className="form-group">
+                  <label htmlFor="new-password">New Password</label>
+                  <input
+                    id="new-password"
+                    type="password"
+                    placeholder="Enter new password"
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                    disabled={passwordLoading}
+                  />
+                </div>
+                <div className="form-group">
+                  <label htmlFor="confirm-password">Confirm Password</label>
+                  <input
+                    id="confirm-password"
+                    type="password"
+                    placeholder="Confirm new password"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    disabled={passwordLoading}
+                  />
+                </div>
+                {passwordError && <p style={{ color: '#ff6b6b', fontSize: '12px' }}>{passwordError}</p>}
+                <button type="submit" disabled={passwordLoading} className="btn btn-primary">
+                  {passwordLoading ? 'Changing...' : 'Change Password'}
+                </button>
+                <button 
+                  type="button" 
+                  onClick={() => {
+                    setShowPasswordChange(false);
+                    setNewPassword('');
+                    setConfirmPassword('');
+                    setPasswordError('');
+                  }} 
+                  className="btn btn-secondary"
+                >
+                  Cancel
+                </button>
+              </form>
+            </>
+          )}
         </div>
       )}
       

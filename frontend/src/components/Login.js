@@ -60,7 +60,7 @@ const Login = ({ onLoginSuccess }) => {
               type="text"
               placeholder="Enter username"
               value={username}
-              onChange={(e) => setUsername(e.target.value)}
+              onChange={(e) => setUsername(e.target.value.toUpperCase())}
               disabled={loading}
               autoComplete="username"
             />

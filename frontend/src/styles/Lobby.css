@@ -36,24 +36,23 @@
   position: fixed;
   top: 80px;
   right: 20px;
-  background: rgba(15, 23, 42, 0.95);
-  border: 1px solid rgba(96, 165, 250, 0.3);
+  background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+  border: 2px solid #60a5fa;
   border-radius: 8px;
   padding: 20px;
-  min-width: 250px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(10px);
+  min-width: 300px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.7);
   z-index: 1000;
 }
 
 .settings-menu h3 {
-  color: #60a5fa;
+  color: #ffffff;
   margin-top: 0;
   font-size: 18px;
 }
 
 .settings-menu p {
-  color: #93c5fd;
+  color: #ffffff;
   margin: 12px 0;
   font-size: 14px;
 }
@@ -126,4 +125,37 @@
 
 .game-info .input {
   width: 100%;
+}
+
+.settings-menu .form-group {
+  margin: 15px 0;
+}
+
+.settings-menu .form-group label {
+  display: block;
+  color: #ffffff;
+  font-weight: bold;
+  font-size: 12px;
+  margin-bottom: 5px;
+  text-transform: uppercase;
+}
+
+.settings-menu .form-group input {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #60a5fa;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+  font-size: 13px;
+}
+
+.settings-menu .form-group input:focus {
+  outline: none;
+  background: rgba(255, 255, 255, 0.2);
+  border-color: #93c5fd;
+}
+
+.settings-menu .form-group input::placeholder {
+  color: rgba(255, 255, 255, 0.6);
 }

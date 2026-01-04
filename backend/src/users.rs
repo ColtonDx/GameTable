@@ -74,14 +74,14 @@ pub async fn verify_user(
         .map_err(|e| format!("Database error: {}", e))?
         .ok_or("User not found")?;
 
-    let user_id: String = row.get("id");
+    let user_id: Uuid = row.get("id");
     let stored_hash: String = row.get("password_hash");
 
     if bcrypt::verify(password, &stored_hash)
         .map_err(|e| format!("Verification error: {}", e))?
     {
         Ok(User {
-            id: user_id,
+            id: user_id.to_string(),
             username: username.to_string(),
             profile_picture_url: None,
         })

@@ -86,9 +86,11 @@ const ExileZone = ({ cards = [], onInspectCard = null, playerName = null, onView
                 onDragStart={(e) => handleDragStart(e, cards[cards.length - 1])}
                 onClick={(e) => {
                   e.stopPropagation();
-                  onInspectCard && onInspectCard(cards[cards.length - 1], playerName);
+                  if (onViewZone) {
+                    onViewZone('Exile', cards);
+                  }
                 }}
-                title={cards[cards.length - 1].name}
+                title={`Click to view all ${cards.length} cards in exile`}
               >
                 <div
                   style={{

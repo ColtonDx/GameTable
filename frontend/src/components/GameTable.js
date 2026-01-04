@@ -11,6 +11,7 @@ import BottomToolbar from './BottomToolbar';
 import RevealCardOverlay from './RevealCardOverlay';
 import ScryInterface from './ScryInterface';
 import ScryCountSelector from './ScryCountSelector';
+import SurveilInterface from './SurveilInterface';
 import ZoneViewerModal from './ZoneViewerModal';
 
 const GameTable = ({ gameId, playerId, playerName, onBack }) => {
@@ -32,6 +33,10 @@ const GameTable = ({ gameId, playerId, playerName, onBack }) => {
   const [scryCards, setScryCards] = useState([]);
   const [scryCount, setScryCount] = useState(0);
   const [scryCountSelector, setScryCountSelector] = useState(false);
+  const [surveilActive, setSurveilActive] = useState(false);
+  const [surveilCards, setSurveilCards] = useState([]);
+  const [surveilCount, setSurveilCount] = useState(0);
+  const [surveilCountSelector, setSurveilCountSelector] = useState(false);
   const [zoneViewerZone, setZoneViewerZone] = useState(null);
   const [zoneViewerCards, setZoneViewerCards] = useState([]);
   const ws = useRef(null);
@@ -318,6 +323,39 @@ const GameTable = ({ gameId, playerId, playerName, onBack }) => {
     setScryCount(0);
   };
 
+  const handleSurveil = (cards) => {
+    setSurveilCards(cards);
+    setSurveilCountSelector(true);
+  };
+
+  const handleSurveilCountConfirm = (count) => {
+    setSurveilCount(count);
+    setSurveilCountSelector(false);
+    setSurveilActive(true);
+  };
+
+  const handleSurveilComplete = (topCards, graveyardCards) => {
+    if (ws.current && ws.current.readyState === WebSocket.OPEN) {
+      ws.current.send(JSON.stringify({
+        SurveilComplete: {
+          player_id: playerId,
+          top_cards: topCards.map(c => c.id || ''),
+          graveyard_cards: graveyardCards.map(c => c.id || '')
+        }
+      }));
+    }
+    setSurveilActive(false);
+    setSurveilCards([]);
+    setSurveilCount(0);
+  };
+
+  const handleSurveilCancel = () => {
+    setSurveilCountSelector(false);
+    setSurveilActive(false);
+    setSurveilCards([]);
+    setSurveilCount(0);
+  };
+
   const handleViewZone = (zoneName, cards) => {
     setZoneViewerZone(zoneName);
     setZoneViewerCards(cards);
@@ -504,6 +542,26 @@ const GameTable = ({ gameId, playerId, playerName, onBack }) => {
         />
       )}
 
+      {/* Surveil Count Selector */}
+      {surveilCountSelector && (
+        <ScryCountSelector
+          maxCards={currentPlayer?.library?.length || 0}
+          onConfirm={handleSurveilCountConfirm}
+          onCancel={handleSurveilCancel}
+        />
+      )}
+
+      {/* Surveil Interface */}
+      {surveilActive && (
+        <SurveilInterface
+          libraryCards={surveilCards}
+          playerName={currentPlayer?.name}
+          surveilCount={surveilCount}
+          onComplete={handleSurveilComplete}
+          onCancel={handleSurveilCancel}
+        />
+      )}
+
       {/* Zone Viewer Modal */}
       {zoneViewerZone && (
         <ZoneViewerModal
@@ -598,6 +656,7 @@ const GameTable = ({ gameId, playerId, playerName, onBack }) => {
                 onInspectCard={handleInspectCard}
                 onReveal={handleReveal}
                 onScry={handleScry}
+                onSurveil={handleSurveil}
               />
             </div>
 

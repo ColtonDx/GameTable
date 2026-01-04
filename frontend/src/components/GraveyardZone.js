@@ -86,9 +86,11 @@ const GraveyardZone = ({ cards = [], onInspectCard = null, playerName = null, on
                 onDragStart={(e) => handleDragStart(e, cards[cards.length - 1])}
                 onClick={(e) => {
                   e.stopPropagation();
-                  onInspectCard && onInspectCard(cards[cards.length - 1], playerName);
+                  if (onViewZone) {
+                    onViewZone('Graveyard', cards);
+                  }
                 }}
-                title={cards[cards.length - 1].name}
+                title={`Click to view all ${cards.length} cards in graveyard`}
               >
                 <div
                   style={{

@@ -47,9 +47,12 @@ const LibraryZone = ({ cards = [], ws = null, playerId = null, playerName = null
 
   const handleManifest = () => {
     if (ws && ws.readyState === WebSocket.OPEN && playerId && cards && cards.length > 0) {
+      // Default center position - backend can adjust as needed
       ws.send(JSON.stringify({
         ManifestCard: {
-          player_id: playerId
+          player_id: playerId,
+          position_x: 250,
+          position_y: 250
         }
       }));
     }

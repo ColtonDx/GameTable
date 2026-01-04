@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import '../styles/LibraryZone.css';
 
-const LibraryZone = ({ cards = [], ws = null, playerId = null, playerName = null, onInspectCard = null }) => {
+const LibraryZone = ({ cards = [], ws = null, playerId = null, playerName = null, onInspectCard = null, onReveal = null, onScry = null }) => {
   const [contextMenu, setContextMenu] = useState(null);
 
   const handleContextMenu = (e) => {
@@ -20,6 +20,20 @@ const LibraryZone = ({ cards = [], ws = null, playerId = null, playerName = null
           player_id: playerId
         }
       }));
+    }
+    setContextMenu(null);
+  };
+
+  const handleReveal = () => {
+    if (cards && cards.length > 0 && onReveal) {
+      onReveal(cards[0]);
+    }
+    setContextMenu(null);
+  };
+
+  const handleScry = () => {
+    if (cards && cards.length > 0 && onScry) {
+      onScry(cards);
     }
     setContextMenu(null);
   };
@@ -79,6 +93,12 @@ const LibraryZone = ({ cards = [], ws = null, playerId = null, playerName = null
         >
           <button className="context-menu-item" onClick={handleShuffleLibrary}>
             Shuffle Library
+          </button>
+          <button className="context-menu-item" onClick={handleReveal}>
+            Reveal
+          </button>
+          <button className="context-menu-item" onClick={handleScry}>
+            Scry
           </button>
         </div>
       )}

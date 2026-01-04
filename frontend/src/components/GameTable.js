@@ -7,6 +7,8 @@ import CommandZone from './CommandZone';
 import LibraryZone from './LibraryZone';
 import CollapsibleZones from './CollapsibleZones';
 import BottomToolbar from './BottomToolbar';
+import RevealCardOverlay from './RevealCardOverlay';
+import ScryInterface from './ScryInterface';
 
 const GameTable = ({ gameId, playerId, playerName, onBack }) => {
   const [gameState, setGameState] = useState(null);
@@ -20,6 +22,10 @@ const GameTable = ({ gameId, playerId, playerName, onBack }) => {
   const [inspectedCard, setInspectedCard] = useState(null);
   const [inspectedCardPlayerName, setInspectedCardPlayerName] = useState(null);
   const [inspectViewFlipped, setInspectViewFlipped] = useState(false);
+  const [revealedCard, setRevealedCard] = useState(null);
+  const [revealedCardPlayer, setRevealedCardPlayer] = useState(null);
+  const [scryActive, setScryActive] = useState(false);
+  const [scryCards, setScryCards] = useState([]);
   const ws = useRef(null);
   const diceRollTimeoutRef = useRef(null);
   const restartTimeoutRef = useRef(null);
@@ -98,6 +104,13 @@ const GameTable = ({ gameId, playerId, playerName, onBack }) => {
         } else if (message.Error) {
           setError(message.Error.message);
           setTimeout(() => setError(''), 5000);
+        } else if (message.RevealCard) {
+          // Display revealed card to all players
+          setRevealedCard({
+            id: message.RevealCard.card_id,
+            name: message.RevealCard.card_name
+          });
+          setRevealedCardPlayer(message.RevealCard.player_name || 'Player');
         }
       } catch (err) {
         console.error('Error parsing WebSocket message:', err);
@@ -245,6 +258,47 @@ const GameTable = ({ gameId, playerId, playerName, onBack }) => {
     setInspectViewFlipped(false);
   };
 
+  const handleReveal = (card) => {
+    if (ws.current && ws.current.readyState === WebSocket.OPEN) {
+      // Broadcast to all players this card is being revealed
+      ws.current.send(JSON.stringify({
+        RevealCard: {
+          player_id: playerId,
+          card_id: card.id || '',
+          card_name: card.name || 'Unknown',
+          zone: 'library' // or 'hand' depending on context
+        }
+      }));
+      // Also show it locally
+      setRevealedCard(card);
+      setRevealedCardPlayer(playerName);
+    }
+  };
+
+  const handleScry = (cards) => {
+    setScryActive(true);
+    setScryCards(cards);
+  };
+
+  const handleScryComplete = (topCards, bottomCards) => {
+    if (ws.current && ws.current.readyState === WebSocket.OPEN) {
+      ws.current.send(JSON.stringify({
+        ScryComplete: {
+          player_id: playerId,
+          top_cards: topCards.map(c => c.id || ''),
+          bottom_cards: bottomCards.map(c => c.id || '')
+        }
+      }));
+    }
+    setScryActive(false);
+    setScryCards([]);
+  };
+
+  const handleScryCancel = () => {
+    setScryActive(false);
+    setScryCards([]);
+  };
+
   const getCardImagePath = (card, playerName) => {
     if (card.is_flipped) {
       // Check if player has custom sleeve
@@ -386,6 +440,29 @@ const GameTable = ({ gameId, playerId, playerName, onBack }) => {
         </div>
       )}
 
+      {/* Reveal Card Overlay */}
+      {revealedCard && (
+        <RevealCardOverlay
+          playerName={revealedCardPlayer}
+          cardName={revealedCard.name}
+          cardId={revealedCard.id}
+          onClose={() => {
+            setRevealedCard(null);
+            setRevealedCardPlayer(null);
+          }}
+        />
+      )}
+
+      {/* Scry Interface */}
+      {scryActive && (
+        <ScryInterface
+          libraryCards={scryCards}
+          playerName={currentPlayer?.name}
+          onComplete={handleScryComplete}
+          onCancel={handleScryCancel}
+        />
+      )}
+
       <div className="game-container" style={{ display: zoomedPlayer ? 'none' : 'flex' }}>
         {/* Left Sidebar */}
         <div className="sidebar-section">
@@ -469,6 +546,8 @@ const GameTable = ({ gameId, playerId, playerName, onBack }) => {
                 playerId={playerId}
                 playerName={currentPlayer?.name}
                 onInspectCard={handleInspectCard}
+                onReveal={handleReveal}
+                onScry={handleScry}
               />
             </div>
 
@@ -483,6 +562,7 @@ const GameTable = ({ gameId, playerId, playerName, onBack }) => {
                 playerName={currentPlayer?.name}
                 position="bottom-left"
                 onInspectCard={handleInspectCard}
+                onReveal={handleReveal}
               />
             </div>
 

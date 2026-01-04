@@ -50,6 +50,12 @@ pub enum Message {
     RestartGame {},
     #[serde(rename = "LeaveTable")]
     LeaveTable {},
+    #[serde(rename = "RevealCard")]
+    RevealCard { player_id: String, card_id: String, card_name: String, zone: String },
+    #[serde(rename = "Scry")]
+    Scry { player_id: String, count: usize },
+    #[serde(rename = "ScryComplete")]
+    ScryComplete { player_id: String, top_cards: Vec<String>, bottom_cards: Vec<String> },
     
     #[serde(rename = "GameState")]
     GameState { state: String },
@@ -480,6 +486,90 @@ async fn handle_socket(
                                 use rand::seq::SliceRandom;
                                 let mut rng = rand::thread_rng();
                                 player.library.shuffle(&mut rng);
+                                game.broadcast_state();
+                            }
+                        }
+                    },
+                    Message::RevealCard { player_id: _, card_id, card_name, zone: _ } => {
+                        // Broadcast revealed card to all players
+                        let gm = game_manager.read().await;
+                        if let Some(game) = gm.get_game(&game_id) {
+                            if let Some(tx) = &game.tx {
+                                let player_name = game.players.get(&player_id).map(|p| &p.name).unwrap_or(&"Unknown".to_string()).clone();
+                                let msg = serde_json::json!({
+                                    "RevealCard": {
+                                        "card_id": card_id,
+                                        "card_name": card_name,
+                                        "player_name": player_name
+                                    }
+                                });
+                                let _ = tx.send(msg.to_string());
+                            }
+                        }
+                    },
+                    Message::Scry { player_id: _, count } => {
+                        // Just acknowledge scry - actual card selection happens on client
+                        // We'll handle the complete in ScryComplete message
+                        let gm = game_manager.read().await;
+                        if let Some(game) = gm.get_game(&game_id) {
+                            if let Some(player) = game.players.get(&player_id) {
+                                if let Some(tx) = &game.tx {
+                                    // Send top cards to viewing player
+                                    let cards_to_view: Vec<String> = player.library.iter()
+                                        .take(count)
+                                        .map(|c| c.name.clone())
+                                        .collect();
+                                    let msg = serde_json::json!({
+                                        "ScryCards": {
+                                            "player_id": player_id,
+                                            "cards": cards_to_view
+                                        }
+                                    });
+                                    let _ = tx.send(msg.to_string());
+                                }
+                            }
+                        }
+                    },
+                    Message::ScryComplete { player_id: pid, top_cards, bottom_cards } => {
+                        // Reorder library based on scry decisions
+                        let mut gm = game_manager.write().await;
+                        if let Some(game) = gm.get_game_mut(&game_id) {
+                            if let Some(player) = game.get_player_mut(&pid) {
+                                // Create mapping of card IDs for lookup
+                                let mut remaining_library: Vec<Card> = vec![];
+                                
+                                // Separate viewed cards from rest of library
+                                let mut all_top_bottom: Vec<String> = top_cards.clone();
+                                all_top_bottom.extend(bottom_cards.clone());
+                                
+                                for card in player.library.drain(..) {
+                                    if !all_top_bottom.contains(&card.id) {
+                                        remaining_library.push(card);
+                                    }
+                                }
+                                
+                                // Rebuild library: top cards, then middle, then bottom cards
+                                let mut new_library: Vec<Card> = vec![];
+                                
+                                // Add top cards in order
+                                for top_id in &top_cards {
+                                    if let Some(pos) = remaining_library.iter().position(|c| &c.id == top_id) {
+                                        new_library.push(remaining_library.remove(pos));
+                                    }
+                                }
+                                
+                                // Add remaining middle cards
+                                new_library.extend(remaining_library);
+                                
+                                // Add bottom cards in order at the end
+                                for bottom_id in &bottom_cards {
+                                    if let Some(pos) = new_library.iter().position(|c| &c.id == bottom_id) {
+                                        let card = new_library.remove(pos);
+                                        new_library.push(card);
+                                    }
+                                }
+                                
+                                player.library = new_library;
                                 game.broadcast_state();
                             }
                         }

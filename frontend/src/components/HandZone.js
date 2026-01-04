@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import '../styles/HandZone.css';
 
-const HandZone = ({ cards, onSelectCard, onHandOptions, scale = 1, ws = null, playerId = null, playerName = null, position = 'bottom-left', onInspectCard = null }) => {
+const HandZone = ({ cards, onSelectCard, onHandOptions, scale = 1, ws = null, playerId = null, playerName = null, position = 'bottom-left', onInspectCard = null, onReveal = null }) => {
   const [selectedCardIndex, setSelectedCardIndex] = useState(null);
   const [scrollOffset, setScrollOffset] = useState(0);
   const [draggedCard, setDraggedCard] = useState(null);
@@ -101,6 +101,13 @@ const HandZone = ({ cards, onSelectCard, onHandOptions, scale = 1, ws = null, pl
   const handleInspectCard = () => {
     if (contextMenu && onInspectCard) {
       onInspectCard(contextMenu.card, playerName);
+    }
+    setContextMenu(null);
+  };
+
+  const handleReveal = () => {
+    if (contextMenu && onReveal) {
+      onReveal(contextMenu.card);
     }
     setContextMenu(null);
   };
@@ -214,6 +221,9 @@ const HandZone = ({ cards, onSelectCard, onHandOptions, scale = 1, ws = null, pl
           </button>
           <button className="context-menu-item" onClick={handleInspectCard}>
             Inspect
+          </button>
+          <button className="context-menu-item" onClick={handleReveal}>
+            Reveal
           </button>
           <div className="context-submenu-divider"></div>
           <div className="context-submenu">

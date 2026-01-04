@@ -481,6 +481,7 @@ const GameTable = ({ gameId, playerId, playerName, onBack }) => {
               ws={zoomedIndex === 0 ? ws.current : null}
               playerId={zoomedIndex === 0 ? playerId : null}
               onInspectCard={setInspectedCard}
+              playmatImage={`/GameTableData/Players/${zoomedPlayer?.name}/playmat.jpg`}
             />
             <div className="zoom-hint">Double-click to exit zoom</div>
           </div>

@@ -156,6 +156,12 @@
   padding: 20px;
 }
 
+/* Scale cards up in zoomed view */
+.zoomed-player-container .battlefield-card {
+  width: 120px;
+  height: 172px;
+}
+
 .zoom-hint {
   position: absolute;
   bottom: 16px;

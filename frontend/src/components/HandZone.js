@@ -183,7 +183,7 @@ const HandZone = ({ cards, onSelectCard, onHandOptions, scale = 1, ws = null, pl
     // Draw the same number of cards
     ws.send(JSON.stringify({
       DrawCard: {
-        player_id: playerId,
+        card_name: 'Card',
         count: handSize
       }
     }));

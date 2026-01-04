@@ -114,17 +114,19 @@ const CommandZone = ({ cards, ws = null, playerId = null, playerName = null, onI
 
       <div className="command-zone-cards" onDragOver={handleDragOver} onDrop={handleDrop}>
         {cards.length > 0 ? (
-          cards.map((card, index) => (
-            <div
-              key={card.id}
-              className={`card-in-command ${draggedCard?.card.id === card.id ? 'dragging' : ''} ${card.is_commander ? 'commander' : ''}`}
-              draggable
-              onDragStart={(e) => handleDragStart(e, card, index)}
-              onDragEnd={handleDragEnd}
-              onContextMenu={(e) => handleContextMenu(e, card, index)}
-              title={card.name}
-            >
-              <div className="card-content">
+          <div className="command-stack">
+            {cards.map((card, index) => (
+              <div
+                key={card.id}
+                className={`command-card ${draggedCard?.card.id === card.id ? 'dragging' : ''} ${card.is_commander ? 'commander' : ''}`}
+                draggable
+                onDragStart={(e) => handleDragStart(e, card, index)}
+                onDragEnd={handleDragEnd}
+                onContextMenu={(e) => handleContextMenu(e, card, index)}
+                onClick={() => onInspectCard && onInspectCard(card, playerName)}
+                title={card.name}
+                style={{ zIndex: index }}
+              >
                 <div 
                   className="card-image"
                   style={{
@@ -135,10 +137,9 @@ const CommandZone = ({ cards, ws = null, playerId = null, playerName = null, onI
                 >
                   {card.is_token && <div className="token-label">TOKEN</div>}
                 </div>
-                <div className="card-name">{card.name}</div>
               </div>
-            </div>
-          ))
+            ))}
+          </div>
         ) : (
           <div className="empty-command">No cards</div>
         )}

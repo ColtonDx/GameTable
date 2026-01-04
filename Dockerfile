@@ -1,5 +1,5 @@
 # Stage 1: Build backend with minimal footprint
-FROM rust:1.75-slim as backend-builder
+FROM rust:latest as backend-builder
 WORKDIR /app/backend
 COPY backend/ .
 RUN cargo build --release

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, createContext } from 'react';
 import '../styles/GameTableNew.css';
 import LeftSidebar from './LeftSidebar';
 import BattlefieldZone from './BattlefieldZone';
@@ -14,6 +14,9 @@ import ScryCountSelector from './ScryCountSelector';
 import SurveilInterface from './SurveilInterface';
 import ZoneViewerModal from './ZoneViewerModal';
 import SpawnCardModal from './SpawnCardModal';
+
+// Create WebSocket context to avoid passing it as a prop
+export const WebSocketContext = createContext(null);
 
 const GameTable = ({ gameId, playerId, playerName, onBack }) => {
   const [gameState, setGameState] = useState(null);
@@ -486,20 +489,21 @@ const GameTable = ({ gameId, playerId, playerName, onBack }) => {
   }
 
   return (
-    <div className="game-table-new">
-      {error && <div className="error-banner">{error}</div>}
+    <WebSocketContext.Provider value={ws.current}>
+      <div className="game-table-new">
+        {error && <div className="error-banner">{error}</div>}
 
-      {/* Game Restart Notification */}
-      {gameRestart && (
-        <div className="game-restart-notification">
-          <div className="notification-content">
-            <span className="notification-icon">🔄</span>
-            <span className="notification-text">Game restarted by {gameRestart.player_name}</span>
+        {/* Game Restart Notification */}
+        {gameRestart && (
+          <div className="game-restart-notification">
+            <div className="notification-content">
+              <span className="notification-icon">🔄</span>
+              <span className="notification-text">Game restarted by {gameRestart.player_name}</span>
+            </div>
           </div>
-        </div>
-      )}
+        )}
 
-      {/* Dice Roll Broadcast */}
+        {/* Dice Roll Broadcast */}
       {diceRoll && (
         <div className="dice-roll-broadcast">
           <div className="broadcast-content">
@@ -525,7 +529,6 @@ const GameTable = ({ gameId, playerId, playerName, onBack }) => {
               onUpdateCounter={updatePlayerCounter}
               onSpawnCard={handleSpawnCard}
               onZoom={handleZoom}
-              ws={zoomedIndex === 0 ? ws.current : null}
               playerId={zoomedIndex === 0 ? playerId : null}
               onInspectCard={setInspectedCard}
               playmatImage={`/GameTableData/Players/${zoomedPlayer?.name}/playmat.jpg`}
@@ -663,7 +666,6 @@ const GameTable = ({ gameId, playerId, playerName, onBack }) => {
           zoneName={zoneViewerZone}
           cards={zoneViewerCards}
           onClose={handleCloseZoneViewer}
-          ws={ws.current}
           playerId={playerId}
         />
       )}
@@ -720,7 +722,6 @@ const GameTable = ({ gameId, playerId, playerName, onBack }) => {
                   onUpdateCounter={updatePlayerCounter}
                   onSpawnCard={handleSpawnCard}
                   onZoom={handleZoom}
-                  ws={ws.current}
                   playerId={playerId}
                   onInspectCard={handleInspectCard}
                   playmatImage={`/GameTableData/Players/${rotatedPlayers[0]?.name}/playmat.jpg`}
@@ -747,7 +748,6 @@ const GameTable = ({ gameId, playerId, playerName, onBack }) => {
             <div style={{ height: `${handScale * 219}px` }}>
               <LibraryZone
                 cards={currentPlayer?.library || []}
-                ws={ws.current}
                 playerId={playerId}
                 playerName={currentPlayer?.name}
                 onInspectCard={handleInspectCard}
@@ -763,7 +763,6 @@ const GameTable = ({ gameId, playerId, playerName, onBack }) => {
                 onSelectCard={() => {}}
                 onHandOptions={() => {}}
                 scale={handScale}
-                ws={ws.current}
                 playerId={playerId}
                 playerName={currentPlayer?.name}
                 position="bottom-left"
@@ -775,7 +774,6 @@ const GameTable = ({ gameId, playerId, playerName, onBack }) => {
             <div style={{ height: `${handScale * 219}px` }}>
               <CommandZone
                 cards={currentPlayer?.command_zone || []}
-                ws={ws.current}
                 playerId={playerId}
                 playerName={currentPlayer?.name}
                 onInspectCard={handleInspectCard}
@@ -788,7 +786,6 @@ const GameTable = ({ gameId, playerId, playerName, onBack }) => {
                 onInspectCard={handleInspectCard}
                 playerName={currentPlayer?.name}
                 onViewZone={handleViewZone}
-                ws={ws.current}
                 playerId={playerId}
                 onMoveCard={() => {}}
               />
@@ -800,7 +797,6 @@ const GameTable = ({ gameId, playerId, playerName, onBack }) => {
                 onInspectCard={handleInspectCard}
                 playerName={currentPlayer?.name}
                 onViewZone={handleViewZone}
-                ws={ws.current}
                 playerId={playerId}
                 onMoveCard={() => {}}
               />
@@ -842,14 +838,15 @@ const GameTable = ({ gameId, playerId, playerName, onBack }) => {
         position={spawnCardPosition}
       />
 
+      <BottomToolbar
         onAction={handleAction}
         onGameMenu={handleGameMenu}
         onUndoTurn={handleUndoTurn}
         onBack={onBack}
-        ws={ws.current}
         playerId={playerId}
       />
-    </div>
+      </div>
+    </WebSocketContext.Provider>
   );
 };
 

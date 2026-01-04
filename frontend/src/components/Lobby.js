@@ -13,14 +13,20 @@ const Lobby = ({ onStartGame }) => {
   const gameIdInputRef = useRef(null);
 
   useEffect(() => {
-    // Check if user is logged in
+    // Check if user is logged in from localStorage (on mount)
     const user = localStorage.getItem('currentUser');
     if (user) {
       const userData = JSON.parse(user);
       setCurrentUser(userData);
-      setPlayerName(userData.username);
     }
   }, []);
+
+  useEffect(() => {
+    // Update playerName whenever currentUser changes
+    if (currentUser && currentUser.username) {
+      setPlayerName(currentUser.username);
+    }
+  }, [currentUser]);
 
   const handleLogout = () => {
     localStorage.removeItem('currentUser');

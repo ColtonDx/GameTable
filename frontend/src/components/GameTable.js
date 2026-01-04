@@ -13,6 +13,7 @@ import ScryInterface from './ScryInterface';
 import ScryCountSelector from './ScryCountSelector';
 import SurveilInterface from './SurveilInterface';
 import ZoneViewerModal from './ZoneViewerModal';
+import SpawnCardModal from './SpawnCardModal';
 
 const GameTable = ({ gameId, playerId, playerName, onBack }) => {
   const [gameState, setGameState] = useState(null);
@@ -28,6 +29,8 @@ const GameTable = ({ gameId, playerId, playerName, onBack }) => {
   const [inspectViewFlipped, setInspectViewFlipped] = useState(false);
   const [revealedCard, setRevealedCard] = useState(null);
   const [revealedCardPlayer, setRevealedCardPlayer] = useState(null);
+  const [spawnCardModalOpen, setSpawnCardModalOpen] = useState(false);
+  const [spawnCardPosition, setSpawnCardPosition] = useState(null);
   const [revealedCardZone, setRevealedCardZone] = useState('library');
   const [scryActive, setScryActive] = useState(false);
   const [scryCards, setScryCards] = useState([]);
@@ -252,8 +255,28 @@ const GameTable = ({ gameId, playerId, playerName, onBack }) => {
   };
 
   const handleSpawnCard = (position) => {
-    console.log('Right-clicked to spawn card at position:', position);
-    // Card spawning is now a placeholder - can be extended later
+    setSpawnCardPosition(position);
+    setSpawnCardModalOpen(true);
+  };
+
+  const handleSpawnCardSubmit = (cardData) => {
+    if (!ws.current || ws.current.readyState !== WebSocket.OPEN) {
+      console.error('WebSocket not connected');
+      return;
+    }
+
+    // Send SpawnCard message to backend
+    ws.current.send(JSON.stringify({
+      SpawnCard: {
+        player_id: playerId,
+        set_code: cardData.setCode,
+        collector_number: cardData.collectorNumber,
+        card_name: cardData.name,
+        position: cardData.position
+      }
+    }));
+
+    setSpawnCardModalOpen(false);
   };
 
   const handleZoom = (position) => {
@@ -754,11 +777,14 @@ const GameTable = ({ gameId, playerId, playerName, onBack }) => {
         </div>
       </div>
 
-      {/* Bottom Toolbar */}
-      <BottomToolbar 
-        gameState={gameState}
-        turnNumber={gameState?.turn_number || 1}
-        onNextTurn={handleNextTurn}
+      {/* Spawn Card Modal */}
+      <SpawnCardModal 
+        isOpen={spawnCardModalOpen}
+        onClose={() => setSpawnCardModalOpen(false)}
+        onSpawn={handleSpawnCardSubmit}
+        position={spawnCardPosition}
+      />
+
         onAction={handleAction}
         onGameMenu={handleGameMenu}
         onUndoTurn={handleUndoTurn}

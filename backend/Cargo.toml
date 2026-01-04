@@ -18,6 +18,8 @@ rand = "0.8"
 sqlx = { version = "0.7", features = ["postgres", "runtime-tokio-rustls", "uuid"] }
 bcrypt = "0.15"
 dotenv = "0.15"
+reqwest = { version = "0.11", features = ["json"] }
+chrono = { version = "0.4", features = ["serde"] }
 
 [profile.release]
 opt-level = 3

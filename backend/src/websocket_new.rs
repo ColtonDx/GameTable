@@ -6,6 +6,7 @@ use futures::{SinkExt, StreamExt};
 use serde::{Deserialize, Serialize};
 use std::sync::Arc;
 use tokio::sync::{RwLock, Mutex};
+use uuid::Uuid;
 
 use crate::game::{GameManager, Player, Zone, Card};
 use crate::AppState;
@@ -60,6 +61,8 @@ pub enum Message {
     SurveilComplete { player_id: String, top_cards: Vec<String>, graveyard_cards: Vec<String> },
     #[serde(rename = "ManifestCard")]
     ManifestCard { player_id: String, card_id: String, #[serde(skip_serializing_if = "Option::is_none")] position_x: Option<f32>, #[serde(skip_serializing_if = "Option::is_none")] position_y: Option<f32> },
+    #[serde(rename = "SpawnCard")]
+    SpawnCard { player_id: String, set_code: String, collector_number: String, card_name: String, position: String },
     
     #[serde(rename = "GameState")]
     GameState { state: String },
@@ -627,6 +630,30 @@ async fn handle_socket(
                                     player.battlefield.push(card);
                                     game.broadcast_state();
                                 }
+                            }
+                        }
+                    },
+                    Message::SpawnCard { player_id: pid, set_code, collector_number, card_name, position: _ } => {
+                        // Spawn a card token on the battlefield
+                        let mut gm = game_manager.write().await;
+                        if let Some(game) = gm.get_game_mut(&game_id) {
+                            if let Some(player) = game.get_player_mut(&pid) {
+                                // Create a token card with the image path
+                                let image_path = format!("/GameTableData/Sets/{}/{}/{}.jpg", set_code, set_code, collector_number);
+                                let card = Card {
+                                    id: format!("token_{}", Uuid::new_v4()),
+                                    name: card_name,
+                                    image_url: image_path,
+                                    is_token: true,
+                                    is_flipped: false,
+                                    is_tapped: false,
+                                    is_commander: false,
+                                    position_x: 400.0,  // Center of battlefield
+                                    position_y: 300.0,
+                                    created_at: chrono::Utc::now(),
+                                };
+                                player.battlefield.push(card);
+                                game.broadcast_state();
                             }
                         }
                     },

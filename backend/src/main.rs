@@ -3,6 +3,7 @@ mod websocket_new;
 mod handlers;
 mod users;
 mod upload;
+mod scryfall;
 
 // Re-export websocket_new as websocket for compatibility
 use websocket_new as websocket;
@@ -18,6 +19,7 @@ use tower_http::cors::CorsLayer;
 use tower_http::services::ServeDir;
 use tracing_subscriber;
 use sqlx::postgres::PgPool;
+use std::path::Path;
 
 use game::GameManager;
 
@@ -61,6 +63,65 @@ async fn main() {
     .await
     .expect("Failed to create index");
 
+    // Create cards table
+    sqlx::query(
+        "CREATE TABLE IF NOT EXISTS cards (
+            id SERIAL PRIMARY KEY,
+            name VARCHAR(255) NOT NULL,
+            collector_number VARCHAR(20) NOT NULL,
+            set_code VARCHAR(10) NOT NULL,
+            set_name VARCHAR(255) NOT NULL,
+            is_two_sided BOOLEAN NOT NULL DEFAULT false,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            UNIQUE(name, collector_number, set_code)
+        )"
+    )
+    .execute(&pool)
+    .await
+    .expect("Failed to create cards table");
+
+    sqlx::query(
+        "CREATE INDEX IF NOT EXISTS idx_cards_set_collector ON cards(set_code, collector_number)"
+    )
+    .execute(&pool)
+    .await
+    .expect("Failed to create index");
+
+    sqlx::query(
+        "CREATE INDEX IF NOT EXISTS idx_cards_set_code ON cards(set_code)"
+    )
+    .execute(&pool)
+    .await
+    .expect("Failed to create index");
+
+    sqlx::query(
+        "CREATE INDEX IF NOT EXISTS idx_cards_name ON cards(name)"
+    )
+    .execute(&pool)
+    .await
+    .expect("Failed to create index");
+
+    // Sync Scryfall cards
+    tracing::info!("Starting Scryfall card sync...");
+    let pool_clone = pool.clone();
+    tokio::spawn(async move {
+        if let Ok(setcodes_content) = tokio::fs::read_to_string("/GameTableData/General/setcodes.txt").await {
+            let set_codes: Vec<String> = setcodes_content
+                .lines()
+                .map(|s| s.trim().to_string())
+                .filter(|s| !s.is_empty())
+                .collect();
+
+            if !set_codes.is_empty() {
+                if let Err(e) = scryfall::sync_all_sets(&pool_clone, &set_codes).await {
+                    tracing::error!("Failed to sync Scryfall cards: {}", e);
+                }
+            }
+        } else {
+            tracing::warn!("setcodes.txt not found, skipping card sync");
+        }
+    });
+
     let game_manager = Arc::new(RwLock::new(GameManager::new()));
 
     let state = AppState {
@@ -77,6 +138,8 @@ async fn main() {
         .route("/auth/register", post(handlers::register_handler))
         .route("/auth/login", post(handlers::login_handler))
         .route("/auth/reset-password", post(handlers::reset_password_handler))
+        .route("/cards/query", get(handlers::query_card_handler))
+        .route("/cards/search", get(handlers::search_cards_handler))
         .route("/upload", post(upload::upload_handler))
         .route("/ws/:game_id/:player_id/:player_name", get(websocket::ws_handler))
         .with_state(state.clone());

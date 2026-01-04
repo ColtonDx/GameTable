@@ -8,9 +8,9 @@ RUN cargo build --release
 FROM node:18-alpine as frontend-builder
 WORKDIR /app/frontend
 COPY frontend/package.json ./
-RUN npm install --legacy-peer-deps --no-optional && npm cache clean --force
+RUN npm install --force
 COPY frontend/ .
-RUN npm run build
+RUN npm run build && npm cache clean --force
 
 # Stage 3: Runtime - minimal image
 FROM debian:bookworm-slim

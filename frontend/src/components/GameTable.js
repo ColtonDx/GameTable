@@ -69,7 +69,8 @@ const GameTable = ({ gameId, playerId, playerName, onBack }) => {
     ws.current = new WebSocket(wsUrl);
 
     ws.current.onopen = () => {
-      console.log('Connected to game server');
+      console.log('WebSocket connected to:', wsUrl);
+      console.log('WebSocket readyState:', ws.current.readyState);
       // Clear the connection timeout since we successfully connected
       if (connectionTimeoutRef.current) {
         clearTimeout(connectionTimeoutRef.current);
@@ -84,20 +85,26 @@ const GameTable = ({ gameId, playerId, playerName, onBack }) => {
             name: playerName
           }
         };
+        console.log('Sending SetPlayerName message:', setNameMsg);
         ws.current.send(JSON.stringify(setNameMsg));
       }
     };
 
     ws.current.onmessage = (event) => {
       try {
+        console.log('Received WebSocket message:', event.data.substring(0, 200));
         const message = JSON.parse(event.data);
+        console.log('Parsed message:', message);
         
         if (message.GameState && message.GameState.state) {
+          console.log('Received GameState, parsing inner state...');
           const state = JSON.parse(message.GameState.state);
+          console.log('Parsed game state:', state);
           setGameState(state);
           // Store the player's join order for seat rotation
           if (message.GameState.player_join_order !== undefined) {
             setPlayerJoinOrder(message.GameState.player_join_order);
+            console.log('Player join order:', message.GameState.player_join_order);
           }
         } else if (message.DiceRoll) {
           setDiceRoll(message.DiceRoll);
@@ -131,6 +138,7 @@ const GameTable = ({ gameId, playerId, playerName, onBack }) => {
         }
       } catch (err) {
         console.error('Error parsing WebSocket message:', err);
+        console.error('Raw event data:', event.data);
       }
     };
 
@@ -424,6 +432,14 @@ const GameTable = ({ gameId, playerId, playerName, onBack }) => {
 
   const players = gameState?.players ? Object.values(gameState.players) : [];
   
+  // Debug logging
+  console.log('GameState received, players:', players);
+  console.log('PlayerJoinOrder:', playerJoinOrder);
+  
+  if (!players || players.length === 0) {
+    return <div className="game-table-new loading">Waiting for players to join...</div>;
+  }
+  
   // Sort players by join_order to ensure correct positions
   const sortedPlayers = [...players].sort((a, b) => a.join_order - b.join_order);
   
@@ -437,7 +453,14 @@ const GameTable = ({ gameId, playerId, playerName, onBack }) => {
     sortedPlayers[(playerJoinOrder + 1) % 4]
   ];
   
+  console.log('RotatedPlayers:', rotatedPlayers);
+  
   const currentPlayer = rotatedPlayers[0];
+  
+  if (!currentPlayer) {
+    return <div className="game-table-new loading">Loading player data...</div>;
+  }
+  
   const activePlayerJoinOrder = gameState?.current_turn_player || 0;
   
   // Map the backend's active player index to the rotated view

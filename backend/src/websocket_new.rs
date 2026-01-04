@@ -27,7 +27,7 @@ pub enum Message {
     #[serde(rename = "MoveCard")]
     MoveCard { card_id: String, from_zone: String, to_zone: String, #[serde(skip_serializing_if = "Option::is_none")] position_x: Option<f32>, #[serde(skip_serializing_if = "Option::is_none")] position_y: Option<f32> },
     #[serde(rename = "DrawCard")]
-    DrawCard { card_name: String },
+    DrawCard { card_name: String, #[serde(skip_serializing_if = "Option::is_none")] count: Option<usize> },
     #[serde(rename = "MillCard")]
     MillCard { card_name: String },
     #[serde(rename = "DiscardCard")]
@@ -245,15 +245,18 @@ async fn handle_socket(
                             game.broadcast_state();
                         }
                     },
-                    Message::DrawCard { card_name: _ } => {
+                    Message::DrawCard { card_name: _, count } => {
                         let mut gm = game_manager.write().await;
                         if let Some(game) = gm.get_game_mut(&game_id) {
                             if let Some(player) = game.get_player_mut(&player_id) {
-                                // Move one card from library to hand
-                                if let Some(card) = player.library.pop() {
-                                    player.hand.push(card);
-                                    game.broadcast_state();
+                                // Draw one or more cards from library to hand
+                                let draw_count = count.unwrap_or(1);
+                                for _ in 0..draw_count {
+                                    if let Some(card) = player.library.pop() {
+                                        player.hand.push(card);
+                                    }
                                 }
+                                game.broadcast_state();
                             }
                         }
                     },
@@ -605,16 +608,15 @@ async fn handle_socket(
                         }
                     },
                     Message::ManifestCard { player_id: pid, card_id, position_x, position_y } => {
-                        // Move a card from library to battlefield face down as a token
+                        // Move a card from library to battlefield face down
                         let mut gm = game_manager.write().await;
                         if let Some(game) = gm.get_game_mut(&game_id) {
                             if let Some(player) = game.get_player_mut(&pid) {
                                 // Find and remove card from library
                                 if let Some(pos) = player.library.iter().position(|c| c.id == card_id) {
                                     let mut card = player.library.remove(pos);
-                                    // Flip the card face down
+                                    // Flip the card face down (but keep it as the original card, not a token)
                                     card.is_flipped = true;
-                                    card.is_token = true;
                                     // Set position if provided, otherwise use default
                                     if let Some(x) = position_x {
                                         card.position_x = x;

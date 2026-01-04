@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import '../styles/LibraryZone.css';
+import ScryCountSelector from './ScryCountSelector';
 
 const LibraryZone = ({ cards = [], ws = null, playerId = null, playerName = null, onInspectCard = null, onReveal = null, onScry = null, onSurveil = null }) => {
   const [contextMenu, setContextMenu] = useState(null);
+  const [showMillSelector, setShowMillSelector] = useState(false);
 
   const handleContextMenu = (e) => {
     e.preventDefault();
@@ -61,18 +63,29 @@ const LibraryZone = ({ cards = [], ws = null, playerId = null, playerName = null
   };
 
   const handleMillCard = () => {
-    if (ws && ws.readyState === WebSocket.OPEN && playerId && cards && cards.length > 0) {
-      // Move the top card from library to graveyard
-      ws.send(JSON.stringify({
-        MoveCard: {
-          player_id: playerId,
-          card_id: cards[0]?.id,
-          from_zone: 'library',
-          to_zone: 'graveyard'
-        }
-      }));
-    }
+    setShowMillSelector(true);
     setContextMenu(null);
+  };
+
+  const handleMillConfirm = (count) => {
+    if (ws && ws.readyState === WebSocket.OPEN && playerId && cards && cards.length > 0) {
+      // Mill the top 'count' cards
+      for (let i = 0; i < count && i < cards.length; i++) {
+        ws.send(JSON.stringify({
+          MoveCard: {
+            player_id: playerId,
+            card_id: cards[i].id,
+            from_zone: 'library',
+            to_zone: 'graveyard'
+          }
+        }));
+      }
+    }
+    setShowMillSelector(false);
+  };
+
+  const handleMillCancel = () => {
+    setShowMillSelector(false);
   };
 
   const handleDrawCard = () => {
@@ -132,7 +145,7 @@ const LibraryZone = ({ cards = [], ws = null, playerId = null, playerName = null
             Shuffle Library
           </button>
           <button className="context-menu-item" onClick={handleMillCard}>
-            Mill a Card
+            Mill
           </button>
           <button className="context-menu-item" onClick={handleReveal}>
             Reveal
@@ -147,6 +160,16 @@ const LibraryZone = ({ cards = [], ws = null, playerId = null, playerName = null
             Manifest
           </button>
         </div>
+      )}
+
+      {/* Mill Count Selector */}
+      {showMillSelector && (
+        <ScryCountSelector
+          maxCards={cards.length}
+          onConfirm={handleMillConfirm}
+          onCancel={handleMillCancel}
+          mode="Mill"
+        />
       )}
     </div>
   );

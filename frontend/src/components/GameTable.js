@@ -632,6 +632,9 @@ const GameTable = ({ gameId, playerId, playerName, onBack }) => {
                 onInspectCard={handleInspectCard}
                 playerName={currentPlayer?.name}
                 onViewZone={handleViewZone}
+                ws={ws.current}
+                playerId={playerId}
+                onMoveCard={() => {}}
               />
             </div>
 
@@ -641,6 +644,9 @@ const GameTable = ({ gameId, playerId, playerName, onBack }) => {
                 onInspectCard={handleInspectCard}
                 playerName={currentPlayer?.name}
                 onViewZone={handleViewZone}
+                ws={ws.current}
+                playerId={playerId}
+                onMoveCard={() => {}}
               />
             </div>
           </div>

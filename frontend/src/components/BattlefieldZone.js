@@ -184,6 +184,8 @@ const BattlefieldZone = ({ player, position, isActive, onUpdateLife, onUpdateCou
         const elementAtDrop = document.elementFromPoint(e.clientX, e.clientY);
         const handZone = elementAtDrop?.closest('.hand-display-area') || elementAtDrop?.closest('.hand-section');
         const commandZone = elementAtDrop?.closest('.command-zone');
+        const graveyardZone = elementAtDrop?.closest('.graveyard-zone');
+        const exileZone = elementAtDrop?.closest('.exile-zone');
         
         if (handZone) {
           // Drag to hand
@@ -206,6 +208,30 @@ const BattlefieldZone = ({ player, position, isActive, onUpdateLife, onUpdateCou
                 card_id: cardId,
                 from_zone: 'battlefield',
                 to_zone: 'command_zone'
+              }
+            }));
+          }
+        } else if (graveyardZone) {
+          // Drag to graveyard
+          if (ws && ws.readyState === WebSocket.OPEN && playerId) {
+            ws.send(JSON.stringify({
+              MoveCard: {
+                player_id: playerId,
+                card_id: cardId,
+                from_zone: 'battlefield',
+                to_zone: 'graveyard'
+              }
+            }));
+          }
+        } else if (exileZone) {
+          // Drag to exile
+          if (ws && ws.readyState === WebSocket.OPEN && playerId) {
+            ws.send(JSON.stringify({
+              MoveCard: {
+                player_id: playerId,
+                card_id: cardId,
+                from_zone: 'battlefield',
+                to_zone: 'exile'
               }
             }));
           }

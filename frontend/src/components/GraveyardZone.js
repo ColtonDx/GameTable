@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import '../styles/GraveyardZone.css';
+import { WebSocketContext } from './GameTable';
 
-const GraveyardZone = ({ cards = [], onInspectCard = null, playerName = null, onViewZone = null, ws = null, playerId = null, onMoveCard = null }) => {
+const GraveyardZone = ({ cards = [], onInspectCard = null, playerName = null, onViewZone = null, playerId = null, onMoveCard = null }) => {
+  const ws = useContext(WebSocketContext);
   const cardCount = cards?.length || 0;
   const [dragOverZone, setDragOverZone] = useState(false);
 

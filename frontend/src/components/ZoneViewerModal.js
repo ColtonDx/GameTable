@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import '../styles/ZoneViewerModal.css';
+import { WebSocketContext } from './GameTable';
 
-const ZoneViewerModal = ({ zoneName, cards, onClose, ws = null, playerId = null }) => {
+const ZoneViewerModal = ({ zoneName, cards, onClose, playerId = null }) => {
+  const ws = useContext(WebSocketContext);
   const [contextMenu, setContextMenu] = useState(null);
 
   const handleContextMenu = (e, card) => {

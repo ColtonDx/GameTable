@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import '../styles/BattlefieldZone.css';
+import { WebSocketContext } from './GameTable';
 
-const BattlefieldZone = ({ player, position, isActive, onUpdateLife, onUpdateCounter, onSpawnCard, onZoom, ws = null, playerId = null, onInspectCard = null, playmatImage = null }) => {
+const BattlefieldZone = ({ player, position, isActive, onUpdateLife, onUpdateCounter, onSpawnCard, onZoom, playerId = null, onInspectCard = null, playmatImage = null }) => {
+  const ws = useContext(WebSocketContext);
   const [dragOverZone, setDragOverZone] = useState(false);
   const [contextMenu, setContextMenu] = useState(null);
   const [draggedBattlefieldCard, setDraggedBattlefieldCard] = useState(null);
@@ -63,6 +65,10 @@ const BattlefieldZone = ({ player, position, isActive, onUpdateLife, onUpdateCou
     }
     // Check if this is a dual-faced card showing its front side
     if (card.is_two_sided && !card.is_back_face && card.set_code && card.collector_number) {
+      return `/GameTableData/Sets/${card.set_code}/${card.set_code}/${card.collector_number}.jpg`;
+    }
+    // Check if this is a regular single-sided card with set_code/collector_number
+    if (card.set_code && card.collector_number) {
       return `/GameTableData/Sets/${card.set_code}/${card.set_code}/${card.collector_number}.jpg`;
     }
     return '/GameTableData/General/blank.jpg';

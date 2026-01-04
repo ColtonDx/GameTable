@@ -74,7 +74,6 @@ const BottomToolbar = ({ gameState, turnNumber, onNextTurn, onAction, onGameMenu
       <div className="toolbar-section right">
         {/* Dice and Coins */}
         <DiceAndCoins 
-          ws={ws}
           playerId={playerId}
           onRoll={(result) => {
             setDiceResult(result);

@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import '../styles/CommandZone.css';
+import { WebSocketContext } from './GameTable';
 
-const CommandZone = ({ cards, ws = null, playerId = null, playerName = null, onInspectCard = null }) => {
+const CommandZone = ({ cards = [], playerId = null, playerName = null, onInspectCard = null }) => {
+  const ws = useContext(WebSocketContext);
   const [draggedCard, setDraggedCard] = useState(null);
   const [contextMenu, setContextMenu] = useState(null);
 

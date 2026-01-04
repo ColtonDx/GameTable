@@ -1,7 +1,9 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useContext } from 'react';
 import '../styles/DiceAndCoins.css';
+import { WebSocketContext } from './GameTable';
 
-const DiceAndCoins = ({ onRoll, ws, playerId }) => {
+const DiceAndCoins = ({ onRoll, playerId }) => {
+  const ws = useContext(WebSocketContext);
   const [isOpen, setIsOpen] = useState(false);
   const [result, setResult] = useState(null);
   const timerRef = useRef(null);

@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import '../styles/HandZone.css';
+import { WebSocketContext } from './GameTable';
 
-const HandZone = ({ cards, onSelectCard, onHandOptions, scale = 1, ws = null, playerId = null, playerName = null, position = 'bottom-left', onInspectCard = null, onReveal = null }) => {
+const HandZone = ({ cards, onSelectCard, onHandOptions, scale = 1, playerId = null, playerName = null, position = 'bottom-left', onInspectCard = null, onReveal = null }) => {
+  const ws = useContext(WebSocketContext);
   const [selectedCardIndex, setSelectedCardIndex] = useState(null);
   const [scrollOffset, setScrollOffset] = useState(0);
   const [draggedCard, setDraggedCard] = useState(null);
@@ -28,6 +30,10 @@ const HandZone = ({ cards, onSelectCard, onHandOptions, scale = 1, ws = null, pl
     }
     // Check if this is a dual-faced card showing its front side
     if (card.is_two_sided && !card.is_back_face && card.set_code && card.collector_number) {
+      return `/GameTableData/Sets/${card.set_code}/${card.set_code}/${card.collector_number}.jpg`;
+    }
+    // Check if this is a regular single-sided card with set_code/collector_number
+    if (card.set_code && card.collector_number) {
       return `/GameTableData/Sets/${card.set_code}/${card.set_code}/${card.collector_number}.jpg`;
     }
     // Future: implement set-based lookup here

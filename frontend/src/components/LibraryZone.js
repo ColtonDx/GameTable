@@ -1,8 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import '../styles/LibraryZone.css';
 import ScryCountSelector from './ScryCountSelector';
+import { WebSocketContext } from './GameTable';
 
-const LibraryZone = ({ cards = [], ws = null, playerId = null, playerName = null, onInspectCard = null, onReveal = null, onScry = null, onSurveil = null }) => {
+const LibraryZone = ({ cards = [], playerId = null, playerName = null, onInspectCard = null, onReveal = null, onScry = null, onSurveil = null }) => {
+  const ws = useContext(WebSocketContext);
   const [contextMenu, setContextMenu] = useState(null);
   const [showMillSelector, setShowMillSelector] = useState(false);
 

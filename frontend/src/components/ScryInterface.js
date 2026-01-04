@@ -1,15 +1,15 @@
 import React, { useState } from 'react';
 import '../styles/ScryInterface.css';
 
-const ScryInterface = ({ libraryCards, playerName, onComplete, onCancel }) => {
+const ScryInterface = ({ libraryCards, playerName, scryCount, onComplete, onCancel }) => {
+  const cardsToView = libraryCards.slice(0, scryCount || libraryCards.length);
+  const [viewingCards, setViewingCards] = useState(cardsToView);
   const [topCards, setTopCards] = useState([]);
   const [bottomCards, setBottomCards] = useState([]);
-  const [viewingCards, setViewingCards] = useState(libraryCards.slice(0, Math.min(libraryCards.length, 5)));
-  const [cardsToView, setCardsToView] = useState(Math.min(libraryCards.length, 5));
 
-  const handleDragStart = (e, cardId, source) => {
+  const handleDragStart = (e, card, source) => {
     e.dataTransfer.effectAllowed = 'move';
-    e.dataTransfer.setData('application/json', JSON.stringify({ cardId, source }));
+    e.dataTransfer.setData('application/json', JSON.stringify({ cardId: card.id, source }));
   };
 
   const handleDragOver = (e) => {
@@ -19,139 +19,209 @@ const ScryInterface = ({ libraryCards, playerName, onComplete, onCancel }) => {
 
   const handleDropToTop = (e) => {
     e.preventDefault();
-    const data = JSON.parse(e.dataTransfer.getData('application/json'));
-    const { cardId, source } = data;
-    
-    // Find card in current location
-    let card = null;
-    let newViewing = [...viewingCards];
-    let newTop = [...topCards];
-    let newBottom = [...bottomCards];
+    try {
+      const data = JSON.parse(e.dataTransfer.getData('application/json'));
+      const cardId = data.cardId;
+      let card = null;
 
-    if (source === 'viewing') {
-      card = newViewing.find(c => c.id === cardId);
-      newViewing = newViewing.filter(c => c.id !== cardId);
-    } else if (source === 'bottom') {
-      card = newBottom.find(c => c.id === cardId);
-      newBottom = newBottom.filter(c => c.id !== cardId);
-    }
+      if (data.source === 'viewing') {
+        const index = viewingCards.findIndex(c => c.id === cardId);
+        if (index !== -1) {
+          card = viewingCards[index];
+          setViewingCards(viewingCards.filter((_, i) => i !== index));
+        }
+      } else if (data.source === 'bottom') {
+        const index = bottomCards.findIndex(c => c.id === cardId);
+        if (index !== -1) {
+          card = bottomCards[index];
+          setBottomCards(bottomCards.filter((_, i) => i !== index));
+        }
+      }
 
-    if (card) {
-      newTop = [card, ...newTop];
-      setTopCards(newTop);
-      setViewingCards(newViewing);
-      setBottomCards(newBottom);
+      if (card && !topCards.find(c => c.id === cardId)) {
+        setTopCards([...topCards, card]);
+      }
+    } catch (err) {
+      console.error('Drop error:', err);
     }
   };
 
   const handleDropToBottom = (e) => {
     e.preventDefault();
-    const data = JSON.parse(e.dataTransfer.getData('application/json'));
-    const { cardId, source } = data;
-    
-    let card = null;
-    let newViewing = [...viewingCards];
-    let newTop = [...topCards];
-    let newBottom = [...bottomCards];
+    try {
+      const data = JSON.parse(e.dataTransfer.getData('application/json'));
+      const cardId = data.cardId;
+      let card = null;
 
-    if (source === 'viewing') {
-      card = newViewing.find(c => c.id === cardId);
-      newViewing = newViewing.filter(c => c.id !== cardId);
-    } else if (source === 'top') {
-      card = newTop.find(c => c.id === cardId);
-      newTop = newTop.filter(c => c.id !== cardId);
+      if (data.source === 'viewing') {
+        const index = viewingCards.findIndex(c => c.id === cardId);
+        if (index !== -1) {
+          card = viewingCards[index];
+          setViewingCards(viewingCards.filter((_, i) => i !== index));
+        }
+      } else if (data.source === 'top') {
+        const index = topCards.findIndex(c => c.id === cardId);
+        if (index !== -1) {
+          card = topCards[index];
+          setTopCards(topCards.filter((_, i) => i !== index));
+        }
+      }
+
+      if (card && !bottomCards.find(c => c.id === cardId)) {
+        setBottomCards([...bottomCards, card]);
+      }
+    } catch (err) {
+      console.error('Drop error:', err);
     }
+  };
 
-    if (card) {
-      newBottom = [...newBottom, card];
-      setBottomCards(newBottom);
-      setViewingCards(newViewing);
-      setTopCards(newTop);
+  const handleDropToViewing = (e) => {
+    e.preventDefault();
+    try {
+      const data = JSON.parse(e.dataTransfer.getData('application/json'));
+      const cardId = data.cardId;
+      let card = null;
+
+      if (data.source === 'top') {
+        const index = topCards.findIndex(c => c.id === cardId);
+        if (index !== -1) {
+          card = topCards[index];
+          setTopCards(topCards.filter((_, i) => i !== index));
+        }
+      } else if (data.source === 'bottom') {
+        const index = bottomCards.findIndex(c => c.id === cardId);
+        if (index !== -1) {
+          card = bottomCards[index];
+          setBottomCards(bottomCards.filter((_, i) => i !== index));
+        }
+      }
+
+      if (card && !viewingCards.find(c => c.id === cardId)) {
+        setViewingCards([...viewingCards, card]);
+      }
+    } catch (err) {
+      console.error('Drop error:', err);
     }
   };
 
   const handleComplete = () => {
-    // Cards not placed stay in the viewing pile and go back on top
     const finalTop = [...topCards, ...viewingCards];
     onComplete(finalTop, bottomCards);
   };
 
   return (
-    <div className="scry-overlay" onClick={onCancel}>
-      <div className="scry-container" onClick={(e) => e.stopPropagation()}>
+    <div className="scry-overlay">
+      <div className="scry-container">
         <div className="scry-header">
-          <h3>Scry - {playerName}</h3>
-          <button className="close-btn" onClick={onCancel}>×</button>
+          <h3>{playerName} is Scrying ({scryCount || cardsToView.length} cards)</h3>
         </div>
 
-        <div className="scry-content">
-          {/* Viewing Cards */}
-          <div className="scry-section">
-            <h4>Viewing (Top {cardsToView} cards)</h4>
-            <div className="scry-cards-viewing">
-              {viewingCards.map((card) => (
+        <div className="scry-columns">
+          {/* Browsing Column */}
+          <div className="scry-column">
+            <div className="scry-column-title">Browsing ({viewingCards.length})</div>
+            <div 
+              className="scry-drop-zone"
+              onDragOver={handleDragOver}
+              onDrop={handleDropToViewing}
+            >
+              {viewingCards.map(card => (
                 <div
                   key={card.id}
-                  className="scry-card"
+                  className="scry-card-item"
                   draggable
-                  onDragStart={(e) => handleDragStart(e, card.id, 'viewing')}
+                  onDragStart={(e) => handleDragStart(e, card, 'viewing')}
                 >
-                  {card.name}
+                  <div className="scry-card-image">
+                    <div
+                      style={{
+                        backgroundImage: `url('/GameTableData/General/blank.jpg')`,
+                        backgroundSize: 'contain',
+                        backgroundPosition: 'center',
+                        backgroundRepeat: 'no-repeat',
+                        width: '100%',
+                        height: '100%'
+                      }}
+                    ></div>
+                  </div>
+                  <p className="scry-card-name">{card.name}</p>
                 </div>
               ))}
             </div>
           </div>
 
-          <div className="scry-columns">
-            {/* Put on Top */}
-            <div className="scry-section">
-              <h4>Put on Top</h4>
-              <div
-                className="scry-drop-zone"
-                onDragOver={handleDragOver}
-                onDrop={handleDropToTop}
-              >
-                {topCards.map((card) => (
-                  <div
-                    key={card.id}
-                    className="scry-card"
-                    draggable
-                    onDragStart={(e) => handleDragStart(e, card.id, 'top')}
-                  >
-                    {card.name}
+          {/* Put on Top Column */}
+          <div className="scry-column">
+            <div className="scry-column-title">Put on Top ({topCards.length})</div>
+            <div 
+              className="scry-drop-zone"
+              onDragOver={handleDragOver}
+              onDrop={handleDropToTop}
+            >
+              {topCards.map(card => (
+                <div
+                  key={card.id}
+                  className="scry-card-item"
+                  draggable
+                  onDragStart={(e) => handleDragStart(e, card, 'top')}
+                >
+                  <div className="scry-card-image">
+                    <div
+                      style={{
+                        backgroundImage: `url('/GameTableData/General/blank.jpg')`,
+                        backgroundSize: 'contain',
+                        backgroundPosition: 'center',
+                        backgroundRepeat: 'no-repeat',
+                        width: '100%',
+                        height: '100%'
+                      }}
+                    ></div>
                   </div>
-                ))}
-              </div>
+                  <p className="scry-card-name">{card.name}</p>
+                </div>
+              ))}
             </div>
+          </div>
 
-            {/* Put on Bottom */}
-            <div className="scry-section">
-              <h4>Put on Bottom</h4>
-              <div
-                className="scry-drop-zone"
-                onDragOver={handleDragOver}
-                onDrop={handleDropToBottom}
-              >
-                {bottomCards.map((card) => (
-                  <div
-                    key={card.id}
-                    className="scry-card"
-                    draggable
-                    onDragStart={(e) => handleDragStart(e, card.id, 'bottom')}
-                  >
-                    {card.name}
+          {/* Put on Bottom Column */}
+          <div className="scry-column">
+            <div className="scry-column-title">Put on Bottom ({bottomCards.length})</div>
+            <div 
+              className="scry-drop-zone"
+              onDragOver={handleDragOver}
+              onDrop={handleDropToBottom}
+            >
+              {bottomCards.map(card => (
+                <div
+                  key={card.id}
+                  className="scry-card-item"
+                  draggable
+                  onDragStart={(e) => handleDragStart(e, card, 'bottom')}
+                >
+                  <div className="scry-card-image">
+                    <div
+                      style={{
+                        backgroundImage: `url('/GameTableData/General/blank.jpg')`,
+                        backgroundSize: 'contain',
+                        backgroundPosition: 'center',
+                        backgroundRepeat: 'no-repeat',
+                        width: '100%',
+                        height: '100%'
+                      }}
+                    ></div>
                   </div>
-                ))}
-              </div>
+                  <p className="scry-card-name">{card.name}</p>
+                </div>
+              ))}
             </div>
           </div>
         </div>
 
         <div className="scry-buttons">
-          <button className="btn btn-primary" onClick={handleComplete}>
-            Done Scrying
+          <button className="scry-btn scry-complete-btn" onClick={handleComplete}>
+            Complete Scry
           </button>
-          <button className="btn btn-secondary" onClick={onCancel}>
+          <button className="scry-btn scry-cancel-btn" onClick={onCancel}>
             Cancel
           </button>
         </div>

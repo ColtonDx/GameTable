@@ -1,0 +1,129 @@
+.scry-count-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+}
+
+.scry-count-container {
+  background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+  border: 2px solid #60a5fa;
+  border-radius: 12px;
+  padding: 40px;
+  max-width: 400px;
+  width: 90%;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+  text-align: center;
+}
+
+.scry-count-container h3 {
+  margin: 0;
+  color: #ffffff;
+  font-size: 22px;
+  font-weight: bold;
+}
+
+.scry-count-input-group {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+  justify-content: center;
+}
+
+.scry-count-btn {
+  background: rgba(59, 130, 246, 0.5);
+  border: 1px solid #60a5fa;
+  color: #ffffff;
+  width: 50px;
+  height: 50px;
+  border-radius: 6px;
+  font-size: 24px;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+}
+
+.scry-count-btn:hover:not(:disabled) {
+  background: rgba(59, 130, 246, 0.7);
+  border-color: #93c5fd;
+}
+
+.scry-count-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.scry-count-input {
+  width: 80px;
+  padding: 12px;
+  border: 2px solid #60a5fa;
+  border-radius: 6px;
+  font-size: 24px;
+  text-align: center;
+  background: rgba(30, 58, 138, 0.3);
+  color: #ffffff;
+  font-weight: bold;
+}
+
+.scry-count-input:focus {
+  outline: none;
+  border-color: #93c5fd;
+  background: rgba(30, 58, 138, 0.5);
+}
+
+.scry-count-info {
+  margin: 0;
+  color: #93c5fd;
+  font-size: 14px;
+}
+
+.scry-count-buttons {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+}
+
+.scry-count-confirm,
+.scry-count-cancel {
+  padding: 12px 30px;
+  border-radius: 6px;
+  border: none;
+  font-weight: bold;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.2s;
+}
+
+.scry-count-confirm {
+  background: rgba(34, 197, 94, 0.6);
+  border: 1px solid rgba(74, 222, 128, 0.5);
+  color: #ffffff;
+}
+
+.scry-count-confirm:hover {
+  background: rgba(34, 197, 94, 0.8);
+  border-color: rgba(74, 222, 128, 0.7);
+}
+
+.scry-count-cancel {
+  background: rgba(239, 68, 68, 0.6);
+  border: 1px solid rgba(248, 113, 113, 0.5);
+  color: #ffffff;
+}
+
+.scry-count-cancel:hover {
+  background: rgba(239, 68, 68, 0.8);
+  border-color: rgba(248, 113, 113, 0.7);
+}

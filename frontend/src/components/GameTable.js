@@ -5,10 +5,13 @@ import BattlefieldZone from './BattlefieldZone';
 import HandZone from './HandZone';
 import CommandZone from './CommandZone';
 import LibraryZone from './LibraryZone';
+import GraveyardZone from './GraveyardZone';
+import ExileZone from './ExileZone';
 import CollapsibleZones from './CollapsibleZones';
 import BottomToolbar from './BottomToolbar';
 import RevealCardOverlay from './RevealCardOverlay';
 import ScryInterface from './ScryInterface';
+import ScryCountSelector from './ScryCountSelector';
 
 const GameTable = ({ gameId, playerId, playerName, onBack }) => {
   const [gameState, setGameState] = useState(null);
@@ -26,6 +29,8 @@ const GameTable = ({ gameId, playerId, playerName, onBack }) => {
   const [revealedCardPlayer, setRevealedCardPlayer] = useState(null);
   const [scryActive, setScryActive] = useState(false);
   const [scryCards, setScryCards] = useState([]);
+  const [scryCount, setScryCount] = useState(0);
+  const [scryCountSelector, setScryCountSelector] = useState(false);
   const ws = useRef(null);
   const diceRollTimeoutRef = useRef(null);
   const restartTimeoutRef = useRef(null);
@@ -276,8 +281,14 @@ const GameTable = ({ gameId, playerId, playerName, onBack }) => {
   };
 
   const handleScry = (cards) => {
-    setScryActive(true);
     setScryCards(cards);
+    setScryCountSelector(true);
+  };
+
+  const handleScryCountConfirm = (count) => {
+    setScryCount(count);
+    setScryCountSelector(false);
+    setScryActive(true);
   };
 
   const handleScryComplete = (topCards, bottomCards) => {
@@ -292,11 +303,14 @@ const GameTable = ({ gameId, playerId, playerName, onBack }) => {
     }
     setScryActive(false);
     setScryCards([]);
+    setScryCount(0);
   };
 
   const handleScryCancel = () => {
+    setScryCountSelector(false);
     setScryActive(false);
     setScryCards([]);
+    setScryCount(0);
   };
 
   const getCardImagePath = (card, playerName) => {
@@ -453,11 +467,21 @@ const GameTable = ({ gameId, playerId, playerName, onBack }) => {
         />
       )}
 
+      {/* Scry Count Selector */}
+      {scryCountSelector && (
+        <ScryCountSelector
+          maxCards={currentPlayer?.library?.length || 0}
+          onConfirm={handleScryCountConfirm}
+          onCancel={handleScryCancel}
+        />
+      )}
+
       {/* Scry Interface */}
       {scryActive && (
         <ScryInterface
           libraryCards={scryCards}
           playerName={currentPlayer?.name}
+          scryCount={scryCount}
           onComplete={handleScryComplete}
           onCancel={handleScryCancel}
         />
@@ -573,6 +597,22 @@ const GameTable = ({ gameId, playerId, playerName, onBack }) => {
                 playerId={playerId}
                 playerName={currentPlayer?.name}
                 onInspectCard={handleInspectCard}
+              />
+            </div>
+
+            <div style={{ height: `${handScale * 219}px` }}>
+              <GraveyardZone
+                cards={currentPlayer?.graveyard || []}
+                onInspectCard={handleInspectCard}
+                playerName={currentPlayer?.name}
+              />
+            </div>
+
+            <div style={{ height: `${handScale * 219}px` }}>
+              <ExileZone
+                cards={currentPlayer?.exile || []}
+                onInspectCard={handleInspectCard}
+                playerName={currentPlayer?.name}
               />
             </div>
           </div>

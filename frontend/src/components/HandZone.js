@@ -107,7 +107,7 @@ const HandZone = ({ cards, onSelectCard, onHandOptions, scale = 1, ws = null, pl
 
   const handleReveal = () => {
     if (contextMenu && onReveal) {
-      onReveal(contextMenu.card);
+      onReveal(contextMenu.card, 'hand');
     }
     setContextMenu(null);
   };

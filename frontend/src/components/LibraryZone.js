@@ -26,7 +26,7 @@ const LibraryZone = ({ cards = [], ws = null, playerId = null, playerName = null
 
   const handleReveal = () => {
     if (cards && cards.length > 0 && onReveal) {
-      onReveal(cards[0]);
+      onReveal(cards[0], 'library');
     }
     setContextMenu(null);
   };

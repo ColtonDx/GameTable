@@ -7,7 +7,6 @@ import CommandZone from './CommandZone';
 import LibraryZone from './LibraryZone';
 import GraveyardZone from './GraveyardZone';
 import ExileZone from './ExileZone';
-import CollapsibleZones from './CollapsibleZones';
 import BottomToolbar from './BottomToolbar';
 import RevealCardOverlay from './RevealCardOverlay';
 import ScryInterface from './ScryInterface';
@@ -27,6 +26,7 @@ const GameTable = ({ gameId, playerId, playerName, onBack }) => {
   const [inspectViewFlipped, setInspectViewFlipped] = useState(false);
   const [revealedCard, setRevealedCard] = useState(null);
   const [revealedCardPlayer, setRevealedCardPlayer] = useState(null);
+  const [revealedCardZone, setRevealedCardZone] = useState('library');
   const [scryActive, setScryActive] = useState(false);
   const [scryCards, setScryCards] = useState([]);
   const [scryCount, setScryCount] = useState(0);
@@ -116,6 +116,7 @@ const GameTable = ({ gameId, playerId, playerName, onBack }) => {
             name: message.RevealCard.card_name
           });
           setRevealedCardPlayer(message.RevealCard.player_name || 'Player');
+          setRevealedCardZone(message.RevealCard.zone || 'library');
         }
       } catch (err) {
         console.error('Error parsing WebSocket message:', err);
@@ -263,7 +264,7 @@ const GameTable = ({ gameId, playerId, playerName, onBack }) => {
     setInspectViewFlipped(false);
   };
 
-  const handleReveal = (card) => {
+  const handleReveal = (card, zone = 'library') => {
     if (ws.current && ws.current.readyState === WebSocket.OPEN) {
       // Broadcast to all players this card is being revealed
       ws.current.send(JSON.stringify({
@@ -271,12 +272,13 @@ const GameTable = ({ gameId, playerId, playerName, onBack }) => {
           player_id: playerId,
           card_id: card.id || '',
           card_name: card.name || 'Unknown',
-          zone: 'library' // or 'hand' depending on context
+          zone: zone
         }
       }));
       // Also show it locally
       setRevealedCard(card);
       setRevealedCardPlayer(playerName);
+      setRevealedCardZone(zone);
     }
   };
 
@@ -460,9 +462,11 @@ const GameTable = ({ gameId, playerId, playerName, onBack }) => {
           playerName={revealedCardPlayer}
           cardName={revealedCard.name}
           cardId={revealedCard.id}
+          zone={revealedCardZone}
           onClose={() => {
             setRevealedCard(null);
             setRevealedCardPlayer(null);
+            setRevealedCardZone('library');
           }}
         />
       )}
@@ -641,10 +645,6 @@ const GameTable = ({ gameId, playerId, playerName, onBack }) => {
             }}
           />
 
-          {/* Collapsible Zones at Bottom */}
-          <div className="zones-section">
-            <CollapsibleZones gameState={gameState} />
-          </div>
         </div>
       </div>
 

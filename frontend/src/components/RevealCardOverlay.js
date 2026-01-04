@@ -1,12 +1,12 @@
 import React from 'react';
 import '../styles/RevealCardOverlay.css';
 
-const RevealCardOverlay = ({ playerName, cardName, cardId, onClose }) => {
+const RevealCardOverlay = ({ playerName, cardName, cardId, zone, onClose }) => {
   return (
     <div className="reveal-overlay" onClick={onClose}>
       <div className="reveal-container" onClick={(e) => e.stopPropagation()}>
         <div className="reveal-header">
-          <h3>{playerName} Reveals:</h3>
+          <h3>{playerName} Reveals: ({zone === 'hand' ? 'from Hand' : 'from Top of Library'})</h3>
           <button className="close-btn" onClick={onClose}>×</button>
         </div>
         

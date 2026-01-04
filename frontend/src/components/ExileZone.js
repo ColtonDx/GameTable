@@ -16,16 +16,12 @@ const ExileZone = ({ cards = [], onInspectCard = null, playerName = null }) => {
       <div className="exile-cards">
         {cardCount > 0 ? (
           <div className="exile-stack">
-            {cards.map((card, idx) => (
+            {cards.length > 0 && (
               <div
-                key={card.id}
+                key={cards[cards.length - 1].id}
                 className="exile-card"
-                style={{
-                  zIndex: idx,
-                  transform: `translateY(${idx * 4}px)`
-                }}
-                onClick={() => onInspectCard && onInspectCard(card, playerName)}
-                title={card.name}
+                onClick={() => onInspectCard && onInspectCard(cards[cards.length - 1], playerName)}
+                title={cards[cards.length - 1].name}
               >
                 <div
                   style={{
@@ -37,7 +33,7 @@ const ExileZone = ({ cards = [], onInspectCard = null, playerName = null }) => {
                   }}
                 ></div>
               </div>
-            ))}
+            )}
           </div>
         ) : (
           <div className="empty-exile">No cards</div>

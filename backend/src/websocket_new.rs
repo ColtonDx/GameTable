@@ -507,28 +507,10 @@ async fn handle_socket(
                             }
                         }
                     },
-                    Message::Scry { player_id: _, count } => {
-                        // Just acknowledge scry - actual card selection happens on client
-                        // We'll handle the complete in ScryComplete message
-                        let gm = game_manager.read().await;
-                        if let Some(game) = gm.get_game(&game_id) {
-                            if let Some(player) = game.players.get(&player_id) {
-                                if let Some(tx) = &game.tx {
-                                    // Send top cards to viewing player
-                                    let cards_to_view: Vec<String> = player.library.iter()
-                                        .take(count)
-                                        .map(|c| c.name.clone())
-                                        .collect();
-                                    let msg = serde_json::json!({
-                                        "ScryCards": {
-                                            "player_id": player_id,
-                                            "cards": cards_to_view
-                                        }
-                                    });
-                                    let _ = tx.send(msg.to_string());
-                                }
-                            }
-                        }
+                    Message::Scry { player_id: _, count: _ } => {
+                        // Scry is a private action - no broadcast needed
+                        // The frontend already has the library and will show the scry interface
+                        // We only process ScryComplete to update the library
                     },
                     Message::ScryComplete { player_id: pid, top_cards, bottom_cards } => {
                         // Reorder library based on scry decisions

@@ -548,6 +548,7 @@ const GameTable = ({ gameId, playerId, playerName, onBack }) => {
           maxCards={currentPlayer?.library?.length || 0}
           onConfirm={handleSurveilCountConfirm}
           onCancel={handleSurveilCancel}
+          mode="Surveil"
         />
       )}
 

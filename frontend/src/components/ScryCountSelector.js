@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import '../styles/ScryCountSelector.css';
 
-const ScryCountSelector = ({ maxCards, onConfirm, onCancel }) => {
+const ScryCountSelector = ({ maxCards, onConfirm, onCancel, mode = 'Scry' }) => {
   const [count, setCount] = useState(Math.min(5, maxCards));
 
   const handleConfirm = () => {
@@ -13,7 +13,7 @@ const ScryCountSelector = ({ maxCards, onConfirm, onCancel }) => {
   return (
     <div className="scry-count-overlay">
       <div className="scry-count-container">
-        <h3>How many cards would you like to scry?</h3>
+        <h3>How many cards would you like to {mode.toLowerCase()}?</h3>
         <div className="scry-count-input-group">
           <button 
             className="scry-count-btn"
@@ -47,7 +47,7 @@ const ScryCountSelector = ({ maxCards, onConfirm, onCancel }) => {
             className="scry-count-confirm"
             onClick={handleConfirm}
           >
-            Scry {count}
+            {mode} {count}
           </button>
           <button 
             className="scry-count-cancel"

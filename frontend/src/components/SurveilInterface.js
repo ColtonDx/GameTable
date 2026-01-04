@@ -69,9 +69,9 @@ const SurveilInterface = ({ libraryCards, playerName, surveilCount, onComplete, 
   };
 
   const handleComplete = () => {
-    // Cards not placed stay on top of library
-    const finalTop = [...viewingCards];
-    onComplete(finalTop, graveyardCards);
+    // Cards in viewingCards will be placed back on top in the order shown
+    // Cards in graveyardCards will be sent to graveyard
+    onComplete([...viewingCards], [...graveyardCards]);
   };
 
   return (
@@ -82,69 +82,86 @@ const SurveilInterface = ({ libraryCards, playerName, surveilCount, onComplete, 
         </div>
 
         <div className="surveil-columns">
-          {/* Browsing Column */}
+          {/* Return to Top of Library Column */}
           <div className="surveil-column">
-            <div className="surveil-column-title">Browsing ({viewingCards.length})</div>
+            <div className="surveil-column-title">
+              <div>Return to Top</div>
+              <div className="surveil-column-count">({viewingCards.length} cards)</div>
+            </div>
+            <div className="surveil-column-subtitle">Drag cards here (order matters - top to bottom)</div>
             <div 
               className="surveil-drop-zone"
               onDragOver={handleDragOver}
               onDrop={handleDropToViewing}
             >
-              {viewingCards.map(card => (
-                <div
-                  key={card.id}
-                  className="surveil-card-item"
-                  draggable
-                  onDragStart={(e) => handleDragStart(e, card, 'viewing')}
-                >
-                  <div className="surveil-card-image">
-                    <div
-                      style={{
-                        backgroundImage: `url('/GameTableData/General/blank.jpg')`,
-                        backgroundSize: 'contain',
-                        backgroundPosition: 'center',
-                        backgroundRepeat: 'no-repeat',
-                        width: '100%',
-                        height: '100%'
-                      }}
-                    ></div>
+              {viewingCards.length > 0 ? (
+                viewingCards.map((card, idx) => (
+                  <div
+                    key={card.id}
+                    className="surveil-card-item"
+                    draggable
+                    onDragStart={(e) => handleDragStart(e, card, 'viewing')}
+                  >
+                    <div className="surveil-card-order">#{idx + 1}</div>
+                    <div className="surveil-card-image">
+                      <div
+                        style={{
+                          backgroundImage: `url('/GameTableData/General/blank.jpg')`,
+                          backgroundSize: 'contain',
+                          backgroundPosition: 'center',
+                          backgroundRepeat: 'no-repeat',
+                          width: '100%',
+                          height: '100%'
+                        }}
+                      ></div>
+                    </div>
+                    <p className="surveil-card-name">{card.name}</p>
                   </div>
-                  <p className="surveil-card-name">{card.name}</p>
-                </div>
-              ))}
+                ))
+              ) : (
+                <div className="surveil-empty">Drag cards here</div>
+              )}
             </div>
           </div>
 
-          {/* Put in Graveyard Column */}
+          {/* Send to Graveyard Column */}
           <div className="surveil-column">
-            <div className="surveil-column-title">Send to Graveyard ({graveyardCards.length})</div>
+            <div className="surveil-column-title">
+              <div>Send to Graveyard</div>
+              <div className="surveil-column-count">({graveyardCards.length} cards)</div>
+            </div>
+            <div className="surveil-column-subtitle">Drag cards here</div>
             <div 
               className="surveil-drop-zone"
               onDragOver={handleDragOver}
               onDrop={handleDropToGraveyard}
             >
-              {graveyardCards.map(card => (
-                <div
-                  key={card.id}
-                  className="surveil-card-item"
-                  draggable
-                  onDragStart={(e) => handleDragStart(e, card, 'graveyard')}
-                >
-                  <div className="surveil-card-image">
-                    <div
-                      style={{
-                        backgroundImage: `url('/GameTableData/General/blank.jpg')`,
-                        backgroundSize: 'contain',
-                        backgroundPosition: 'center',
-                        backgroundRepeat: 'no-repeat',
-                        width: '100%',
-                        height: '100%'
-                      }}
-                    ></div>
+              {graveyardCards.length > 0 ? (
+                graveyardCards.map(card => (
+                  <div
+                    key={card.id}
+                    className="surveil-card-item"
+                    draggable
+                    onDragStart={(e) => handleDragStart(e, card, 'graveyard')}
+                  >
+                    <div className="surveil-card-image">
+                      <div
+                        style={{
+                          backgroundImage: `url('/GameTableData/General/blank.jpg')`,
+                          backgroundSize: 'contain',
+                          backgroundPosition: 'center',
+                          backgroundRepeat: 'no-repeat',
+                          width: '100%',
+                          height: '100%'
+                        }}
+                      ></div>
+                    </div>
+                    <p className="surveil-card-name">{card.name}</p>
                   </div>
-                  <p className="surveil-card-name">{card.name}</p>
-                </div>
-              ))}
+                ))
+              ) : (
+                <div className="surveil-empty">Drag cards here</div>
+              )}
             </div>
           </div>
         </div>

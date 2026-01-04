@@ -78,7 +78,7 @@ async fn main() {
         .route("/auth/login", post(handlers::login_handler))
         .route("/auth/reset-password", post(handlers::reset_password_handler))
         .route("/upload", post(upload::upload_handler))
-        .route("/ws/:game_id/:player_id", get(websocket::ws_handler))
+        .route("/ws/:game_id/:player_id/:player_name", get(websocket::ws_handler))
         .with_state(state.clone());
 
     // Serve card images from /GameTableData

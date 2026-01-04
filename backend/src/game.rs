@@ -48,7 +48,7 @@ impl Player {
     pub fn new(id: String, name: String, join_order: usize) -> Self {
         Self {
             id,
-            name,
+            name: name.clone(),
             life: 40,
             poison: 0,
             energy: 0,
@@ -61,7 +61,7 @@ impl Player {
             command_zone: Vec::new(),
             is_active: true,
             join_order,
-            profile_picture: String::from("/GameTableData/General/standin.jpg"),
+            profile_picture: format!("/GameTableData/Players/{}/profile.jpg", name),
         }
     }
 

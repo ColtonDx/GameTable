@@ -58,18 +58,19 @@ pub enum Message {
 }
 
 pub async fn ws_handler(
-    Path((game_id, player_id)): Path<(String, String)>,
+    Path((game_id, player_id, player_name)): Path<(String, String, String)>,
     ws: WebSocketUpgrade,
     State(state): State<AppState>,
 ) -> impl IntoResponse {
     let game_manager = state.game_manager.clone();
-    ws.on_upgrade(|socket| handle_socket(socket, game_id, player_id, game_manager))
+    ws.on_upgrade(|socket| handle_socket(socket, game_id, player_id, player_name, game_manager))
 }
 
 async fn handle_socket(
     socket: WebSocket,
     game_id: String,
     player_id: String,
+    player_name: String,
     game_manager: Arc<RwLock<GameManager>>,
 ) {
     let (sender, mut receiver) = socket.split();
@@ -83,7 +84,7 @@ async fn handle_socket(
             
             if is_new_player {
                 let join_order = game.players.len();
-                let player = Player::new(player_id.clone(), format!("Player {}", join_order + 1), join_order);
+                let player = Player::new(player_id.clone(), player_name.clone(), join_order);
                 game.add_player(player);
                 // Broadcast state to all players so they see the new player joined
                 game.broadcast_state();

@@ -1,6 +1,7 @@
 use serde::{Deserialize, Serialize};
 use sqlx::{postgres::PgPool, Row};
 use uuid::Uuid;
+use std::fs;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct User {
@@ -54,6 +55,20 @@ pub async fn create_user(
     .execute(pool)
     .await
     .map_err(|e| format!("Failed to create user: {}", e))?;
+
+    // Create user directory
+    let user_dir = format!("/GameTableData/Players/{}", username);
+    fs::create_dir_all(&user_dir)
+        .map_err(|e| format!("Failed to create user directory: {}", e))?;
+
+    // Copy blank.jpg as default sleeve
+    let blank_source = "/GameTableData/General/blank.jpg";
+    let sleeve_dest = format!("{}/sleeve.jpg", user_dir);
+    
+    if let Err(e) = fs::copy(blank_source, &sleeve_dest) {
+        // Don't fail the user creation if we can't copy the default sleeve
+        eprintln!("Warning: Failed to copy default sleeve for {}: {}", username, e);
+    }
 
     Ok(User {
         id: user_id.to_string(),

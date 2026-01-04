@@ -43,7 +43,7 @@ const GameTable = ({ gameId, playerId, playerName, onBack }) => {
     }, connectionTimeout);
 
     // Connect to WebSocket
-    const wsUrl = `ws://${window.location.hostname}:3001/ws/${gameId}/${playerId}`;
+    const wsUrl = `ws://${window.location.hostname}:3001/ws/${gameId}/${playerId}/${playerName}`;
     ws.current = new WebSocket(wsUrl);
 
     ws.current.onopen = () => {

@@ -15,6 +15,8 @@ const Lobby = ({ onStartGame }) => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [passwordError, setPasswordError] = useState('');
   const [passwordLoading, setPasswordLoading] = useState(false);
+  const [uploadError, setUploadError] = useState('');
+  const [uploadLoading, setUploadLoading] = useState('');
   const gameIdInputRef = useRef(null);
 
   useEffect(() => {
@@ -137,6 +139,51 @@ const Lobby = ({ onStartGame }) => {
     }
   };
 
+  const handleFileUpload = async (e, uploadType) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    // Validate file type
+    if (!file.type.startsWith('image/jpeg') && file.type !== 'image/jpg') {
+      setUploadError('Only JPG files are allowed');
+      return;
+    }
+
+    // Validate file size (25MB)
+    if (file.size > 25 * 1024 * 1024) {
+      setUploadError('File size must be less than 25MB');
+      return;
+    }
+
+    setUploadLoading(uploadType);
+    setUploadError('');
+
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('username', currentUser.username);
+    formData.append('type', uploadType);
+
+    try {
+      const response = await fetch('/upload', {
+        method: 'POST',
+        body: formData,
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        alert(`${uploadType} uploaded successfully!`);
+        e.target.value = '';
+      } else {
+        setUploadError(data.message || `Failed to upload ${uploadType}`);
+      }
+    } catch (err) {
+      setUploadError('Network error: ' + err.message);
+    } finally {
+      setUploadLoading('');
+    }
+  };
+
   const handleStartJoin = () => {
     if (!gameId) {
       setError('Please enter a game ID');
@@ -199,6 +246,49 @@ const Lobby = ({ onStartGame }) => {
           
           {!showPasswordChange ? (
             <>
+              <h4 style={{ marginTop: '15px', marginBottom: '10px', color: '#ffffff' }}>Customization</h4>
+              
+              <div style={{ marginBottom: '12px' }}>
+                <label style={{ display: 'block', color: '#ffffff', fontSize: '12px', marginBottom: '5px' }}>
+                  Profile Picture (JPG, max 1024x1024)
+                </label>
+                <input
+                  type="file"
+                  accept=".jpg,.jpeg"
+                  onChange={(e) => handleFileUpload(e, 'profile-picture')}
+                  disabled={uploadLoading !== ''}
+                  style={{ width: '100%', padding: '5px', fontSize: '12px' }}
+                />
+              </div>
+
+              <div style={{ marginBottom: '12px' }}>
+                <label style={{ display: 'block', color: '#ffffff', fontSize: '12px', marginBottom: '5px' }}>
+                  Card Sleeve (JPG)
+                </label>
+                <input
+                  type="file"
+                  accept=".jpg,.jpeg"
+                  onChange={(e) => handleFileUpload(e, 'card-sleeve')}
+                  disabled={uploadLoading !== ''}
+                  style={{ width: '100%', padding: '5px', fontSize: '12px' }}
+                />
+              </div>
+
+              <div style={{ marginBottom: '12px' }}>
+                <label style={{ display: 'block', color: '#ffffff', fontSize: '12px', marginBottom: '5px' }}>
+                  Playmat (JPG)
+                </label>
+                <input
+                  type="file"
+                  accept=".jpg,.jpeg"
+                  onChange={(e) => handleFileUpload(e, 'playmat')}
+                  disabled={uploadLoading !== ''}
+                  style={{ width: '100%', padding: '5px', fontSize: '12px' }}
+                />
+              </div>
+
+              {uploadError && <p style={{ color: '#ff6b6b', fontSize: '12px', marginBottom: '10px' }}>{uploadError}</p>}
+
               <button onClick={() => setShowPasswordChange(true)} className="btn btn-primary">
                 Change Password
               </button>

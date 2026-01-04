@@ -2,6 +2,7 @@ mod game;
 mod websocket_new;
 mod handlers;
 mod users;
+mod upload;
 
 // Re-export websocket_new as websocket for compatibility
 use websocket_new as websocket;
@@ -76,6 +77,7 @@ async fn main() {
         .route("/auth/register", post(handlers::register_handler))
         .route("/auth/login", post(handlers::login_handler))
         .route("/auth/reset-password", post(handlers::reset_password_handler))
+        .route("/upload", post(upload::upload_handler))
         .route("/ws/:game_id/:player_id", get(websocket::ws_handler))
         .with_state(state.clone());
 

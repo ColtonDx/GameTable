@@ -96,27 +96,9 @@ const LeftSidebar = ({ gameId, playerId, ws }) => {
               <div className="menu-content">
                 <button 
                   className="action-btn"
-                  onClick={handleDrawCard}
-                >
-                  Draw a Card
-                </button>
-                <button 
-                  className="action-btn"
-                  onClick={handleMillCard}
-                >
-                  Mill a Card
-                </button>
-                <button 
-                  className="action-btn"
-                  onClick={handleShuffleLibrary}
-                >
-                  🔀 Shuffle Library
-                </button>
-                <button 
-                  className="action-btn"
                   onClick={() => setShowLoadLibraryModal(true)}
                 >
-                  Load Library
+                  Load a Deck
                 </button>
               </div>
             )}
@@ -124,12 +106,12 @@ const LeftSidebar = ({ gameId, playerId, ws }) => {
         </div>
       )}
 
-      {/* Load Library Modal */}
+      {/* Load Deck Modal */}
       {showLoadLibraryModal && (
         <div className="modal-overlay">
           <div className="modal-content">
             <div className="modal-header">
-              <h3>Load Library</h3>
+              <h3>Load a Deck</h3>
               <button 
                 className="modal-close"
                 onClick={() => setShowLoadLibraryModal(false)}

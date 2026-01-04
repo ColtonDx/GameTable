@@ -6,6 +6,7 @@ const HandZone = ({ cards, onSelectCard, onHandOptions, scale = 1, ws = null, pl
   const [scrollOffset, setScrollOffset] = useState(0);
   const [draggedCard, setDraggedCard] = useState(null);
   const [contextMenu, setContextMenu] = useState(null);
+  const [handMenu, setHandMenu] = useState(false);
 
   // Debug logging
   React.useEffect(() => {
@@ -128,6 +129,80 @@ const HandZone = ({ cards, onSelectCard, onHandOptions, scale = 1, ws = null, pl
     setContextMenu(null);
   };
 
+  // Hand Menu Actions
+  const handleDiscardHand = () => {
+    if (!ws || ws.readyState !== WebSocket.OPEN || !playerId || cards.length === 0) return;
+
+    cards.forEach(card => {
+      ws.send(JSON.stringify({
+        MoveCard: {
+          player_id: playerId,
+          card_id: card.id,
+          from_zone: 'hand',
+          to_zone: 'graveyard'
+        }
+      }));
+    });
+    setHandMenu(false);
+  };
+
+  const handleDiscardRandom = () => {
+    if (!ws || ws.readyState !== WebSocket.OPEN || !playerId || cards.length === 0) return;
+
+    const randomIndex = Math.floor(Math.random() * cards.length);
+    const randomCard = cards[randomIndex];
+
+    ws.send(JSON.stringify({
+      MoveCard: {
+        player_id: playerId,
+        card_id: randomCard.id,
+        from_zone: 'hand',
+        to_zone: 'graveyard'
+      }
+    }));
+    setHandMenu(false);
+  };
+
+  const handleWheel = () => {
+    if (!ws || ws.readyState !== WebSocket.OPEN || !playerId || cards.length === 0) return;
+
+    const handSize = cards.length;
+
+    // Discard all cards
+    cards.forEach(card => {
+      ws.send(JSON.stringify({
+        MoveCard: {
+          player_id: playerId,
+          card_id: card.id,
+          from_zone: 'hand',
+          to_zone: 'graveyard'
+        }
+      }));
+    });
+
+    // Draw the same number of cards
+    ws.send(JSON.stringify({
+      DrawCard: {
+        player_id: playerId,
+        count: handSize
+      }
+    }));
+
+    setHandMenu(false);
+  };
+
+  const handleHandMenuClick = (e) => {
+    e.stopPropagation();
+    setHandMenu(!handMenu);
+  };
+
+  // Close hand menu when clicking elsewhere
+  React.useEffect(() => {
+    const handleClick = () => setHandMenu(false);
+    document.addEventListener('click', handleClick);
+    return () => document.removeEventListener('click', handleClick);
+  }, []);
+
   // Close context menu when clicking elsewhere
   React.useEffect(() => {
     const handleClick = () => setContextMenu(null);
@@ -142,13 +217,40 @@ const HandZone = ({ cards, onSelectCard, onHandOptions, scale = 1, ws = null, pl
           <span className="title-text">Hand</span>
           <span className="card-count">{cards.length} card{cards.length !== 1 ? 's' : ''}</span>
         </div>
-        <button 
-          className="hand-options-btn"
-          onClick={onHandOptions}
-          title="Hand options menu"
-        >
-          ⋮
-        </button>
+        <div className="hand-options-wrapper">
+          <button 
+            className="hand-options-btn"
+            onClick={handleHandMenuClick}
+            title="Hand options menu"
+          >
+            ⋮
+          </button>
+          {handMenu && (
+            <div className="hand-menu">
+              <button 
+                className="hand-menu-item"
+                onClick={handleDiscardHand}
+                disabled={cards.length === 0}
+              >
+                Discard Hand
+              </button>
+              <button 
+                className="hand-menu-item"
+                onClick={handleDiscardRandom}
+                disabled={cards.length === 0}
+              >
+                Discard at Random
+              </button>
+              <button 
+                className="hand-menu-item"
+                onClick={handleWheel}
+                disabled={cards.length === 0}
+              >
+                Wheel
+              </button>
+            </div>
+          )}
+        </div>
       </div>
 
       <div className="hand-display-area" onDragOver={handleDragOver} onDrop={handleDrop}>

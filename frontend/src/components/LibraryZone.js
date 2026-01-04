@@ -60,6 +60,21 @@ const LibraryZone = ({ cards = [], ws = null, playerId = null, playerName = null
     setContextMenu(null);
   };
 
+  const handleMillCard = () => {
+    if (ws && ws.readyState === WebSocket.OPEN && playerId && cards && cards.length > 0) {
+      // Move the top card from library to graveyard
+      ws.send(JSON.stringify({
+        MoveCard: {
+          player_id: playerId,
+          card_id: cards[0]?.id,
+          from_zone: 'library',
+          to_zone: 'graveyard'
+        }
+      }));
+    }
+    setContextMenu(null);
+  };
+
   const handleDrawCard = () => {
     if (ws && ws.readyState === WebSocket.OPEN) {
       ws.send(JSON.stringify({
@@ -115,6 +130,9 @@ const LibraryZone = ({ cards = [], ws = null, playerId = null, playerName = null
         >
           <button className="context-menu-item" onClick={handleShuffleLibrary}>
             Shuffle Library
+          </button>
+          <button className="context-menu-item" onClick={handleMillCard}>
+            Mill a Card
           </button>
           <button className="context-menu-item" onClick={handleReveal}>
             Reveal

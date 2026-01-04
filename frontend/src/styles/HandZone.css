@@ -44,6 +44,12 @@
   font-weight: 600;
 }
 
+.hand-options-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
 .hand-options-btn {
   background: rgba(37, 99, 235, 0.2);
   border: 1px solid rgba(37, 99, 235, 0.3);
@@ -58,6 +64,52 @@
 .hand-options-btn:hover {
   background: rgba(37, 99, 235, 0.3);
   border-color: rgba(37, 99, 235, 0.5);
+}
+
+.hand-menu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background: rgba(26, 26, 46, 0.95);
+  border: 1px solid #60a5fa;
+  border-radius: 4px;
+  padding: 8px 0;
+  min-width: 160px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  margin-top: 4px;
+  animation: slideDown 0.2s ease-out;
+}
+
+.hand-menu-item {
+  display: block;
+  width: 100%;
+  padding: 8px 12px;
+  text-align: left;
+  background: transparent;
+  border: none;
+  color: #60a5fa;
+  cursor: pointer;
+  font-size: 12px;
+  transition: background-color 0.2s;
+}
+
+.hand-menu-item:hover:not(:disabled) {
+  background-color: rgba(96, 165, 250, 0.2);
+}
+
+.hand-menu-item:disabled {
+  color: #4b5563;
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.hand-menu-item:first-child {
+  border-radius: 3px 3px 0 0;
+}
+
+.hand-menu-item:last-child {
+  border-radius: 0 0 3px 3px;
 }
 
 .hand-display-area {

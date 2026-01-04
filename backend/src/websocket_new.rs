@@ -56,6 +56,10 @@ pub enum Message {
     Scry { player_id: String, count: usize },
     #[serde(rename = "ScryComplete")]
     ScryComplete { player_id: String, top_cards: Vec<String>, bottom_cards: Vec<String> },
+    #[serde(rename = "SurveilComplete")]
+    SurveilComplete { player_id: String, top_cards: Vec<String>, graveyard_cards: Vec<String> },
+    #[serde(rename = "ManifestCard")]
+    ManifestCard { player_id: String, card_id: String, #[serde(skip_serializing_if = "Option::is_none")] position_x: Option<f32>, #[serde(skip_serializing_if = "Option::is_none")] position_y: Option<f32> },
     
     #[serde(rename = "GameState")]
     GameState { state: String },
@@ -553,6 +557,74 @@ async fn handle_socket(
                                 
                                 player.library = new_library;
                                 game.broadcast_state();
+                            }
+                        }
+                    },
+                    Message::SurveilComplete { player_id: pid, top_cards, graveyard_cards } => {
+                        // Reorder library based on surveil decisions
+                        let mut gm = game_manager.write().await;
+                        if let Some(game) = gm.get_game_mut(&game_id) {
+                            if let Some(player) = game.get_player_mut(&pid) {
+                                // Create mapping of card IDs for lookup
+                                let mut remaining_library: Vec<Card> = vec![];
+                                
+                                // Separate viewed cards from rest of library
+                                let mut all_viewed: Vec<String> = top_cards.clone();
+                                all_viewed.extend(graveyard_cards.clone());
+                                
+                                for card in player.library.drain(..) {
+                                    if !all_viewed.contains(&card.id) {
+                                        remaining_library.push(card);
+                                    }
+                                }
+                                
+                                // Rebuild library: top cards, then middle, then graveyard cards
+                                let mut new_library: Vec<Card> = vec![];
+                                
+                                // Add top cards in order
+                                for top_id in &top_cards {
+                                    if let Some(pos) = remaining_library.iter().position(|c| &c.id == top_id) {
+                                        new_library.push(remaining_library.remove(pos));
+                                    }
+                                }
+                                
+                                // Add remaining middle cards
+                                new_library.extend(remaining_library);
+                                
+                                // Move graveyard cards to graveyard
+                                for graveyard_id in &graveyard_cards {
+                                    if let Some(pos) = new_library.iter().position(|c| &c.id == graveyard_id) {
+                                        let card = new_library.remove(pos);
+                                        player.graveyard.push(card);
+                                    }
+                                }
+                                
+                                player.library = new_library;
+                                game.broadcast_state();
+                            }
+                        }
+                    },
+                    Message::ManifestCard { player_id: pid, card_id, position_x, position_y } => {
+                        // Move a card from library to battlefield face down as a token
+                        let mut gm = game_manager.write().await;
+                        if let Some(game) = gm.get_game_mut(&game_id) {
+                            if let Some(player) = game.get_player_mut(&pid) {
+                                // Find and remove card from library
+                                if let Some(pos) = player.library.iter().position(|c| c.id == card_id) {
+                                    let mut card = player.library.remove(pos);
+                                    // Flip the card face down
+                                    card.is_flipped = true;
+                                    card.is_token = true;
+                                    // Set position if provided, otherwise use default
+                                    if let Some(x) = position_x {
+                                        card.position_x = x;
+                                    }
+                                    if let Some(y) = position_y {
+                                        card.position_y = y;
+                                    }
+                                    player.battlefield.push(card);
+                                    game.broadcast_state();
+                                }
                             }
                         }
                     },

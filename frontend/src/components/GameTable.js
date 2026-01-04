@@ -336,6 +336,7 @@ const GameTable = ({ gameId, playerId, playerName, onBack }) => {
 
   const handleSurveilComplete = (topCards, graveyardCards) => {
     if (ws.current && ws.current.readyState === WebSocket.OPEN) {
+      // Send SurveilComplete message to reorder the library
       ws.current.send(JSON.stringify({
         SurveilComplete: {
           player_id: playerId,
@@ -343,6 +344,18 @@ const GameTable = ({ gameId, playerId, playerName, onBack }) => {
           graveyard_cards: graveyardCards.map(c => c.id || '')
         }
       }));
+      
+      // Also send individual MoveCard messages for cards going to graveyard
+      graveyardCards.forEach(card => {
+        ws.current.send(JSON.stringify({
+          MoveCard: {
+            player_id: playerId,
+            card_id: card.id,
+            from_zone: 'library',
+            to_zone: 'graveyard'
+          }
+        }));
+      });
     }
     setSurveilActive(false);
     setSurveilCards([]);
@@ -569,6 +582,8 @@ const GameTable = ({ gameId, playerId, playerName, onBack }) => {
           zoneName={zoneViewerZone}
           cards={zoneViewerCards}
           onClose={handleCloseZoneViewer}
+          ws={ws.current}
+          playerId={playerId}
         />
       )}
 

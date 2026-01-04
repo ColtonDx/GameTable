@@ -308,7 +308,12 @@ const BattlefieldZone = ({ player, position, isActive, onUpdateLife, onUpdateCou
           <div className="player-avatar">
             <img src={player.profile_picture} alt={player.name} />
           </div>
-          <div className="player-name">{player.name}</div>
+          <div className="player-info">
+            <div className="player-name">{player.name}</div>
+            <div className="player-zones-summary">
+              (H:{player.hand?.length || 0} L:{player.library?.length || 0} G:{player.graveyard?.length || 0} E:{player.exile?.length || 0})
+            </div>
+          </div>
         </div>
         
         <div className="player-life">

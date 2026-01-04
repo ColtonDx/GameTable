@@ -22,6 +22,14 @@ const HandZone = ({ cards, onSelectCard, onHandOptions, scale = 1, ws = null, pl
     if (card.name && card.name.includes('Blank')) {
       return '/GameTableData/General/blank.jpg';
     }
+    // Check if this is a dual-faced card showing its back side
+    if (card.is_two_sided && card.is_back_face && card.set_code && card.collector_number) {
+      return `/GameTableData/Sets/${card.set_code}/${card.set_code}/${card.collector_number}-b.jpg`;
+    }
+    // Check if this is a dual-faced card showing its front side
+    if (card.is_two_sided && !card.is_back_face && card.set_code && card.collector_number) {
+      return `/GameTableData/Sets/${card.set_code}/${card.set_code}/${card.collector_number}.jpg`;
+    }
     // Future: implement set-based lookup here
     // For now, default to blank if image not found
     return '/GameTableData/General/blank.jpg';
@@ -95,6 +103,20 @@ const HandZone = ({ cards, onSelectCard, onHandOptions, scale = 1, ws = null, pl
       }));
     } else {
       console.warn('Cannot flip card - WebSocket not ready or playerId missing', { ws, playerId, readyState: ws?.readyState });
+    }
+    setContextMenu(null);
+  };
+
+  const handlePlayBackside = () => {
+    if (!contextMenu) return;
+    
+    if (ws && ws.readyState === WebSocket.OPEN && playerId) {
+      ws.send(JSON.stringify({
+        FlipCardFace: {
+          player_id: playerId,
+          card_id: contextMenu.card.id
+        }
+      }));
     }
     setContextMenu(null);
   };
@@ -321,6 +343,11 @@ const HandZone = ({ cards, onSelectCard, onHandOptions, scale = 1, ws = null, pl
           <button className="context-menu-item" onClick={handleFlipCard}>
             Flip Card
           </button>
+          {contextMenu.card.is_two_sided && (
+            <button className="context-menu-item" onClick={handlePlayBackside}>
+              {contextMenu.card.is_back_face ? 'Play Front Side' : 'Play Back Side'}
+            </button>
+          )}
           <button className="context-menu-item" onClick={handleInspectCard}>
             Inspect
           </button>

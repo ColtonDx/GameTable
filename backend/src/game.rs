@@ -11,6 +11,10 @@ pub struct Card {
     pub is_flipped: bool,
     pub is_commander: bool,
     pub is_token: bool,
+    pub is_two_sided: bool,
+    pub is_back_face: bool,
+    pub set_code: Option<String>,
+    pub collector_number: Option<String>,
     pub position_x: f32,
     pub position_y: f32,
 }

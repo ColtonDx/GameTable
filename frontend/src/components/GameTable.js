@@ -272,7 +272,8 @@ const GameTable = ({ gameId, playerId, playerName, onBack }) => {
         set_code: cardData.setCode,
         collector_number: cardData.collectorNumber,
         card_name: cardData.name,
-        position: cardData.position
+        position: cardData.position,
+        is_two_sided: cardData.isTwoSided
       }
     }));
 
@@ -515,28 +516,61 @@ const GameTable = ({ gameId, playerId, playerName, onBack }) => {
       {inspectedCard && (
         <div className="card-inspection-overlay" onClick={handleCloseInspection}>
           <div className="card-inspection-container" onClick={(e) => e.stopPropagation()}>
-            <div
-              className="inspected-card-image"
-              style={{
-                backgroundImage: `url('${inspectViewFlipped ? `/GameTableData/Players/${inspectedCardPlayerName}/sleeve.jpg` : '/GameTableData/General/blank.jpg'}')`,
-                backgroundSize: 'contain',
-                backgroundPosition: 'center',
-                backgroundRepeat: 'no-repeat'
-              }}
-            ></div>
+            {inspectedCard.is_two_sided ? (
+              // Dual-faced card: show both sides
+              <div className="dual-faced-inspection">
+                <div className="inspection-side">
+                  <h4>Front Side</h4>
+                  <div
+                    className="inspected-card-image"
+                    style={{
+                      backgroundImage: `url('/GameTableData/Sets/${inspectedCard.set_code}/${inspectedCard.set_code}/${inspectedCard.collector_number}.jpg')`,
+                      backgroundSize: 'contain',
+                      backgroundPosition: 'center',
+                      backgroundRepeat: 'no-repeat'
+                    }}
+                  ></div>
+                </div>
+                <div className="inspection-side">
+                  <h4>Back Side</h4>
+                  <div
+                    className="inspected-card-image"
+                    style={{
+                      backgroundImage: `url('/GameTableData/Sets/${inspectedCard.set_code}/${inspectedCard.set_code}/${inspectedCard.collector_number}-b.jpg')`,
+                      backgroundSize: 'contain',
+                      backgroundPosition: 'center',
+                      backgroundRepeat: 'no-repeat'
+                    }}
+                  ></div>
+                </div>
+              </div>
+            ) : (
+              // Single-sided card: show with flip for sleeve
+              <div
+                className="inspected-card-image"
+                style={{
+                  backgroundImage: `url('${inspectViewFlipped ? `/GameTableData/Players/${inspectedCardPlayerName}/sleeve.jpg` : '/GameTableData/General/blank.jpg'}')`,
+                  backgroundSize: 'contain',
+                  backgroundPosition: 'center',
+                  backgroundRepeat: 'no-repeat'
+                }}
+              ></div>
+            )}
             <div className="card-inspection-info">
               <h3>{inspectedCard.name}</h3>
               <div className="inspection-controls">
-                <button 
-                  className="flip-in-inspect-btn"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setInspectViewFlipped(!inspectViewFlipped);
-                  }}
-                  title={inspectViewFlipped ? 'Show front' : 'Show back'}
-                >
-                  {inspectViewFlipped ? '📋 Front' : '🔄 Back'}
-                </button>
+                {!inspectedCard.is_two_sided && (
+                  <button 
+                    className="flip-in-inspect-btn"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setInspectViewFlipped(!inspectViewFlipped);
+                    }}
+                    title={inspectViewFlipped ? 'Show front' : 'Show back'}
+                  >
+                    {inspectViewFlipped ? '📋 Front' : '🔄 Back'}
+                  </button>
+                )}
               </div>
               <p className="close-hint">Click outside to close</p>
             </div>

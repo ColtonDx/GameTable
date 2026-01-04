@@ -62,7 +62,9 @@ pub enum Message {
     #[serde(rename = "ManifestCard")]
     ManifestCard { player_id: String, card_id: String, #[serde(skip_serializing_if = "Option::is_none")] position_x: Option<f32>, #[serde(skip_serializing_if = "Option::is_none")] position_y: Option<f32> },
     #[serde(rename = "SpawnCard")]
-    SpawnCard { player_id: String, set_code: String, collector_number: String, card_name: String, position: String },
+    SpawnCard { player_id: String, set_code: String, collector_number: String, card_name: String, position: String, is_two_sided: bool },
+    #[serde(rename = "FlipCardFace")]
+    FlipCardFace { player_id: String, card_id: String },
     
     #[serde(rename = "GameState")]
     GameState { state: String },
@@ -364,6 +366,10 @@ async fn handle_socket(
                                         is_flipped: card_to_copy.is_flipped,
                                         is_commander: false,
                                         is_token: true,
+                                        is_two_sided: card_to_copy.is_two_sided,
+                                        is_back_face: card_to_copy.is_back_face,
+                                        set_code: card_to_copy.set_code.clone(),
+                                        collector_number: card_to_copy.collector_number.clone(),
                                         position_x: card_to_copy.position_x,
                                         position_y: card_to_copy.position_y,
                                     };
@@ -464,6 +470,10 @@ async fn handle_socket(
                                         is_flipped: false,
                                         is_commander: false,
                                         is_token: false,
+                                        is_two_sided: false,
+                                        is_back_face: false,
+                                        set_code: None,
+                                        collector_number: None,
                                         position_x: 0.0,
                                         position_y: 0.0,
                                     };
@@ -479,6 +489,10 @@ async fn handle_socket(
                                         is_flipped: false,
                                         is_token: false,
                                         is_commander: true,
+                                        is_two_sided: false,
+                                        is_back_face: false,
+                                        set_code: None,
+                                        collector_number: None,
                                         position_x: 0.0,
                                         position_y: 0.0,
                                     };
@@ -633,27 +647,55 @@ async fn handle_socket(
                             }
                         }
                     },
-                    Message::SpawnCard { player_id: pid, set_code, collector_number, card_name, position: _ } => {
+                    Message::SpawnCard { player_id: pid, set_code, collector_number, card_name, position: _, is_two_sided } => {
                         // Spawn a card token on the battlefield
                         let mut gm = game_manager.write().await;
                         if let Some(game) = gm.get_game_mut(&game_id) {
                             if let Some(player) = game.get_player_mut(&pid) {
                                 // Create a token card with the image path
-                                let image_path = format!("/GameTableData/Sets/{}/{}/{}.jpg", set_code, set_code, collector_number);
                                 let card = Card {
                                     id: format!("token_{}", Uuid::new_v4()),
                                     name: card_name,
-                                    image_url: image_path,
                                     is_token: true,
                                     is_flipped: false,
                                     is_tapped: false,
                                     is_commander: false,
+                                    is_two_sided,
+                                    is_back_face: false,
+                                    set_code: Some(set_code),
+                                    collector_number: Some(collector_number),
                                     position_x: 400.0,  // Center of battlefield
                                     position_y: 300.0,
-                                    created_at: chrono::Utc::now(),
                                 };
                                 player.battlefield.push(card);
                                 game.broadcast_state();
+                            }
+                        }
+                    },
+                    Message::FlipCardFace { player_id: pid, card_id } => {
+                        // Toggle card face for dual-faced cards
+                        let mut gm = game_manager.write().await;
+                        if let Some(game) = gm.get_game_mut(&game_id) {
+                            if let Some(player) = game.get_player_mut(&pid) {
+                                // Search through all zones for the card
+                                let zones = vec![
+                                    &mut player.hand,
+                                    &mut player.battlefield,
+                                    &mut player.graveyard,
+                                    &mut player.exile,
+                                    &mut player.command_zone,
+                                    &mut player.library,
+                                ];
+                                
+                                for zone in zones {
+                                    if let Some(card) = zone.iter_mut().find(|c| c.id == card_id) {
+                                        if card.is_two_sided {
+                                            card.is_back_face = !card.is_back_face;
+                                            game.broadcast_state();
+                                            break;
+                                        }
+                                    }
+                                }
                             }
                         }
                     },

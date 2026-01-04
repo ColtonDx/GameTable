@@ -1,9 +1,7 @@
 use serde::{Deserialize, Serialize};
 use sqlx::PgPool;
-use std::path::Path;
 use tokio::fs;
 use std::sync::atomic::{AtomicU64, Ordering};
-use std::sync::Arc;
 
 // Global rate limiter: track last request time
 static LAST_REQUEST_TIME: AtomicU64 = AtomicU64::new(0);

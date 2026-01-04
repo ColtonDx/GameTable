@@ -19,7 +19,6 @@ use tower_http::cors::CorsLayer;
 use tower_http::services::ServeDir;
 use tracing_subscriber;
 use sqlx::postgres::PgPool;
-use std::path::Path;
 
 use game::GameManager;
 
@@ -101,25 +100,28 @@ async fn main() {
     .await
     .expect("Failed to create index");
 
-    // Sync Scryfall cards
+    // Sync Scryfall cards in background (doesn't need to be Send)
     tracing::info!("Starting Scryfall card sync...");
     let pool_clone = pool.clone();
-    tokio::spawn(async move {
-        if let Ok(setcodes_content) = tokio::fs::read_to_string("/GameTableData/General/setcodes.txt").await {
-            let set_codes: Vec<String> = setcodes_content
-                .lines()
-                .map(|s| s.trim().to_string())
-                .filter(|s| !s.is_empty())
-                .collect();
+    std::thread::spawn(move || {
+        let rt = tokio::runtime::Runtime::new().expect("Failed to create runtime");
+        rt.block_on(async {
+            if let Ok(setcodes_content) = tokio::fs::read_to_string("/GameTableData/General/setcodes.txt").await {
+                let set_codes: Vec<String> = setcodes_content
+                    .lines()
+                    .map(|s| s.trim().to_string())
+                    .filter(|s| !s.is_empty())
+                    .collect();
 
-            if !set_codes.is_empty() {
-                if let Err(e) = scryfall::sync_all_sets(&pool_clone, &set_codes).await {
-                    tracing::error!("Failed to sync Scryfall cards: {}", e);
+                if !set_codes.is_empty() {
+                    if let Err(e) = scryfall::sync_all_sets(&pool_clone, &set_codes).await {
+                        tracing::error!("Failed to sync Scryfall cards: {}", e);
+                    }
                 }
+            } else {
+                tracing::warn!("setcodes.txt not found, skipping card sync");
             }
-        } else {
-            tracing::warn!("setcodes.txt not found, skipping card sync");
-        }
+        });
     });
 
     let game_manager = Arc::new(RwLock::new(GameManager::new()));

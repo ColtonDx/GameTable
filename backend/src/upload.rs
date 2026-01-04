@@ -15,7 +15,7 @@ pub struct UploadResponse {
 }
 
 pub async fn upload_handler(
-    State(state): State<AppState>,
+    State(_state): State<AppState>,
     mut multipart: Multipart,
 ) -> (StatusCode, Json<UploadResponse>) {
     let mut username = String::new();

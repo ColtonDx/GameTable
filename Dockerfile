@@ -11,8 +11,8 @@ RUN mkdir -p /app/backend/release-bin && \
 # Stage 2: Build frontend
 FROM node:18-alpine as frontend-builder
 WORKDIR /app/frontend
-COPY frontend/package*.json ./
-RUN npm ci --omit=dev && npm cache clean --force
+COPY frontend/package.json ./
+RUN npm install --legacy-peer-deps && npm cache clean --force
 COPY frontend/ .
 RUN npm run build
 

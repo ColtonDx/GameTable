@@ -1,8 +1,14 @@
 import React from 'react';
 import '../styles/GraveyardZone.css';
 
-const GraveyardZone = ({ cards = [], onInspectCard = null, playerName = null }) => {
+const GraveyardZone = ({ cards = [], onInspectCard = null, playerName = null, onViewZone = null }) => {
   const cardCount = cards?.length || 0;
+
+  const handleZoneClick = () => {
+    if (onViewZone && cardCount > 0) {
+      onViewZone('Graveyard', cards);
+    }
+  };
 
   return (
     <div className="graveyard-zone">
@@ -13,14 +19,17 @@ const GraveyardZone = ({ cards = [], onInspectCard = null, playerName = null }) 
         </div>
       </div>
 
-      <div className="graveyard-cards">
+      <div className="graveyard-cards" onClick={handleZoneClick} style={{ cursor: cardCount > 0 ? 'pointer' : 'default' }}>
         {cardCount > 0 ? (
           <div className="graveyard-stack">
             {cards.length > 0 && (
               <div
                 key={cards[cards.length - 1].id}
                 className="graveyard-card"
-                onClick={() => onInspectCard && onInspectCard(cards[cards.length - 1], playerName)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onInspectCard && onInspectCard(cards[cards.length - 1], playerName);
+                }}
                 title={cards[cards.length - 1].name}
               >
                 <div

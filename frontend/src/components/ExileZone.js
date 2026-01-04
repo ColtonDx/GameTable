@@ -1,8 +1,14 @@
 import React from 'react';
 import '../styles/ExileZone.css';
 
-const ExileZone = ({ cards = [], onInspectCard = null, playerName = null }) => {
+const ExileZone = ({ cards = [], onInspectCard = null, playerName = null, onViewZone = null }) => {
   const cardCount = cards?.length || 0;
+
+  const handleZoneClick = () => {
+    if (onViewZone && cardCount > 0) {
+      onViewZone('Exile', cards);
+    }
+  };
 
   return (
     <div className="exile-zone">
@@ -13,14 +19,17 @@ const ExileZone = ({ cards = [], onInspectCard = null, playerName = null }) => {
         </div>
       </div>
 
-      <div className="exile-cards">
+      <div className="exile-cards" onClick={handleZoneClick} style={{ cursor: cardCount > 0 ? 'pointer' : 'default' }}>
         {cardCount > 0 ? (
           <div className="exile-stack">
             {cards.length > 0 && (
               <div
                 key={cards[cards.length - 1].id}
                 className="exile-card"
-                onClick={() => onInspectCard && onInspectCard(cards[cards.length - 1], playerName)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onInspectCard && onInspectCard(cards[cards.length - 1], playerName);
+                }}
                 title={cards[cards.length - 1].name}
               >
                 <div

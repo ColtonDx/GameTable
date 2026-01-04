@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import '../styles/LibraryZone.css';
 
-const LibraryZone = ({ cards = [], ws = null, playerId = null, playerName = null, onInspectCard = null, onReveal = null, onScry = null }) => {
+const LibraryZone = ({ cards = [], ws = null, playerId = null, playerName = null, onInspectCard = null, onReveal = null, onScry = null, onSurveil = null }) => {
   const [contextMenu, setContextMenu] = useState(null);
 
   const handleContextMenu = (e) => {
@@ -34,6 +34,13 @@ const LibraryZone = ({ cards = [], ws = null, playerId = null, playerName = null
   const handleScry = () => {
     if (cards && cards.length > 0 && onScry) {
       onScry(cards);
+    }
+    setContextMenu(null);
+  };
+
+  const handleSurveil = () => {
+    if (cards && cards.length > 0 && onSurveil) {
+      onSurveil(cards);
     }
     setContextMenu(null);
   };
@@ -99,6 +106,9 @@ const LibraryZone = ({ cards = [], ws = null, playerId = null, playerName = null
           </button>
           <button className="context-menu-item" onClick={handleScry}>
             Scry
+          </button>
+          <button className="context-menu-item" onClick={handleSurveil}>
+            Surveil
           </button>
         </div>
       )}

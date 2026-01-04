@@ -11,6 +11,7 @@ import BottomToolbar from './BottomToolbar';
 import RevealCardOverlay from './RevealCardOverlay';
 import ScryInterface from './ScryInterface';
 import ScryCountSelector from './ScryCountSelector';
+import ZoneViewerModal from './ZoneViewerModal';
 
 const GameTable = ({ gameId, playerId, playerName, onBack }) => {
   const [gameState, setGameState] = useState(null);
@@ -31,6 +32,8 @@ const GameTable = ({ gameId, playerId, playerName, onBack }) => {
   const [scryCards, setScryCards] = useState([]);
   const [scryCount, setScryCount] = useState(0);
   const [scryCountSelector, setScryCountSelector] = useState(false);
+  const [zoneViewerZone, setZoneViewerZone] = useState(null);
+  const [zoneViewerCards, setZoneViewerCards] = useState([]);
   const ws = useRef(null);
   const diceRollTimeoutRef = useRef(null);
   const restartTimeoutRef = useRef(null);
@@ -315,6 +318,16 @@ const GameTable = ({ gameId, playerId, playerName, onBack }) => {
     setScryCount(0);
   };
 
+  const handleViewZone = (zoneName, cards) => {
+    setZoneViewerZone(zoneName);
+    setZoneViewerCards(cards);
+  };
+
+  const handleCloseZoneViewer = () => {
+    setZoneViewerZone(null);
+    setZoneViewerCards([]);
+  };
+
   const getCardImagePath = (card, playerName) => {
     if (card.is_flipped) {
       // Check if player has custom sleeve
@@ -491,6 +504,15 @@ const GameTable = ({ gameId, playerId, playerName, onBack }) => {
         />
       )}
 
+      {/* Zone Viewer Modal */}
+      {zoneViewerZone && (
+        <ZoneViewerModal
+          zoneName={zoneViewerZone}
+          cards={zoneViewerCards}
+          onClose={handleCloseZoneViewer}
+        />
+      )}
+
       <div className="game-container" style={{ display: zoomedPlayer ? 'none' : 'flex' }}>
         {/* Left Sidebar */}
         <div className="sidebar-section">
@@ -609,6 +631,7 @@ const GameTable = ({ gameId, playerId, playerName, onBack }) => {
                 cards={currentPlayer?.graveyard || []}
                 onInspectCard={handleInspectCard}
                 playerName={currentPlayer?.name}
+                onViewZone={handleViewZone}
               />
             </div>
 
@@ -617,6 +640,7 @@ const GameTable = ({ gameId, playerId, playerName, onBack }) => {
                 cards={currentPlayer?.exile || []}
                 onInspectCard={handleInspectCard}
                 playerName={currentPlayer?.name}
+                onViewZone={handleViewZone}
               />
             </div>
           </div>

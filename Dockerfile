@@ -2,11 +2,7 @@
 FROM rust:1.75-slim as backend-builder
 WORKDIR /app/backend
 COPY backend/ .
-RUN --mount=type=cache,target=/usr/local/cargo/registry \
-    cargo build --release 2>&1 && \
-    rm -rf target/release/deps target/release/build target/release/.fingerprint target/release/incremental || true
-RUN mkdir -p /app/backend/release-bin && \
-    cp target/release/game-table-server /app/backend/release-bin/ 2>/dev/null || true
+RUN cargo build --release
 
 # Stage 2: Build frontend
 FROM node:18-alpine as frontend-builder
@@ -23,7 +19,7 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/* /var/cache/apt/*
 
 # Copy backend binary
-COPY --from=backend-builder /app/backend/release-bin/game-table-server /app/server
+COPY --from=backend-builder /app/backend/target/release/game-table-server /app/server
 
 # Copy built frontend
 COPY --from=frontend-builder /app/frontend/build /app/public

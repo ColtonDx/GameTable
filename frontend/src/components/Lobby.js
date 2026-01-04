@@ -56,8 +56,12 @@ const Lobby = ({ onStartGame }) => {
   };
 
   const handleJoinGame = () => {
-    if (!gameId || !playerName) {
-      setError('Please enter both game ID and player name');
+    if (!gameId) {
+      setError('Please enter a game ID');
+      return;
+    }
+    if (!playerName) {
+      setError('Player name not found. Please log in again.');
       return;
     }
     // Generate and store a persistent player ID for this game session

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import '../styles/LibraryZone.css';
 
-const LibraryZone = ({ cards = [], ws = null, playerId = null, onInspectCard = null }) => {
+const LibraryZone = ({ cards = [], ws = null, playerId = null, playerName = null, onInspectCard = null }) => {
   const [contextMenu, setContextMenu] = useState(null);
 
   const handleContextMenu = (e) => {
@@ -60,7 +60,7 @@ const LibraryZone = ({ cards = [], ws = null, playerId = null, onInspectCard = n
             onContextMenu={handleContextMenu}
             title="Click to draw a card, right-click for options"
             style={{
-              backgroundImage: `url('/GameTableData/General/back.jpg')`,
+              backgroundImage: `url('/GameTableData/Players/${playerName}/sleeve.jpg')`,
               backgroundSize: 'cover',
               backgroundPosition: 'center',
               cursor: 'pointer'

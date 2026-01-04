@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import '../styles/BattlefieldZone.css';
 
-const BattlefieldZone = ({ player, position, isActive, onUpdateLife, onUpdateCounter, onSpawnCard, onZoom, ws = null, playerId = null, onInspectCard = null }) => {
+const BattlefieldZone = ({ player, position, isActive, onUpdateLife, onUpdateCounter, onSpawnCard, onZoom, ws = null, playerId = null, onInspectCard = null, playmatImage = null }) => {
   const [dragOverZone, setDragOverZone] = useState(false);
   const [contextMenu, setContextMenu] = useState(null);
   const [draggedBattlefieldCard, setDraggedBattlefieldCard] = useState(null);
@@ -18,7 +18,7 @@ const BattlefieldZone = ({ player, position, isActive, onUpdateLife, onUpdateCou
 
   const getCardImagePath = (card) => {
     if (card.is_flipped) {
-      return '/GameTableData/General/back.jpg';
+      return `/GameTableData/Players/${player.name}/sleeve.jpg`;
     }
     if (card.name && card.name.includes('Blank')) {
       return '/GameTableData/General/blank.jpg';
@@ -101,7 +101,8 @@ const BattlefieldZone = ({ player, position, isActive, onUpdateLife, onUpdateCou
 
   const handleInspectCard = () => {
     if (contextMenu && onInspectCard) {
-      onInspectCard(contextMenu.card);
+      // Pass both card and player name
+      onInspectCard(contextMenu.card, player.name);
     }
     setContextMenu(null);
   };
@@ -260,6 +261,12 @@ const BattlefieldZone = ({ player, position, isActive, onUpdateLife, onUpdateCou
   return (
     <div 
       className={`battlefield-zone ${position} ${isActive ? 'active' : ''} ${dragOverZone ? 'drag-over' : ''}`}
+      style={playmatImage ? {
+        backgroundImage: `url('${playmatImage}')`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundAttachment: 'fixed'
+      } : {}}
       onContextMenu={(e) => {
         e.preventDefault();
         onSpawnCard && onSpawnCard(position);

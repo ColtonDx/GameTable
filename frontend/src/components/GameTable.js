@@ -18,6 +18,7 @@ const GameTable = ({ gameId, playerId, playerName, onBack }) => {
   const [diceRoll, setDiceRoll] = useState(null);
   const [gameRestart, setGameRestart] = useState(null);
   const [inspectedCard, setInspectedCard] = useState(null);
+  const [inspectedCardPlayerName, setInspectedCardPlayerName] = useState(null);
   const [inspectViewFlipped, setInspectViewFlipped] = useState(false);
   const ws = useRef(null);
   const diceRollTimeoutRef = useRef(null);
@@ -233,14 +234,21 @@ const GameTable = ({ gameId, playerId, playerName, onBack }) => {
     setZoomedPosition(zoomedPosition === position ? null : position);
   };
 
+  const handleInspectCard = (card, playerName) => {
+    setInspectedCard(card);
+    setInspectedCardPlayerName(playerName);
+  };
+
   const handleCloseInspection = () => {
     setInspectedCard(null);
+    setInspectedCardPlayerName(null);
     setInspectViewFlipped(false);
   };
 
-  const getCardImagePath = (card) => {
+  const getCardImagePath = (card, playerName) => {
     if (card.is_flipped) {
-      return '/GameTableData/General/back.jpg';
+      // Check if player has custom sleeve
+      return `/GameTableData/Players/${playerName}/sleeve.jpg`;
     }
     if (card.name && card.name.includes('Blank')) {
       return '/GameTableData/General/blank.jpg';
@@ -352,7 +360,7 @@ const GameTable = ({ gameId, playerId, playerName, onBack }) => {
             <div
               className="inspected-card-image"
               style={{
-                backgroundImage: `url('${inspectViewFlipped ? '/GameTableData/General/back.jpg' : '/GameTableData/General/blank.jpg'}')`,
+                backgroundImage: `url('${inspectViewFlipped ? `/GameTableData/Players/${inspectedCardPlayerName}/sleeve.jpg` : '/GameTableData/General/blank.jpg'}')`,
                 backgroundSize: 'contain',
                 backgroundPosition: 'center',
                 backgroundRepeat: 'no-repeat'
@@ -400,6 +408,7 @@ const GameTable = ({ gameId, playerId, playerName, onBack }) => {
                   onUpdateCounter={updatePlayerCounter}
                   onSpawnCard={handleSpawnCard}
                   onZoom={handleZoom}
+                  playmatImage={`/GameTableData/Players/${rotatedPlayers[3]?.name}/playmat.jpg`}
                 />
               </div>
               {/* Top-Right Player (rotatedPlayers[2]) */}
@@ -412,6 +421,7 @@ const GameTable = ({ gameId, playerId, playerName, onBack }) => {
                   onUpdateCounter={updatePlayerCounter}
                   onSpawnCard={handleSpawnCard}
                   onZoom={handleZoom}
+                  playmatImage={`/GameTableData/Players/${rotatedPlayers[2]?.name}/playmat.jpg`}
                 />
               </div>
             </div>
@@ -430,7 +440,8 @@ const GameTable = ({ gameId, playerId, playerName, onBack }) => {
                   onZoom={handleZoom}
                   ws={ws.current}
                   playerId={playerId}
-                  onInspectCard={setInspectedCard}
+                  onInspectCard={handleInspectCard}
+                  playmatImage={`/GameTableData/Players/${rotatedPlayers[0]?.name}/playmat.jpg`}
                 />
               </div>
               {/* Bottom-Right Player (rotatedPlayers[1]) */}
@@ -443,6 +454,7 @@ const GameTable = ({ gameId, playerId, playerName, onBack }) => {
                   onUpdateCounter={updatePlayerCounter}
                   onSpawnCard={handleSpawnCard}
                   onZoom={handleZoom}
+                  playmatImage={`/GameTableData/Players/${rotatedPlayers[1]?.name}/playmat.jpg`}
                 />
               </div>
             </div>
@@ -455,7 +467,8 @@ const GameTable = ({ gameId, playerId, playerName, onBack }) => {
                 cards={currentPlayer?.library || []}
                 ws={ws.current}
                 playerId={playerId}
-                onInspectCard={setInspectedCard}
+                playerName={currentPlayer?.name}
+                onInspectCard={handleInspectCard}
               />
             </div>
 
@@ -467,8 +480,9 @@ const GameTable = ({ gameId, playerId, playerName, onBack }) => {
                 scale={handScale}
                 ws={ws.current}
                 playerId={playerId}
+                playerName={currentPlayer?.name}
                 position="bottom-left"
-                onInspectCard={setInspectedCard}
+                onInspectCard={handleInspectCard}
               />
             </div>
 
@@ -477,7 +491,8 @@ const GameTable = ({ gameId, playerId, playerName, onBack }) => {
                 cards={currentPlayer?.command_zone || []}
                 ws={ws.current}
                 playerId={playerId}
-                onInspectCard={setInspectedCard}
+                playerName={currentPlayer?.name}
+                onInspectCard={handleInspectCard}
               />
             </div>
           </div>

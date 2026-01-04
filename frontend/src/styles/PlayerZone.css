@@ -24,6 +24,14 @@
   border-bottom: 1px solid rgba(37, 99, 235, 0.3);
 }
 
+.player-profile-pic {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #60a5fa;
+}
+
 .player-header h3 {
   margin: 0;
   color: #60a5fa;

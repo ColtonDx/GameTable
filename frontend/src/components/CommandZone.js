@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
 import '../styles/CommandZone.css';
 
-const CommandZone = ({ cards, ws = null, playerId = null, onInspectCard = null }) => {
+const CommandZone = ({ cards, ws = null, playerId = null, playerName = null, onInspectCard = null }) => {
   const [draggedCard, setDraggedCard] = useState(null);
   const [contextMenu, setContextMenu] = useState(null);
 
   const getCardImagePath = (card) => {
     // Show back if card is flipped
     if (card.is_flipped) {
-      return '/GameTableData/General/back.jpg';
+      return `/GameTableData/Players/${playerName}/sleeve.jpg`;
     }
     // For now, all blank cards use the blank.jpg image
     if (card.name && card.name.includes('Blank')) {
@@ -77,7 +77,7 @@ const CommandZone = ({ cards, ws = null, playerId = null, onInspectCard = null }
 
   const handleInspectCard = () => {
     if (contextMenu && onInspectCard) {
-      onInspectCard(contextMenu.card);
+      onInspectCard(contextMenu.card, playerName);
     }
     setContextMenu(null);
   };

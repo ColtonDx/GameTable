@@ -24,6 +24,15 @@ const PlayerZone = ({ player, playerIndex, isCurrentPlayer, onUpdateLife, onDraw
   return (
     <div className={`player-zone ${isCurrentPlayer ? 'current-player' : ''}`}>
       <div className="player-header">
+        <img 
+          src={`/GameTableData/Players/${player.name}/profile.jpg`}
+          alt={`${player.name}'s profile`}
+          className="player-profile-pic"
+          onError={(e) => {
+            // Fallback if profile picture doesn't exist
+            e.target.style.display = 'none';
+          }}
+        />
         <h3>{player.name}</h3>
         {isCurrentPlayer && <span className="you-badge">You</span>}
       </div>

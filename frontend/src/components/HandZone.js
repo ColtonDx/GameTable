@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import '../styles/HandZone.css';
 
-const HandZone = ({ cards, onSelectCard, onHandOptions, scale = 1, ws = null, playerId = null, position = 'bottom-left', onInspectCard = null }) => {
+const HandZone = ({ cards, onSelectCard, onHandOptions, scale = 1, ws = null, playerId = null, playerName = null, position = 'bottom-left', onInspectCard = null }) => {
   const [selectedCardIndex, setSelectedCardIndex] = useState(null);
   const [scrollOffset, setScrollOffset] = useState(0);
   const [draggedCard, setDraggedCard] = useState(null);
@@ -15,7 +15,7 @@ const HandZone = ({ cards, onSelectCard, onHandOptions, scale = 1, ws = null, pl
   const getCardImagePath = (card) => {
     // Show back if card is flipped
     if (card.is_flipped) {
-      return '/GameTableData/General/back.jpg';
+      return `/GameTableData/Players/${playerName}/sleeve.jpg`;
     }
     // For now, all blank cards use the blank.jpg image
     if (card.name && card.name.includes('Blank')) {
@@ -100,7 +100,7 @@ const HandZone = ({ cards, onSelectCard, onHandOptions, scale = 1, ws = null, pl
 
   const handleInspectCard = () => {
     if (contextMenu && onInspectCard) {
-      onInspectCard(contextMenu.card);
+      onInspectCard(contextMenu.card, playerName);
     }
     setContextMenu(null);
   };

@@ -259,8 +259,6 @@ pub async fn search_cards_handler(
         }
         Err(e) => {
             tracing::error!("Search error: {}", e);
-        Err(e) => {
-            tracing::error!("Search error: {}", e);
             (
                 StatusCode::INTERNAL_SERVER_ERROR,
                 Json(json!({

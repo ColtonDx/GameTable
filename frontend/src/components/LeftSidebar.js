@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import '../styles/LeftSidebar.css';
+import { WebSocketContext } from './GameTable';
 
-const LeftSidebar = ({ gameId, playerId, ws }) => {
+const LeftSidebar = ({ gameId, playerId }) => {
+  const ws = useContext(WebSocketContext);
   const [sidebarVisible, setSidebarVisible] = useState(false);
   const [expandedMenus, setExpandedMenus] = useState({
     library: false

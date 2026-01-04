@@ -673,7 +673,7 @@ const GameTable = ({ gameId, playerId, playerName, onBack }) => {
       <div className="game-container" style={{ display: zoomedPlayer ? 'none' : 'flex' }}>
         {/* Left Sidebar */}
         <div className="sidebar-section">
-          <LeftSidebar gameId={gameId} playerId={playerId} ws={ws.current} />
+          <LeftSidebar gameId={gameId} playerId={playerId} />
         </div>
 
         {/* Main Game Area */}

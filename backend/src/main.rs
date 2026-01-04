@@ -106,20 +106,35 @@ async fn main() {
     std::thread::spawn(move || {
         let rt = tokio::runtime::Runtime::new().expect("Failed to create runtime");
         rt.block_on(async {
-            if let Ok(setcodes_content) = tokio::fs::read_to_string("/GameTableData/General/setcodes.txt").await {
-                let set_codes: Vec<String> = setcodes_content
-                    .lines()
-                    .map(|s| s.trim().to_string())
-                    .filter(|s| !s.is_empty())
-                    .collect();
+            // Try to read setcodes from file
+            let setcodes_content = match std::fs::read_to_string("/GameTableData/General/setcodes.txt") {
+                Ok(content) => {
+                    tracing::info!("Successfully read setcodes.txt");
+                    content
+                },
+                Err(e) => {
+                    tracing::warn!("Failed to read setcodes.txt: {}", e);
+                    return;
+                }
+            };
 
-                if !set_codes.is_empty() {
-                    if let Err(e) = scryfall::sync_all_sets(&pool_clone, &set_codes).await {
+            let set_codes: Vec<String> = setcodes_content
+                .lines()
+                .map(|s| s.trim().to_string())
+                .filter(|s| !s.is_empty())
+                .collect();
+
+            tracing::info!("Found {} set codes to sync: {:?}", set_codes.len(), set_codes);
+
+            if !set_codes.is_empty() {
+                match scryfall::sync_all_sets(&pool_clone, &set_codes).await {
+                    Ok(_) => {
+                        tracing::info!("Successfully completed Scryfall card sync");
+                    }
+                    Err(e) => {
                         tracing::error!("Failed to sync Scryfall cards: {}", e);
                     }
                 }
-            } else {
-                tracing::warn!("setcodes.txt not found, skipping card sync");
             }
         });
     });

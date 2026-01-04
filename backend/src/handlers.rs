@@ -152,6 +152,8 @@ pub async fn query_card_handler(
 ) -> (StatusCode, Json<CardResponse>) {
     let pool = state.db_pool.as_ref();
 
+    tracing::info!("Querying card: set_code={}, collector_number={}", params.set_code, params.collector_number);
+
     match sqlx::query_as::<_, (String, bool)>(
         "SELECT name, is_two_sided FROM cards WHERE set_code = $1 AND collector_number = $2 LIMIT 1"
     )
@@ -161,6 +163,7 @@ pub async fn query_card_handler(
     .await
     {
         Ok(Some((name, is_two_sided))) => {
+            tracing::info!("Card found: {}", name);
             let image_path = format!("/GameTableData/Sets/{}/{}/{}.jpg", params.set_code, params.set_code, params.collector_number);
             (
                 StatusCode::OK,
@@ -173,26 +176,32 @@ pub async fn query_card_handler(
                 }),
             )
         }
-        Ok(None) => (
-            StatusCode::NOT_FOUND,
-            Json(CardResponse {
-                found: false,
-                name: None,
-                image_path: None,
-                is_two_sided: None,
-                message: "Card not found".to_string(),
-            }),
-        ),
-        Err(e) => (
-            StatusCode::INTERNAL_SERVER_ERROR,
-            Json(CardResponse {
-                found: false,
-                name: None,
-                image_path: None,
-                is_two_sided: None,
-                message: format!("Database error: {}", e),
-            }),
-        ),
+        Ok(None) => {
+            tracing::warn!("Card not found: set_code={}, collector_number={}", params.set_code, params.collector_number);
+            (
+                StatusCode::NOT_FOUND,
+                Json(CardResponse {
+                    found: false,
+                    name: None,
+                    image_path: None,
+                    is_two_sided: None,
+                    message: "Card not found".to_string(),
+                }),
+            )
+        }
+        Err(e) => {
+            tracing::error!("Database error querying card: {}", e);
+            (
+                StatusCode::INTERNAL_SERVER_ERROR,
+                Json(CardResponse {
+                    found: false,
+                    name: None,
+                    image_path: None,
+                    is_two_sided: None,
+                    message: format!("Database error: {}", e),
+                }),
+            )
+        }
     }
 }
 
@@ -210,6 +219,8 @@ pub async fn search_cards_handler(
         .and_then(|v| v.as_str());
 
     let limit = 50;
+
+    tracing::info!("Searching cards: query={}, set_code={:?}", query, set_code);
 
     let results = if let Some(set) = set_code {
         sqlx::query_as::<_, (String, String)>(
@@ -231,25 +242,33 @@ pub async fn search_cards_handler(
     };
 
     match results {
-        Ok(cards) => (
-            StatusCode::OK,
-            Json(json!({
-                "success": true,
-                "cards": cards.iter().map(|(name, collector_number)| {
-                    json!({
-                        "name": name,
-                        "collector_number": collector_number,
-                    })
-                }).collect::<Vec<_>>()
-            })),
-        ),
-        Err(e) => (
-            StatusCode::INTERNAL_SERVER_ERROR,
-            Json(json!({
-                "success": false,
-                "message": format!("Search failed: {}", e),
-                "cards": []
-            })),
-        ),
+        Ok(cards) => {
+            tracing::info!("Search found {} cards", cards.len());
+            (
+                StatusCode::OK,
+                Json(json!({
+                    "success": true,
+                    "cards": cards.iter().map(|(name, collector_number)| {
+                        json!({
+                            "name": name,
+                            "collector_number": collector_number,
+                        })
+                    }).collect::<Vec<_>>()
+                })),
+            )
+        }
+        Err(e) => {
+            tracing::error!("Search error: {}", e);
+        Err(e) => {
+            tracing::error!("Search error: {}", e);
+            (
+                StatusCode::INTERNAL_SERVER_ERROR,
+                Json(json!({
+                    "success": false,
+                    "message": format!("Search failed: {}", e),
+                    "cards": []
+                })),
+            )
+        }
     }
 }

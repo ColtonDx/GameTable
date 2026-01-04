@@ -1,8 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import '../styles/BottomToolbar.css';
 import DiceAndCoins from './DiceAndCoins';
+import { WebSocketContext } from './GameTable';
 
-const BottomToolbar = ({ gameState, turnNumber, onNextTurn, onAction, onGameMenu, onUndoTurn, onBack, ws, playerId }) => {
+const BottomToolbar = ({ gameState, turnNumber, onNextTurn, onAction, onGameMenu, onUndoTurn, onBack, playerId }) => {
+  const ws = useContext(WebSocketContext);
   const [gameMenuOpen, setGameMenuOpen] = useState(false);
   const [diceResult, setDiceResult] = useState(null);
 

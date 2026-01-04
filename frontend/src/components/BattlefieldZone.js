@@ -6,6 +6,40 @@ const BattlefieldZone = ({ player, position, isActive, onUpdateLife, onUpdateCou
   const [contextMenu, setContextMenu] = useState(null);
   const [draggedBattlefieldCard, setDraggedBattlefieldCard] = useState(null);
   const [cardBeingDragged, setCardBeingDragged] = useState(null);
+  const [editingValue, setEditingValue] = useState(null);
+  const [inputValue, setInputValue] = useState('');
+
+  const handleStartEdit = (type, currentValue) => {
+    setEditingValue(type);
+    setInputValue(currentValue.toString());
+  };
+
+  const handleConfirmEdit = (type, currentValue) => {
+    const newValue = parseInt(inputValue) || 0;
+    const delta = newValue - currentValue;
+    
+    if (type === 'life') {
+      onUpdateLife(player.id, delta);
+    } else {
+      onUpdateCounter(player.id, type, delta);
+    }
+    
+    setEditingValue(null);
+    setInputValue('');
+  };
+
+  const handleCancelEdit = () => {
+    setEditingValue(null);
+    setInputValue('');
+  };
+
+  const handleKeyDown = (e, type, currentValue) => {
+    if (e.key === 'Enter') {
+      handleConfirmEdit(type, currentValue);
+    } else if (e.key === 'Escape') {
+      handleCancelEdit();
+    }
+  };
 
   const handleZoomClick = (e) => {
     // Trigger zoom on double-click anywhere in the battlefield zone
@@ -325,7 +359,25 @@ const BattlefieldZone = ({ player, position, isActive, onUpdateLife, onUpdateCou
             −
           </button>
           <span className="life-icon">❤️</span>
-          <span className="life-value">{player.life}</span>
+          {editingValue === 'life' ? (
+            <input 
+              type="number"
+              className="life-input"
+              value={inputValue}
+              onChange={(e) => setInputValue(e.target.value)}
+              onKeyDown={(e) => handleKeyDown(e, 'life', player.life)}
+              onBlur={() => handleConfirmEdit('life', player.life)}
+              autoFocus
+            />
+          ) : (
+            <span 
+              className="life-value"
+              onClick={() => handleStartEdit('life', player.life)}
+              title="Click to set life total"
+            >
+              {player.life}
+            </span>
+          )}
           <button 
             className="life-btn life-plus"
             onClick={() => onUpdateLife(player.id, 1)}
@@ -346,7 +398,25 @@ const BattlefieldZone = ({ player, position, isActive, onUpdateLife, onUpdateCou
               −
             </button>
             <span className="counter-icon">☠️</span>
-            <span className="counter-value">{player.poison || 0}</span>
+            {editingValue === 'poison' ? (
+              <input 
+                type="number"
+                className="counter-input"
+                value={inputValue}
+                onChange={(e) => setInputValue(e.target.value)}
+                onKeyDown={(e) => handleKeyDown(e, 'poison', player.poison || 0)}
+                onBlur={() => handleConfirmEdit('poison', player.poison || 0)}
+                autoFocus
+              />
+            ) : (
+              <span 
+                className="counter-value"
+                onClick={() => handleStartEdit('poison', player.poison || 0)}
+                title="Click to set poison total"
+              >
+                {player.poison || 0}
+              </span>
+            )}
             <button 
               className="counter-btn counter-plus"
               onClick={() => onUpdateCounter(player.id, 'poison', 1)}
@@ -364,7 +434,25 @@ const BattlefieldZone = ({ player, position, isActive, onUpdateLife, onUpdateCou
               −
             </button>
             <span className="counter-icon">⚡</span>
-            <span className="counter-value">{player.energy || 0}</span>
+            {editingValue === 'energy' ? (
+              <input 
+                type="number"
+                className="counter-input"
+                value={inputValue}
+                onChange={(e) => setInputValue(e.target.value)}
+                onKeyDown={(e) => handleKeyDown(e, 'energy', player.energy || 0)}
+                onBlur={() => handleConfirmEdit('energy', player.energy || 0)}
+                autoFocus
+              />
+            ) : (
+              <span 
+                className="counter-value"
+                onClick={() => handleStartEdit('energy', player.energy || 0)}
+                title="Click to set energy total"
+              >
+                {player.energy || 0}
+              </span>
+            )}
             <button 
               className="counter-btn counter-plus"
               onClick={() => onUpdateCounter(player.id, 'energy', 1)}
@@ -382,7 +470,25 @@ const BattlefieldZone = ({ player, position, isActive, onUpdateLife, onUpdateCou
               −
             </button>
             <span className="counter-icon">⭐</span>
-            <span className="counter-value">{player.experience || 0}</span>
+            {editingValue === 'experience' ? (
+              <input 
+                type="number"
+                className="counter-input"
+                value={inputValue}
+                onChange={(e) => setInputValue(e.target.value)}
+                onKeyDown={(e) => handleKeyDown(e, 'experience', player.experience || 0)}
+                onBlur={() => handleConfirmEdit('experience', player.experience || 0)}
+                autoFocus
+              />
+            ) : (
+              <span 
+                className="counter-value"
+                onClick={() => handleStartEdit('experience', player.experience || 0)}
+                title="Click to set experience total"
+              >
+                {player.experience || 0}
+              </span>
+            )}
             <button 
               className="counter-btn counter-plus"
               onClick={() => onUpdateCounter(player.id, 'experience', 1)}

@@ -186,6 +186,31 @@
   color: #ef4444;
   min-width: 20px;
   text-align: center;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.life-value:hover {
+  opacity: 0.7;
+  text-decoration: underline;
+}
+
+.life-input {
+  font-size: 12px;
+  font-weight: 700;
+  color: #ef4444;
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.6);
+  padding: 2px 4px;
+  border-radius: 2px;
+  width: 30px;
+  text-align: center;
+  outline: none;
+}
+
+.life-input:focus {
+  background: rgba(239, 68, 68, 0.2);
+  border-color: rgba(239, 68, 68, 0.8);
 }
 
 .life-btn {
@@ -284,6 +309,32 @@
   text-align: center;
   flex-shrink: 0;
   font-size: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.counter-value:hover {
+  opacity: 0.7;
+  text-decoration: underline;
+}
+
+.counter-input {
+  font-weight: 700;
+  color: #e0e0e0;
+  background: rgba(96, 165, 250, 0.15);
+  border: 1px solid rgba(96, 165, 250, 0.4);
+  padding: 1px 2px;
+  border-radius: 1px;
+  width: 16px;
+  text-align: center;
+  flex-shrink: 0;
+  font-size: 7px;
+  outline: none;
+}
+
+.counter-input:focus {
+  background: rgba(96, 165, 250, 0.25);
+  border-color: rgba(96, 165, 250, 0.6);
 }
 
 .life-btn:hover {

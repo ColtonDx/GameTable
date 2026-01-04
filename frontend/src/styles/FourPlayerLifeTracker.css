@@ -152,6 +152,31 @@
   font-weight: 900;
   color: #ef4444;
   line-height: 1;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.life-value:hover {
+  opacity: 0.7;
+  text-decoration: underline;
+}
+
+.life-input-four-player {
+  font-size: 36px;
+  font-weight: 900;
+  color: #ef4444;
+  background: rgba(239, 68, 68, 0.1);
+  border: 2px solid rgba(239, 68, 68, 0.6);
+  padding: 4px 8px;
+  border-radius: 4px;
+  width: 120px;
+  text-align: center;
+  outline: none;
+}
+
+.life-input-four-player:focus {
+  background: rgba(239, 68, 68, 0.2);
+  border-color: rgba(239, 68, 68, 0.8);
 }
 
 .player-life-card.active .life-value {

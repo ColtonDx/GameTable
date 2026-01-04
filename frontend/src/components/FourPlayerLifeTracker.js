@@ -1,7 +1,35 @@
-import React from 'react';
+import React, { useState } from 'react';
 import '../styles/FourPlayerLifeTracker.css';
 
 const FourPlayerLifeTracker = ({ gameState, currentPlayerId, onUpdatePlayerLife }) => {
+  const [editingPlayerId, setEditingPlayerId] = useState(null);
+  const [inputValue, setInputValue] = useState('');
+
+  const handleStartEdit = (playerId, currentLife) => {
+    setEditingPlayerId(playerId);
+    setInputValue(currentLife.toString());
+  };
+
+  const handleConfirmEdit = (playerId, currentLife) => {
+    const newLife = parseInt(inputValue) || 0;
+    const delta = newLife - currentLife;
+    onUpdatePlayerLife(playerId, delta);
+    setEditingPlayerId(null);
+    setInputValue('');
+  };
+
+  const handleCancelEdit = () => {
+    setEditingPlayerId(null);
+    setInputValue('');
+  };
+
+  const handleKeyDown = (e, playerId, currentLife) => {
+    if (e.key === 'Enter') {
+      handleConfirmEdit(playerId, currentLife);
+    } else if (e.key === 'Escape') {
+      handleCancelEdit();
+    }
+  };
   const players = gameState?.players ? Object.values(gameState.players) : [];
   
   // Get all 4 players, or create placeholders for empty seats
@@ -33,6 +61,13 @@ const FourPlayerLifeTracker = ({ gameState, currentPlayerId, onUpdatePlayerLife 
             onDecrease={() => updateLife(getPlayerAtIndex(0).id, -1)}
             isActive={getPlayerAtIndex(0)?.id === currentPlayerId}
             position="top-left"
+            isEditing={editingPlayerId === getPlayerAtIndex(0).id}
+            inputValue={inputValue}
+            onStartEdit={() => handleStartEdit(getPlayerAtIndex(0).id, getPlayerAtIndex(0).life)}
+            onConfirmEdit={() => handleConfirmEdit(getPlayerAtIndex(0).id, getPlayerAtIndex(0).life)}
+            onCancelEdit={handleCancelEdit}
+            onInputChange={(val) => setInputValue(val)}
+            onKeyDown={(e) => handleKeyDown(e, getPlayerAtIndex(0).id, getPlayerAtIndex(0).life)}
           />
         </div>
 
@@ -44,6 +79,13 @@ const FourPlayerLifeTracker = ({ gameState, currentPlayerId, onUpdatePlayerLife 
             onDecrease={() => updateLife(getPlayerAtIndex(1).id, -1)}
             isActive={getPlayerAtIndex(1)?.id === currentPlayerId}
             position="top-right"
+            isEditing={editingPlayerId === getPlayerAtIndex(1).id}
+            inputValue={inputValue}
+            onStartEdit={() => handleStartEdit(getPlayerAtIndex(1).id, getPlayerAtIndex(1).life)}
+            onConfirmEdit={() => handleConfirmEdit(getPlayerAtIndex(1).id, getPlayerAtIndex(1).life)}
+            onCancelEdit={handleCancelEdit}
+            onInputChange={(val) => setInputValue(val)}
+            onKeyDown={(e) => handleKeyDown(e, getPlayerAtIndex(1).id, getPlayerAtIndex(1).life)}
           />
         </div>
       </div>
@@ -58,6 +100,13 @@ const FourPlayerLifeTracker = ({ gameState, currentPlayerId, onUpdatePlayerLife 
             onDecrease={() => updateLife(getPlayerAtIndex(3).id, -1)}
             isActive={getPlayerAtIndex(3)?.id === currentPlayerId}
             position="bottom-left"
+            isEditing={editingPlayerId === getPlayerAtIndex(3).id}
+            inputValue={inputValue}
+            onStartEdit={() => handleStartEdit(getPlayerAtIndex(3).id, getPlayerAtIndex(3).life)}
+            onConfirmEdit={() => handleConfirmEdit(getPlayerAtIndex(3).id, getPlayerAtIndex(3).life)}
+            onCancelEdit={handleCancelEdit}
+            onInputChange={(val) => setInputValue(val)}
+            onKeyDown={(e) => handleKeyDown(e, getPlayerAtIndex(3).id, getPlayerAtIndex(3).life)}
           />
         </div>
 
@@ -69,6 +118,13 @@ const FourPlayerLifeTracker = ({ gameState, currentPlayerId, onUpdatePlayerLife 
             onDecrease={() => updateLife(getPlayerAtIndex(2).id, -1)}
             isActive={getPlayerAtIndex(2)?.id === currentPlayerId}
             position="bottom-right"
+            isEditing={editingPlayerId === getPlayerAtIndex(2).id}
+            inputValue={inputValue}
+            onStartEdit={() => handleStartEdit(getPlayerAtIndex(2).id, getPlayerAtIndex(2).life)}
+            onConfirmEdit={() => handleConfirmEdit(getPlayerAtIndex(2).id, getPlayerAtIndex(2).life)}
+            onCancelEdit={handleCancelEdit}
+            onInputChange={(val) => setInputValue(val)}
+            onKeyDown={(e) => handleKeyDown(e, getPlayerAtIndex(2).id, getPlayerAtIndex(2).life)}
           />
         </div>
       </div>
@@ -76,7 +132,7 @@ const FourPlayerLifeTracker = ({ gameState, currentPlayerId, onUpdatePlayerLife 
   );
 };
 
-const PlayerLifeCard = ({ player, onIncrease, onDecrease, isActive, position }) => {
+const PlayerLifeCard = ({ player, onIncrease, onDecrease, isActive, position, isEditing, inputValue, onStartEdit, onConfirmEdit, onCancelEdit, onInputChange, onKeyDown }) => {
   return (
     <div className={`player-life-card ${isActive ? 'active' : ''} ${player.isPlaceholder ? 'placeholder' : ''}`}>
       {/* Player Name */}
@@ -92,9 +148,25 @@ const PlayerLifeCard = ({ player, onIncrease, onDecrease, isActive, position }) 
         >
           −
         </button>
-        <div className="life-number">
-          <span className="life-value">{player.life}</span>
-        </div>
+        {isEditing ? (
+          <input 
+            type="number"
+            className="life-input-four-player"
+            value={inputValue}
+            onChange={(e) => onInputChange(e.target.value)}
+            onKeyDown={onKeyDown}
+            onBlur={onConfirmEdit}
+            autoFocus
+          />
+        ) : (
+          <span 
+            className="life-value"
+            onClick={onStartEdit}
+            title="Click to set life total"
+          >
+            {player.life}
+          </span>
+        )}
         <button 
           className="life-btn increase-btn"
           onClick={onIncrease}

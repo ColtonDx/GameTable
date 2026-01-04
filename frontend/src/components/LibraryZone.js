@@ -45,6 +45,17 @@ const LibraryZone = ({ cards = [], ws = null, playerId = null, playerName = null
     setContextMenu(null);
   };
 
+  const handleManifest = () => {
+    if (ws && ws.readyState === WebSocket.OPEN && playerId && cards && cards.length > 0) {
+      ws.send(JSON.stringify({
+        ManifestCard: {
+          player_id: playerId
+        }
+      }));
+    }
+    setContextMenu(null);
+  };
+
   const handleDrawCard = () => {
     if (ws && ws.readyState === WebSocket.OPEN) {
       ws.send(JSON.stringify({
@@ -109,6 +120,9 @@ const LibraryZone = ({ cards = [], ws = null, playerId = null, playerName = null
           </button>
           <button className="context-menu-item" onClick={handleSurveil}>
             Surveil
+          </button>
+          <button className="context-menu-item" onClick={handleManifest}>
+            Manifest
           </button>
         </div>
       )}
